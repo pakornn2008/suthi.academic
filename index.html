@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUTHI PORTAL - Digital Academic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #ffffff;
+            --text-main: #1a1a1a;
+            --text-sub: #4a4a4a;
+            --card-radius: 32px; /* ขอบมนมากตามภาพตัวอย่าง */
+            --easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            color: var(--text-main);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        /* --- Header Section (แบบมินิมอลเหมือนภาพตัวอย่าง) --- */
+        .portal-header {
+            text-align: center;
+            animation: fadeDown 0.8s var(--easing) forwards;
+        }
+
+        .portal-header h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 600;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .portal-header p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-sub);
+            font-weight: 400;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .header-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn-outline {
+            padding: 10px 24px;
+            border: 1px solid #000;
+            border-radius: 100px;
+            text-decoration: none;
+            color: #000;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        /* --- Card Grid Section --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 คอลัมน์แบบในภาพ */
+            gap: 24px;
+        }
+
+        /* --- Card Style --- */
+        .portal-card {
+            position: relative;
+            height: 480px; /* ทรงสูง */
+            border-radius: var(--card-radius);
+            padding: 35px 25px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.4s var(--easing), box-shadow 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s var(--easing) forwards;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* Staggered Animation */
+        .portal-card:nth-child(1) { animation-delay: 0.1s; }
+        .portal-card:nth-child(2) { animation-delay: 0.2s; }
+        .portal-card:nth-child(3) { animation-delay: 0.3s; }
+        .portal-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .portal-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        /* การไล่สีพื้นหลังให้คล้ายภาพตัวอย่าง */
+        .card-1 { background: linear-gradient(to bottom, #9d4b6c, #6c324a); }
+        .card-2 { background: linear-gradient(to bottom, #4a5d23, #2c3815); }
+        .card-3 { background: linear-gradient(to bottom, #d4a373, #a67c52); }
+        .card-4 { background: linear-gradient(to bottom, #e8b4b8, #b8868a); color: #1a1a1a; } /* สีอ่อน ตัวหนังสือดำ */
+
+        /* --- Card Content --- */
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .card-desc {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        /* --- Circular Button (+) --- */
+        .circle-btn {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            z-index: 2;
+        }
+
+        .portal-card:hover .circle-btn {
+            transform: scale(1.1) rotate(90deg); /* ลูกเล่นหมุนตอนโฮเวอร์ */
+        }
+
+        /* Background Design Elements (สมมติแทนรูปภาพ) */
+        .bg-element {
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 120%;
+            height: 60%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50% 50% 0 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- Keyframes --- */
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 1024px) {
+            .card-grid { grid-template-columns: repeat(2, 1fr); } /* แท็บเล็ตเหลือ 2 แถว */
+            .portal-card { height: 400px; }
+        }
+
+        @media (max-width: 600px) {
+            .card-grid { grid-template-columns: 1fr; } /* มือถือเหลือ 1 แถว */
+            .portal-card { height: 350px; }
+            .portal-header h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="portal-header">
+        <h1>SUTHI PORTAL</h1>
+        <p>ศูนย์กลางระบบวิชาการดิจิทัลอัจฉริยะ<br>เพื่อยกระดับการจัดการเรียนรู้และบริหารงานวิชาการอย่างยั่งยืน</p>
+        
+        <div class="header-buttons">
+            <a href="#" class="btn-outline">
+                คู่มือการใช้งาน 
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+            </a>
+            <a href="#" class="btn-outline" id="datetime-display">
+                กำลังโหลดเวลา...
+            </a>
+        </div>
+    </header>
+
+    <div class="card-grid">
+        
+        <a href="https://sites.google.com/suthi.ac.th/academic/doc" target="_blank" class="portal-card card-1">
+            <div class="card-content">
+                <h2 class="card-title">ระบบบริหารงาน<br>ผลิตเอกสาร</h2>
+                <p class="card-desc">จัดการสื่อการสอนและใบงาน<br>ส่งผลิตแบบออนไลน์</p>
+            </div>
+            <div class="bg-element"></div>
+            <div class="circle-btn">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+            </div>
+        </a>
+
+        <a href="https://sites.google.com/suthi.ac.th/academic/doc-test" target="_blank" class="portal-card card-2">
+            <div class="card-content">
+                <h2 class="card-title">ระบบอัดสำเนา<br>แบบทดสอบ</h2>
+                <p class="card-desc">รักษาความลับขั้นสูงสุด<br>สำหรับงานวัดและประเมินผล</p>
+            </div>
+            <div class="bg-element"></div>
+            <div class="circle-btn">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+            </div>
+        </a>
+
+        <a href="https://sites.google.com/suthi.ac.th/academic/syllabus" target="_blank" class="portal-card card-3">
+            <div class="card-content">
+                <h2 class="card-title">สืบค้นข้อมูล<br>ประมวลรายวิชา</h2>
+                <p class="card-desc">คลังข้อมูล Syllabus<br>และโครงสร้างแผนการสอน</p>
+            </div>
+            <div class="bg-element"></div>
+            <div class="circle-btn">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+            </div>
+        </a>
+
+        <a href="https://sites.google.com/suthi.ac.th/academic/pickuppaper" target="_blank" class="portal-card card-4">
+            <div class="card-content">
+                <h2 class="card-title">ระบบควบคุม<br>คลังวัสดุ</h2>
+                <p class="card-desc">ตรวจสอบและเบิกจ่าย<br>ทรัพยากรส่วนกลาง</p>
+            </div>
+            <div class="bg-element"></div>
+            <div class="circle-btn">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<script>
+    // สคริปต์แสดงเวลาใส่ไว้ในปุ่มด้านบน
+    function updateThaiDateTime() {
+        const now = new Date();
+        const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
+        const dateStr = now.toLocaleDateString('th-TH', optionsDate);
+        const timeStr = now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
+        document.getElementById('datetime-display').innerHTML = `${dateStr} | ${timeStr} น.`;
+    }
+    updateThaiDateTime();
+    setInterval(updateThaiDateTime, 60000);
+</script>
+
+</body>
+</html>
