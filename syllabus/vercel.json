@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/syllabus",
+      "destination": "https://script.google.com/macros/s/AKfycbyL_zPlLJNj_lfKvJsxBzs6oOD0zDbbUPtlX5xcAWbCukEUTBI_9RLPNxW3k3doBCeM/exec",
+      "permanent": false
+    }
+  ]
+}
