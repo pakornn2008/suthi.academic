@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/pickuppaper",
+      "destination": "https://script.google.com/a/macros/suthi.ac.th/s/AKfycbyz2J9iFewBkcRvuGtSgEBHvrh4-uTCDWktBSG_8l_sb3EteH1MRr4hYlRFj83we9JdnA/exec",
+      "permanent": false
+    }
+  ]
+}
