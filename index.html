@@ -1,285 +1,1328 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUTHI PORTAL - Digital Academic</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-body: #ffffff;
-            --text-main: #1a1a1a;
-            --text-sub: #4a4a4a;
-            --card-radius: 32px; /* ขอบมนมากตามภาพตัวอย่าง */
-            --easing: cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>กลุ่มบริหารวิชาการ | โรงเรียนวัดสุทธิวราราม</title>
+  
+  <!-- Google Fonts: Prompt & Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6.4.0 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+  <style>
+    :root {
+      --suthi-pink-dark: #D47FA6;
+      --suthi-pink-primary: #E86DAA;
+      --suthi-pink-light: #FFB6C1;
+      --suthi-green-dark: #2D8A68;
+      --suthi-green-light: #E0F2F1;
+      --academic-navy: #0F172A;
+      --academic-slate: #1E293B;
+      --gold-accent: #C5A059;
+      --portal-purple: #7C3AED;
+      --portal-glow: rgba(124, 58, 237, 0.35);
+      
+      --card-glass: rgba(255, 255, 255, 0.92);
+      --card-border: rgba(255, 255, 255, 0.8);
+      --shadow-sm: 0 4px 15px rgba(0,0,0,0.04);
+      --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
+      --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+    }
 
-        body {
-            font-family: 'Prompt', sans-serif;
-            background-color: var(--bg-body);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 60px 20px;
-            color: var(--text-main);
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            flex-direction: column;
-            gap: 50px;
-        }
+    html { scroll-behavior: smooth; }
 
-        /* --- Header Section (แบบมินิมอลเหมือนภาพตัวอย่าง) --- */
-        .portal-header {
-            text-align: center;
-            animation: fadeDown 0.8s var(--easing) forwards;
-        }
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: #F8FAFC;
+      color: var(--academic-navy);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-        .portal-header h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 600;
-            letter-spacing: -1px;
-            margin-bottom: 15px;
-            color: #000;
-        }
+    h1, h2, h3, h4, h5, .font-prompt {
+      font-family: 'Prompt', sans-serif;
+    }
 
-        .portal-header p {
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            color: var(--text-sub);
-            font-weight: 400;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
+    /* --------------------------------------
+       1. Top Notice Bar & Navigation
+    -------------------------------------- */
+    .top-notice-bar {
+      background: linear-gradient(90deg, var(--academic-navy), var(--academic-slate));
+      color: #CBD5E1;
+      font-size: 0.83rem;
+      padding: 8px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
 
-        .header-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
+    .top-notice-bar a {
+      color: var(--suthi-pink-light);
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-        .btn-outline {
-            padding: 10px 24px;
-            border: 1px solid #000;
-            border-radius: 100px;
-            text-decoration: none;
-            color: #000;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid #E2E8F0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
 
-        .btn-outline:hover {
-            background: #000;
-            color: #fff;
-        }
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        /* --- Card Grid Section --- */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 คอลัมน์แบบในภาพ */
-            gap: 24px;
-        }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
 
-        /* --- Card Style --- */
-        .portal-card {
-            position: relative;
-            height: 480px; /* ทรงสูง */
-            border-radius: var(--card-radius);
-            padding: 35px 25px;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: transform 0.4s var(--easing), box-shadow 0.4s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s var(--easing) forwards;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+    .nav-brand img {
+      height: 50px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+    }
 
-        /* Staggered Animation */
-        .portal-card:nth-child(1) { animation-delay: 0.1s; }
-        .portal-card:nth-child(2) { animation-delay: 0.2s; }
-        .portal-card:nth-child(3) { animation-delay: 0.3s; }
-        .portal-card:nth-child(4) { animation-delay: 0.4s; }
+    .nav-title {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--academic-navy);
+      line-height: 1.2;
+    }
 
-        .portal-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
+    .nav-subtitle {
+      font-size: 0.8rem;
+      color: #64748B;
+    }
 
-        /* การไล่สีพื้นหลังให้คล้ายภาพตัวอย่าง */
-        .card-1 { background: linear-gradient(to bottom, #9d4b6c, #6c324a); }
-        .card-2 { background: linear-gradient(to bottom, #4a5d23, #2c3815); }
-        .card-3 { background: linear-gradient(to bottom, #d4a373, #a67c52); }
-        .card-4 { background: linear-gradient(to bottom, #e8b4b8, #b8868a); color: #1a1a1a; } /* สีอ่อน ตัวหนังสือดำ */
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      list-style: none;
+    }
 
-        /* --- Card Content --- */
-        .card-content {
-            position: relative;
-            z-index: 2;
-        }
+    .nav-link {
+      text-decoration: none;
+      color: #475569;
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
 
-        .card-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            line-height: 1.2;
-            margin-bottom: 12px;
-        }
+    .nav-link:hover { color: var(--suthi-pink-primary); }
 
-        .card-desc {
-            font-size: 1rem;
-            opacity: 0.9;
-            line-height: 1.5;
-            font-weight: 300;
-        }
+    /* Animated Portal CTA Button */
+    .btn-portal-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      background: linear-gradient(135deg, var(--portal-purple) 0%, #6366F1 100%);
+      color: #fff !important;
+      border-radius: 50px;
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 15px var(--portal-glow);
+      transition: all 0.3s ease;
+      animation: pulseGlow 2.5s infinite;
+    }
 
-        /* --- Circular Button (+) --- */
-        .circle-btn {
-            position: absolute;
-            bottom: 25px;
-            right: 25px;
-            width: 45px;
-            height: 45px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #000;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            z-index: 2;
-        }
+    .btn-portal-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+    }
 
-        .portal-card:hover .circle-btn {
-            transform: scale(1.1) rotate(90deg); /* ลูกเล่นหมุนตอนโฮเวอร์ */
-        }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(124, 58, 237, 0); }
+    }
 
-        /* Background Design Elements (สมมติแทนรูปภาพ) */
-        .bg-element {
-            position: absolute;
-            bottom: -10%;
-            left: -10%;
-            width: 120%;
-            height: 60%;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50% 50% 0 0;
-            z-index: 1;
-            pointer-events: none;
-        }
+    /* Mobile Hamburger Button */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--academic-navy);
+      cursor: pointer;
+    }
 
-        /* --- Keyframes --- */
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    /* --------------------------------------
+       2. Hero Section with Graphic Elements
+    -------------------------------------- */
+    .hero-section {
+      position: relative;
+      padding: 70px 24px 90px;
+      background: radial-gradient(circle at 10% 20%, rgba(232, 109, 170, 0.12) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(45, 138, 104, 0.12) 0%, transparent 40%),
+                  linear-gradient(135deg, #FAF5F8 0%, #F1F5F9 100%);
+      overflow: hidden;
+    }
 
-        /* --- Responsive --- */
-        @media (max-width: 1024px) {
-            .card-grid { grid-template-columns: repeat(2, 1fr); } /* แท็บเล็ตเหลือ 2 แถว */
-            .portal-card { height: 400px; }
-        }
+    /* Floating Academic Graphics Background Bubbles */
+    .bg-shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(45px);
+      z-index: 1;
+      opacity: 0.5;
+    }
+    .shape-1 { top: -40px; left: -40px; width: 280px; height: 280px; background: var(--suthi-pink-light); }
+    .shape-2 { bottom: -60px; right: 8%; width: 320px; height: 320px; background: rgba(45, 138, 104, 0.2); }
 
-        @media (max-width: 600px) {
-            .card-grid { grid-template-columns: 1fr; } /* มือถือเหลือ 1 แถว */
-            .portal-card { height: 350px; }
-            .portal-header h1 { font-size: 2.2rem; }
-        }
-    </style>
+    /* Floating Academic Icons Graphic Elements */
+    .academic-float-icon {
+      position: absolute;
+      opacity: 0.12;
+      color: var(--academic-navy);
+      z-index: 1;
+      animation: floatAnim 6s ease-in-out infinite alternate;
+    }
+    .f-icon-1 { top: 15%; left: 8%; font-size: 3.5rem; animation-delay: 0s; }
+    .f-icon-2 { bottom: 20%; left: 45%; font-size: 4rem; animation-delay: 2s; }
+    .f-icon-3 { top: 20%; right: 10%; font-size: 3rem; animation-delay: 4s; }
+
+    @keyframes floatAnim {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-18px) rotate(10deg); }
+    }
+
+    .hero-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: #fff;
+      border: 1px solid rgba(232, 109, 170, 0.3);
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--suthi-pink-primary);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 800;
+      color: var(--academic-navy);
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--suthi-pink-primary), var(--suthi-green-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.08rem;
+      color: #475569;
+      margin-bottom: 30px;
+      max-width: 580px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .btn-hero-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--portal-purple), #6366F1);
+      color: #fff;
+      border-radius: 14px;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 10px 25px var(--portal-glow);
+      transition: all 0.3s ease;
+    }
+
+    .btn-hero-main:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(124, 58, 237, 0.45);
+    }
+
+    .btn-hero-sub {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 26px;
+      background: #fff;
+      color: var(--academic-navy);
+      border: 1px solid #CBD5E1;
+      border-radius: 14px;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .btn-hero-sub:hover {
+      background: #F8FAFC;
+      border-color: var(--suthi-pink-primary);
+      color: var(--suthi-pink-primary);
+    }
+
+    /* Hero Preview Card Showcase */
+    .portal-preview-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(124, 58, 237, 0.2);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .portal-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+
+    .portal-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--portal-purple);
+      border-radius: 8px;
+    }
+
+    .portal-features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .p-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #F8FAFC;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      border: 1px solid #E2E8F0;
+    }
+
+    .p-feature-item i { color: var(--portal-purple); }
+
+    /* --------------------------------------
+       3. Academic Statistics Counter Dashboard
+    -------------------------------------- */
+    .stats-section {
+      max-width: 1280px;
+      margin: -45px auto 60px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--card-glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover { transform: translateY(-5px); }
+
+    .stat-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .stat-number {
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1;
+      font-family: 'Prompt', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #64748B;
+      margin-top: 4px;
+    }
+
+    /* --------------------------------------
+       4. Suthi Portal Spotlight Banner
+    -------------------------------------- */
+    .portal-banner-section {
+      max-width: 1280px;
+      margin: 0 auto 70px;
+      padding: 0 24px;
+    }
+
+    .portal-banner {
+      background: linear-gradient(135deg, #1E1B4B 0%, #311042 50%, #1E293B 100%);
+      border-radius: 28px;
+      padding: 40px 48px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(49, 16, 66, 0.3);
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .portal-banner-content h2 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .portal-banner-content p {
+      color: #C7D2FE;
+      font-size: 1.02rem;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .portal-launch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 34px;
+      background: linear-gradient(90deg, #A855F7, #EC4899);
+      color: #fff;
+      border-radius: 50px;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .portal-launch-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 15px 40px rgba(236, 72, 153, 0.6);
+    }
+
+    .portal-badge-box {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    /* --------------------------------------
+       5. Dynamic News & Announcements Section
+    -------------------------------------- */
+    .section-container {
+      max-width: 1280px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--academic-navy);
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-title::after {
+      content: "";
+      display: block;
+      width: 70px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--suthi-pink-primary), var(--gold-accent));
+      margin: 10px auto 0;
+      border-radius: 2px;
+    }
+
+    .section-subtitle {
+      color: #64748B;
+      font-size: 1rem;
+      margin-top: 8px;
+    }
+
+    /* News Action Toolbar */
+    .news-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .news-categories {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      padding: 8px 18px;
+      border-radius: 30px;
+      border: 1px solid #CBD5E1;
+      background: #fff;
+      color: #475569;
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cat-btn.active, .cat-btn:hover {
+      background: var(--academic-navy);
+      color: #fff;
+      border-color: var(--academic-navy);
+    }
+
+    .btn-add-news {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      background: linear-gradient(135deg, var(--suthi-pink-primary), var(--suthi-pink-dark));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(232, 109, 170, 0.35);
+      transition: all 0.3s ease;
+    }
+
+    .btn-add-news:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(232, 109, 170, 0.5);
+    }
+
+    /* News Cards Grid */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .news-card {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid #E2E8F0;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .news-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--suthi-pink-light);
+    }
+
+    .news-card-header {
+      padding: 16px 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .news-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--suthi-green-light);
+      color: var(--suthi-green-dark);
+    }
+
+    .news-date-str {
+      font-size: 0.82rem;
+      color: #94A3B8;
+    }
+
+    .news-card-body {
+      padding: 16px 20px 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .news-card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--academic-navy);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .news-card-desc {
+      font-size: 0.9rem;
+      color: #64748B;
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+
+    .news-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px dashed #F1F5F9;
+    }
+
+    .news-link-btn {
+      color: var(--portal-purple);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+
+    .news-link-btn:hover { text-decoration: underline; }
+
+    /* --------------------------------------
+       6. Modal Dialog for "Add News"
+    -------------------------------------- */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 540px;
+      padding: 30px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      animation: modalSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlide {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 1.3rem;
+      color: var(--academic-navy);
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: #94A3B8;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--academic-navy);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #CBD5E1;
+      border-radius: 10px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--suthi-pink-primary);
+      box-shadow: 0 0 0 3px rgba(232, 109, 170, 0.15);
+    }
+
+    .btn-submit-news {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--portal-purple), #6366F1);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* --------------------------------------
+       7. 8 Learning Groups Grid
+    -------------------------------------- */
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 20px;
+    }
+
+    .group-item-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 22px;
+      border: 1px solid #E2E8F0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .group-item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--suthi-pink-primary);
+    }
+
+    .group-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--suthi-green-light);
+      color: var(--suthi-green-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .group-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--academic-navy);
+    }
+
+    .group-head {
+      font-size: 0.85rem;
+      color: #64748B;
+    }
+
+    /* --------------------------------------
+       8. Footer
+    -------------------------------------- */
+    footer {
+      background: var(--academic-navy);
+      color: #94A3B8;
+      padding: 60px 24px 20px;
+      font-size: 0.9rem;
+    }
+
+    .footer-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .footer-brand h3 {
+      color: #fff;
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+    }
+
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: #94A3B8; text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--suthi-pink-light); }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 24px;
+      font-size: 0.85rem;
+    }
+
+    /* Responsive Breakdown */
+    @media (max-width: 992px) {
+      .hero-container { grid-template-columns: 1fr; }
+      .portal-banner { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu { display: none; }
+      .nav-menu.mobile-active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%; left: 0; width: 100%;
+        background: #fff;
+        padding: 20px;
+        box-shadow: var(--shadow-md);
+      }
+      .mobile-menu-btn { display: block; }
+      .hero-title { font-size: 2.1rem; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <header class="portal-header">
-        <h1>SUTHI PORTAL</h1>
-        <p>ศูนย์กลางระบบวิชาการดิจิทัลอัจฉริยะ<br>เพื่อยกระดับการจัดการเรียนรู้และบริหารงานวิชาการอย่างยั่งยืน</p>
-        
-        <div class="header-buttons">
-            <a href="#" class="btn-outline">
-                คู่มือการใช้งาน 
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
-            </a>
-            <a href="#" class="btn-outline" id="datetime-display">
-                กำลังโหลดเวลา...
-            </a>
-        </div>
-    </header>
-
-    <div class="card-grid">
-        
-        <a href="https://suthiacademic.vercel.app/doc" target="_blank" class="portal-card card-1">
-            <div class="card-content">
-                <h2 class="card-title">ระบบบริหารงาน<br>ผลิตเอกสาร</h2>
-                <p class="card-desc">จัดการสื่อการสอนและใบงาน<br>ส่งผลิตแบบออนไลน์</p>
-            </div>
-            <div class="bg-element"></div>
-            <div class="circle-btn">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
-            </div>
-        </a>
-
-        <a href="https://suthiacademic.vercel.app/doc-test" target="_blank" class="portal-card card-2">
-            <div class="card-content">
-                <h2 class="card-title">ระบบอัดสำเนา<br>แบบทดสอบ</h2>
-                <p class="card-desc">รักษาความลับขั้นสูงสุด<br>สำหรับงานวัดและประเมินผล</p>
-            </div>
-            <div class="bg-element"></div>
-            <div class="circle-btn">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
-            </div>
-        </a>
-
-        <a href="https://suthiacademic.vercel.app/syllabus" target="_blank" class="portal-card card-3">
-            <div class="card-content">
-                <h2 class="card-title">สืบค้นข้อมูล<br>ประมวลรายวิชา</h2>
-                <p class="card-desc">คลังข้อมูล Syllabus<br>และโครงสร้างแผนการสอน</p>
-            </div>
-            <div class="bg-element"></div>
-            <div class="circle-btn">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
-            </div>
-        </a>
-
-        <a href="https://suthiacademic.vercel.app/pickuppaper" target="_blank" class="portal-card card-4">
-            <div class="card-content">
-                <h2 class="card-title">ระบบควบคุม<br>คลังวัสดุ</h2>
-                <p class="card-desc">ตรวจสอบและเบิกจ่าย<br>ทรัพยากรส่วนกลาง</p>
-            </div>
-            <div class="bg-element"></div>
-            <div class="circle-btn">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
-            </div>
-        </a>
-
+  <!-- 1. Top Notice Bar -->
+  <div class="top-notice-bar">
+    <div>
+      <i class="fa-solid fa-graduation-cap"></i> ระบบสารสนเทศ กลุ่มบริหารวิชาการ โรงเรียนวัดสุทธิวราราม
     </div>
-</div>
+    <div>
+      <a href="https://suthiacademic.vercel.app/portal" target="_blank">
+        <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ Suthi Academic Portal
+      </a>
+    </div>
+  </div>
 
-<script>
-    // สคริปต์แสดงเวลาใส่ไว้ในปุ่มด้านบน
-    function updateThaiDateTime() {
-        const now = new Date();
-        const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
-        const dateStr = now.toLocaleDateString('th-TH', optionsDate);
-        const timeStr = now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
-        document.getElementById('datetime-display').innerHTML = `${dateStr} | ${timeStr} น.`;
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="https://suthi.ac.th/" class="nav-brand" target="_blank">
+        <img src="https://suthi.ac.th/wp-content/uploads/2022/11/SUTHIWARARAM_SCHOOL_LOGO.png" alt="ตราโรงเรียนวัดสุทธิวราราม">
+        <div>
+          <div class="nav-title">กลุ่มบริหารวิชาการ</div>
+          <div class="nav-subtitle">โรงเรียนวัดสุทธิวราราม</div>
+        </div>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#portal-spotlight" class="nav-link">Suthi Portal</a></li>
+        <li><a href="#news-section" class="nav-link">ข่าวประกาศ</a></li>
+        <li><a href="#subjects-section" class="nav-link">8 กลุ่มสาระฯ</a></li>
+        <li>
+          <a href="https://suthiacademic.vercel.app/portal" target="_blank" class="btn-portal-cta">
+            <i class="fa-solid fa-rocket"></i> Suthi Portal
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 2. Hero Section with Academic Floating Elements -->
+  <section class="hero-section">
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Floating Graphic Icons -->
+    <i class="fa-solid fa-atom academic-float-icon f-icon-1"></i>
+    <i class="fa-solid fa-book-open academic-float-icon f-icon-2"></i>
+    <i class="fa-solid fa-award academic-float-icon f-icon-3"></i>
+
+    <div class="hero-container">
+      <div>
+        <div class="hero-badge-tag">
+          <i class="fa-solid fa-sparkles"></i> Academic Innovation & Excellence Center
+        </div>
+        <h1 class="hero-title">
+          ยกระดับวิชาการ สู่ความเป็นเลิศ<br><span>โรงเรียนวัดสุทธิวราราม</span>
+        </h1>
+        <p class="hero-desc">
+          การบริหารจัดการงานวิชาการยุคใหม่ หลักสูตรสถานศึกษามาตรฐานสากล วัดและประเมินผลโปร่งใส เชื่อมโยงระบบบริการดิจิทัลวิชาการเต็มรูปแบบ
+        </p>
+        <div class="hero-actions">
+          <a href="https://suthiacademic.vercel.app/portal" target="_blank" class="btn-hero-main">
+            <i class="fa-solid fa-laptop-code"></i> เข้าสู่ระบบ Suthi Portal
+          </a>
+          <a href="#news-section" class="btn-hero-sub">
+            <i class="fa-solid fa-bullhorn"></i> ข่าววิชาการล่าสุด
+          </a>
+        </div>
+      </div>
+
+      <!-- Portal Feature Showcase Card -->
+      <div class="portal-preview-card">
+        <div class="portal-card-header">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:700;"><i class="fa-solid fa-server" style="color:var(--portal-purple);"></i> Suthi Academic Portal</h3>
+            <p style="font-size:0.8rem; color:#64748B;">ศูนย์รวมบริการดิจิทัลวิชาการสำหรับนักเรียนและครู</p>
+          </div>
+          <span class="portal-tag">ONLINE 24/7</span>
+        </div>
+
+        <div class="portal-features-grid">
+          <div class="p-feature-item"><i class="fa-solid fa-circle-check"></i> ตรวจสอบผลการเรียน</div>
+          <div class="p-feature-item"><i class="fa-solid fa-circle-check"></i> ยื่นคำร้องวิชาการ</div>
+          <div class="p-feature-item"><i class="fa-solid fa-circle-check"></i> ลงทะเบียนวิชาเลือก</div>
+          <div class="p-feature-item"><i class="fa-solid fa-circle-check"></i> ตารางเรียน/ตารางสอบ</div>
+        </div>
+
+        <a href="https://suthiacademic.vercel.app/portal" target="_blank" style="display:block; text-align:center; padding:12px; background:var(--suthi-green-light); color:var(--suthi-green-dark); border-radius:12px; font-weight:700; text-decoration:none;">
+          เปิดใช้งาน Portal (suthiacademic.vercel.app) <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Academic Stats Counter Dashboard -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #E86DAA, #FFB6C1);">
+          <i class="fa-solid fa-book-bookmark"></i>
+        </div>
+        <div>
+          <div class="stat-number">8</div>
+          <div class="stat-label">กลุ่มสาระการเรียนรู้</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #7C3AED, #6366F1);">
+          <i class="fa-solid fa-user-graduate"></i>
+        </div>
+        <div>
+          <div class="stat-number">2,500+</div>
+          <div class="stat-label">นักเรียนในการดูแล</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #2D8A68, #66BB6A);">
+          <i class="fa-solid fa-microscope"></i>
+        </div>
+        <div>
+          <div class="stat-number">100%</div>
+          <div class="stat-label">ห้องเรียนพิเศษคุณภาพ</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #D4AF37, #F59E0B);">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <div>
+          <div class="stat-number">TOP</div>
+          <div class="stat-label">มาตรฐานวิชาการระดับประเทศ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Suthi Portal Spotlight Banner -->
+  <section class="portal-banner-section" id="portal-spotlight">
+    <div class="portal-banner">
+      <div class="portal-banner-content">
+        <span style="background:rgba(236,72,153,0.25); color:#F472B6; padding:4px 14px; border-radius:20px; font-size:0.85rem; font-weight:700;">RECOMMENDED PORTAL</span>
+        <h2 style="margin-top:10px;">Suthi Academic Portal</h2>
+        <p>
+          ระบบพอร์ตทัลวิชาการกลาง เชื่อมโยงการลงทะเบียน ตรวจสอบผลการเรียน และบริการวิชาการสำหรับนักเรียน ครู และผู้ปกครองในจุดเดียว
+        </p>
+        <a href="https://suthiacademic.vercel.app/portal" target="_blank" class="portal-launch-btn">
+          <i class="fa-solid fa-paper-plane"></i> เข้าสู่ระบบ Portal ตอนนี้
+        </a>
+      </div>
+
+      <div class="portal-badge-box">
+        <i class="fa-solid fa-laptop-code" style="font-size:3.5rem; color:#F472B6; margin-bottom:12px;"></i>
+        <h3 style="font-size:1.25rem;">Smart Academic System</h3>
+        <p style="font-size:0.85rem; color:#A5B4FC; margin-top:4px;">สะดวก รวดเร็ว ปลอดภัย ปรับปรุงข้อมูลแบบ Real-time</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Dynamic News & Announcements Section -->
+  <section class="section-container" id="news-section">
+    <div class="section-header">
+      <h2 class="section-title">ข่าวสารและประกาศวิชาการ</h2>
+      <p class="section-subtitle">ติดตามตารางสอบ กำหนดการลงทะเบียน และประกาศสำคัญงานวิชาการ</p>
+    </div>
+
+    <!-- News Toolbar: Filters + Add News Button -->
+    <div class="news-toolbar">
+      <div class="news-categories">
+        <button class="cat-btn active" onclick="filterNews('all')">ทั้งหมด</button>
+        <button class="cat-btn" onclick="filterNews('สอบ')">การสอบ/ตารางสอบ</button>
+        <button class="cat-btn" onclick="filterNews('ลงทะเบียน')">การลงทะเบียน</button>
+        <button class="cat-btn" onclick="filterNews('ประกาศทั่วไป')">ประกาศทั่วไป</button>
+      </div>
+
+      <button class="btn-add-news" onclick="openNewsModal()">
+        <i class="fa-solid fa-plus-circle"></i> เพิ่มข่าวสารวิชาการ
+      </button>
+    </div>
+
+    <!-- Dynamic News Grid Container -->
+    <div class="news-grid" id="newsGrid">
+      <!-- News cards will be rendered dynamically by JavaScript -->
+    </div>
+  </section>
+
+  <!-- 6. 8 Learning Groups Grid -->
+  <section class="section-container" id="subjects-section">
+    <div class="section-header">
+      <h2 class="section-title">8 กลุ่มสาระการเรียนรู้</h2>
+      <p class="section-subtitle">ขับเคลื่อนการจัดการเรียนการสอนและหลักสูตรสถานศึกษา</p>
+    </div>
+
+    <div class="groups-grid">
+      <div class="group-item-card">
+        <div class="group-icon"><i class="fa-solid fa-atom"></i></div>
+        <div>
+          <div class="group-title">วิทยาศาสตร์และเทคโนโลยี</div>
+          <div class="group-head">ครูอโณทัย สำลีอ่อน</div>
+        </div>
+      </div>
+
+      <div class="group-item-card">
+        <div class="group-icon"><i class="fa-solid fa-calculator"></i></div>
+        <div>
+          <div class="group-title">คณิตศาสตร์</div>
+          <div class="group-head">ครูอุเทน ทรัพย์สิริไพบูลย์</div>
+        </div>
+      </div>
+
+      <div class="group-item-card">
+        <div class="group-icon"><i class="fa-solid fa-book-quran"></i></div>
+        <div>
+          <div class="group-title">ภาษาไทย</div>
+          <div class="group-head">ครูรัฐพล ศรีบูรณะพิทักษ์</div>
+        </div>
+      </div>
+
+      <div class="group-item-card">
+        <div class="group-icon"><i class="fa-solid fa-earth-americas"></i></div>
+        <div>
+          <div class="group-title">สังคมศึกษา ศาสนาฯ</div>
+          <div class="group-head">ครูวลัยพร ตรีไธสง</div>
+        </div>
+      </div>
+
+      <div class="group-item-card">
+        <div class="group-icon"><i class="fa-solid fa-football"></i></div>
+        <div>
+          <div class="group-title">สุขศึกษาและพลศึกษา</div>
+          <div class="group-head">ครูภาคภูมิ ทำทอง</div>
+        </div>
+      </div>
+
+      <div class="group-item-card">
+        <div class="group-icon"><i class="fa-solid fa-palette"></i></div>
+        <div>
+          <div class="group-title">ศิลปะ</div>
+          <div class="group-head">ครูสุรสิงห์ แก้วเศษ</div>
+        </div>
+      </div>
+
+      <div class="group-item-card">
+        <div class="group-icon"><i class="fa-solid fa-kitchen-set"></i></div>
+        <div>
+          <div class="group-title">การงานอาชีพ</div>
+          <div class="group-head">ครูภรภัทร ชัยสุริยะเดชา</div>
+        </div>
+      </div>
+
+      <div class="group-item-card">
+        <div class="group-icon"><i class="fa-solid fa-language"></i></div>
+        <div>
+          <div class="group-title">ภาษาต่างประเทศ</div>
+          <div class="group-head">ครูเฉลิมพล ดีสวัสดิ์</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Modal Form for Adding News -->
+  <div class="modal-overlay" id="newsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-pen-to-square" style="color:var(--suthi-pink-primary);"></i> เพิ่มข่าวสารวิชาการ</h3>
+        <button class="close-modal" onclick="closeNewsModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="addNewsForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+          <label>หัวข้อข่าวสาร / ประกาศ</label>
+          <input type="text" id="newsTitle" class="form-control" placeholder="เช่น ประกาศตารางสอบปลายภาคเรียน" required>
+        </div>
+
+        <div class="form-group">
+          <label>หมวดหมู่ข่าว</label>
+          <select id="newsCategory" class="form-control" required>
+            <option value="การสอบ">การสอบ/ตารางสอบ</option>
+            <option value="ลงทะเบียน">การลงทะเบียน</option>
+            <option value="ประกาศทั่วไป">ประกาศทั่วไป</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>รายละเอียดโดยย่อ</label>
+          <textarea id="newsDesc" class="form-control" rows="3" placeholder="ระบุรายละเอียดข่าวสาร..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>ลิงก์เชื่อมโยง (ถ้ามี)</label>
+          <input type="url" id="newsLink" class="form-control" placeholder="https://suthiacademic.vercel.app/portal">
+        </div>
+
+        <button type="submit" class="btn-submit-news">
+          <i class="fa-solid fa-paper-plane"></i> โพสต์ประกาศข่าว
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 8. Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h3>กลุ่มบริหารวิชาการ โรงเรียนวัดสุทธิวราราม</h3>
+        <p><i class="fa-solid fa-location-dot"></i> 252 ถนนเจริญกรุง แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120</p>
+        <p style="margin-top:6px;"><i class="fa-solid fa-phone"></i> โทรศัพท์: 02-211-4192 (ต่อ 918)</p>
+        <p style="margin-top:6px;"><i class="fa-solid fa-globe"></i> เว็บไซต์หลัก: suthi.ac.th</p>
+      </div>
+
+      <div>
+        <h4 style="color:#fff; margin-bottom:12px;">Suthi Academic Portal</h4>
+        <ul class="footer-links">
+          <li>
+            <a href="https://suthiacademic.vercel.app/portal" target="_blank" style="color:#F472B6; font-weight:700;">
+              <i class="fa-solid fa-rocket"></i> เข้าสู่ระบบ Portal (suthiacademic.vercel.app)
+            </a>
+          </li>
+          <li><a href="https://suthi.ac.th/" target="_blank"><i class="fa-solid fa-chevron-right"></i> เว็บไซต์โรงเรียนวัดสุทธิวราราม</a></li>
+          <li><a href="https://www.facebook.com/academic.suthi.ac.th/" target="_blank"><i class="fa-solid fa-chevron-right"></i> Facebook ฝ่ายวิชาการ</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 กลุ่มบริหารวิชาการ โรงเรียนวัดสุทธิวราราม | Academic Affairs - Wat Suthiwararam School</p>
+    </div>
+  </footer>
+
+  <!-- 9. Interactive JavaScript Script -->
+  <script>
+    // Initial News Data
+    let newsData = [
+      {
+        id: 1,
+        title: "ประกาศตารางสอบปลายภาคเรียน กลุ่มบริหารวิชาการ",
+        category: "การสอบ",
+        desc: "ขอให้นักเรียนทุกคนตรวจสอบตารางสอบ รายชื่อห้องสอบ และข้อปฏิบัติตนในการสอบผ่านระบบ Suthi Academic Portal",
+        date: "20 ก.ย. 2569",
+        link: "https://suthiacademic.vercel.app/portal"
+      },
+      {
+        id: 2,
+        title: "เปิดระบบลงทะเบียนเลือกวิชาเสรี / กิจกรรมชุมนุม",
+        category: "ลงทะเบียน",
+        desc: "นักเรียนระดับชั้น ม.1 - ม.6 สามารถลงทะเบียนเลือกวิชาเรียนและชุมนุมประจำภาคเรียนออนไลน์ได้แล้ววันนี้",
+        date: "15 ก.ย. 2569",
+        link: "https://suthiacademic.vercel.app/portal"
+      },
+      {
+        id: 3,
+        title: "กำหนดการรับคำร้องขอแก้ไขผลการเรียน (0, ร, มส)",
+        category: "ประกาศทั่วไป",
+        desc: "ยื่นคำร้องยื่นซ่อมตัวผ่านระบบ Portal หรือติดต่อห้องงานวัดและประเมินผล กลุ่มบริหารวิชาการ",
+        date: "10 ก.ย. 2569",
+        link: "https://suthiacademic.vercel.app/portal"
+      }
+    ];
+
+    let currentFilter = 'all';
+
+    // Render News Function
+    function renderNews() {
+      const newsGrid = document.getElementById('newsGrid');
+      newsGrid.innerHTML = '';
+
+      const filteredData = currentFilter === 'all' 
+        ? newsData 
+        : newsData.filter(item => item.category === currentFilter);
+
+      if (filteredData.length === 0) {
+        newsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #94A3B8; padding: 40px;">ไม่มีรายการข่าวสารในหมวดหมู่นี้</p>`;
+        return;
+      }
+
+      filteredData.forEach(item => {
+        const cardHtml = `
+          <div class="news-card">
+            <div class="news-card-header">
+              <span class="news-tag">${item.category}</span>
+              <span class="news-date-str">${item.date}</span>
+            </div>
+            <div class="news-card-body">
+              <h3 class="news-card-title">${item.title}</h3>
+              <p class="news-card-desc">${item.desc}</p>
+              <div class="news-card-footer">
+                <a href="${item.link || 'https://suthiacademic.vercel.app/portal'}" target="_blank" class="news-link-btn">
+                  อ่านรายละเอียด / ดำเนินการ <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+        newsGrid.insertAdjacentHTML('beforeend', cardHtml);
+      });
     }
-    updateThaiDateTime();
-    setInterval(updateThaiDateTime, 60000);
-</script>
 
+    // Filter News Category
+    function filterNews(cat) {
+      currentFilter = cat;
+      const buttons = document.querySelectorAll('.cat-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderNews();
+    }
+
+    // Modal Control Functions
+    function openNewsModal() {
+      document.getElementById('newsModal').classList.add('active');
+    }
+
+    function closeNewsModal() {
+      document.getElementById('newsModal').classList.remove('active');
+    }
+
+    // Handle Adding New News
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('newsTitle').value;
+      const category = document.getElementById('newsCategory').value;
+      const desc = document.getElementById('newsDesc').value;
+      const link = document.getElementById('newsLink').value || 'https://suthiacademic.vercel.app/portal';
+
+      const today = new Date();
+      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      const dateStr = `${today.getDate()} ${thaiMonths[today.getMonth()]} ${today.getFullYear() + 543}`;
+
+      const newNews = {
+        id: newsData.length + 1,
+        title,
+        category,
+        desc,
+        date: dateStr,
+        link
+      };
+
+      newsData.unshift(newNews);
+      renderNews();
+      closeNewsModal();
+      document.getElementById('addNewsForm').reset();
+    }
+
+    // Mobile Navigation Toggle
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      document.getElementById('navMenu').classList.toggle('mobile-active');
+    });
+
+    // Initialize Page
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNews();
+    });
+  </script>
 </body>
 </html>
