@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>กลุ่มบริหารวิชาการ | โรงเรียนวัดสุทธิวราราม</title>
   
-  <!-- Google Fonts: Prompt & Sarabun -->
+  <!-- Google Fonts & FontAwesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- FontAwesome 6.4.0 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Chart.js for Statistics Visualizations -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Google Identity Services (GIS) OAuth Client -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
     :root {
@@ -28,8 +29,6 @@
       --gold-accent: #C5A059;
       --portal-purple: #7C3AED;
       --portal-glow: rgba(124, 58, 237, 0.35);
-      --card-glass: rgba(255, 255, 255, 0.94);
-      --card-border: rgba(255, 255, 255, 0.8);
       --shadow-sm: 0 4px 15px rgba(0,0,0,0.04);
       --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
       --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
@@ -46,13 +45,9 @@
       overflow-x: hidden;
     }
 
-    h1, h2, h3, h4, h5, .font-prompt {
-      font-family: 'Prompt', sans-serif;
-    }
+    h1, h2, h3, h4, h5, .font-prompt { font-family: 'Prompt', sans-serif; }
 
-    /* --------------------------------------
-       1. Top Bar & Navigation
-    -------------------------------------- */
+    /* Top Notice Bar & Admin Status */
     .top-notice-bar {
       background: linear-gradient(90deg, var(--academic-navy), var(--academic-slate));
       color: #CBD5E1;
@@ -77,7 +72,6 @@
       z-index: 1000;
       background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid #E2E8F0;
       box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
@@ -103,22 +97,13 @@
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
     }
 
-    .nav-title {
-      font-weight: 700;
-      font-size: 1.15rem;
-      color: var(--academic-navy);
-      line-height: 1.2;
-    }
-
-    .nav-subtitle {
-      font-size: 0.8rem;
-      color: #64748B;
-    }
+    .nav-title { font-weight: 700; font-size: 1.15rem; color: var(--academic-navy); line-height: 1.2; }
+    .nav-subtitle { font-size: 0.8rem; color: #64748B; }
 
     .nav-menu {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 18px;
       list-style: none;
     }
 
@@ -133,46 +118,42 @@
 
     .nav-link:hover { color: var(--suthi-pink-primary); }
 
-    .btn-portal-cta {
-      display: inline-flex;
+    /* Admin Profile Pill */
+    .admin-pill {
+      display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 9px 20px;
-      background: linear-gradient(135deg, var(--portal-purple) 0%, #6366F1 100%);
-      color: #fff !important;
-      border-radius: 50px;
-      font-family: 'Prompt', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 600;
-      text-decoration: none;
-      box-shadow: 0 4px 15px var(--portal-glow);
-      transition: all 0.3s ease;
+      gap: 10px;
+      padding: 4px 12px 4px 6px;
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-radius: 30px;
+      font-size: 0.85rem;
     }
 
-    .btn-portal-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+    .admin-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
     }
 
-    .mobile-menu-btn {
-      display: none;
-      background: none;
+    .btn-logout {
+      background: #EF4444;
+      color: #fff;
       border: none;
-      font-size: 1.5rem;
-      color: var(--academic-navy);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
       cursor: pointer;
+      font-weight: 600;
     }
 
-    /* --------------------------------------
-       2. Hero Banner
-    -------------------------------------- */
+    /* Hero Section */
     .hero-section {
       position: relative;
-      padding: 60px 24px 80px;
+      padding: 55px 24px 75px;
       background: radial-gradient(circle at 10% 20%, rgba(232, 109, 170, 0.12) 0%, transparent 40%),
                   radial-gradient(circle at 90% 80%, rgba(45, 138, 104, 0.12) 0%, transparent 40%),
                   linear-gradient(135deg, #FAF5F8 0%, #F1F5F9 100%);
-      overflow: hidden;
     }
 
     .hero-container {
@@ -182,21 +163,6 @@
       grid-template-columns: 1.1fr 0.9fr;
       align-items: center;
       gap: 40px;
-    }
-
-    .hero-badge-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      background: #fff;
-      border: 1px solid rgba(232, 109, 170, 0.3);
-      border-radius: 30px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--suthi-pink-primary);
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 18px;
     }
 
     .hero-title {
@@ -213,31 +179,34 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .hero-desc {
-      font-size: 1.05rem;
-      color: #475569;
-      margin-bottom: 28px;
-    }
+    .hero-desc { font-size: 1.05rem; color: #475569; margin-bottom: 28px; }
 
-    .hero-quick-links {
-      display: flex;
+    /* Admin Action Banner Panel */
+    .admin-control-banner {
+      display: none;
+      background: linear-gradient(135deg, #1E1B4B 0%, #311042 100%);
+      color: #fff;
+      padding: 18px 24px;
+      margin: 0 auto 30px;
+      max-width: 1280px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      align-items: center;
+      justify-content: space-between;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 15px;
     }
 
-    /* --------------------------------------
-       3. Section Title Style
-    -------------------------------------- */
+    .admin-control-banner.active { display: flex; }
+
+    /* Section Styles */
     .section-container {
       max-width: 1280px;
       margin: 0 auto 70px;
       padding: 0 24px;
     }
 
-    .section-header {
-      text-align: center;
-      margin-bottom: 35px;
-    }
+    .section-header { text-align: center; margin-bottom: 35px; }
 
     .section-title {
       font-size: 2rem;
@@ -257,15 +226,7 @@
       border-radius: 2px;
     }
 
-    .section-subtitle {
-      color: #64748B;
-      font-size: 0.98rem;
-      margin-top: 8px;
-    }
-
-    /* --------------------------------------
-       4. Systems Cards Grid (Student & Internal)
-    -------------------------------------- */
+    /* Grid System Cards */
     .systems-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -281,9 +242,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.3s ease;
       text-decoration: none;
       color: inherit;
     }
@@ -302,7 +261,6 @@
       border-radius: 20px;
       margin-bottom: 14px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .badge-blue { background: #E0F2FE; color: #0284C7; }
@@ -312,85 +270,24 @@
     .badge-orange { background: #FFEDD5; color: #C2410C; }
 
     .sys-icon {
-      width: 52px;
-      height: 52px;
+      width: 50px;
+      height: 50px;
       border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       margin-bottom: 16px;
       color: #fff;
     }
 
-    .sys-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--academic-navy);
-      margin-bottom: 8px;
-    }
-
-    .sys-desc {
-      font-size: 0.88rem;
-      color: #64748B;
-      margin-bottom: 18px;
-      line-height: 1.5;
-    }
-
-    .sys-action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Prompt', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--suthi-pink-primary);
-      margin-top: auto;
-    }
-
-    .sys-card:hover .sys-action-btn {
-      color: var(--academic-navy);
-    }
-
-    /* --------------------------------------
-       5. Student Statistics Section (Google Sheet Data)
-    -------------------------------------- */
+    /* Stats Box & Table */
     .stats-card-box {
       background: #fff;
       border-radius: 24px;
       border: 1px solid #E2E8F0;
       padding: 32px;
       box-shadow: var(--shadow-md);
-    }
-
-    .stats-header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 25px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid #F1F5F9;
-    }
-
-    .sheet-link-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: #ECFDF5;
-      color: #047857;
-      border: 1px solid #A7F3D0;
-      border-radius: 30px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .sheet-link-badge:hover {
-      background: #D1FAE5;
     }
 
     .stats-grid-dashboard {
@@ -405,20 +302,8 @@
       border-radius: 16px;
       padding: 20px;
       border: 1px solid #E2E8F0;
-      position: relative;
     }
 
-    .chart-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--academic-navy);
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Data Table Styling */
     .stats-table-wrapper {
       overflow-x: auto;
       border-radius: 16px;
@@ -437,65 +322,11 @@
       color: #fff;
       padding: 12px 18px;
       font-family: 'Prompt', sans-serif;
-      font-weight: 600;
     }
 
-    .stats-table td {
-      padding: 12px 18px;
-      border-bottom: 1px solid #E2E8F0;
-    }
+    .stats-table td { padding: 12px 18px; border-bottom: 1px solid #E2E8F0; }
 
-    .stats-table tr:hover {
-      background: #F1F5F9;
-    }
-
-    /* --------------------------------------
-       6. News & Modal Form
-    -------------------------------------- */
-    .news-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .cat-btn {
-      padding: 8px 18px;
-      border-radius: 30px;
-      border: 1px solid #CBD5E1;
-      background: #fff;
-      color: #475569;
-      font-family: 'Prompt', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .cat-btn.active, .cat-btn:hover {
-      background: var(--academic-navy);
-      color: #fff;
-      border-color: var(--academic-navy);
-    }
-
-    .btn-add-news {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 22px;
-      background: linear-gradient(135deg, var(--suthi-pink-primary), var(--suthi-pink-dark));
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Prompt', sans-serif;
-      font-weight: 600;
-      font-size: 0.92rem;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(232, 109, 170, 0.35);
-    }
-
+    /* News Grid & Modals */
     .news-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -512,7 +343,6 @@
       flex-direction: column;
     }
 
-    /* Modal Overlay */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -536,64 +366,38 @@
       box-shadow: var(--shadow-lg);
     }
 
-    /* --------------------------------------
-       7. Footer
-    -------------------------------------- */
-    footer {
-      background: var(--academic-navy);
-      color: #94A3B8;
-      padding: 60px 24px 20px;
-      font-size: 0.9rem;
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #CBD5E1;
+      border-radius: 10px;
+      font-family: 'Sarabun', sans-serif;
+      margin-top: 5px;
     }
 
-    .footer-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 35px;
-      padding-bottom: 40px;
-      border-bottom: 1px solid #334155;
-    }
-
+    footer { background: var(--academic-navy); color: #94A3B8; padding: 50px 24px 20px; font-size: 0.9rem; }
+    .footer-container { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 35px; padding-bottom: 30px; border-bottom: 1px solid #334155; }
     .footer-links { list-style: none; }
-    .footer-links li { margin-bottom: 10px; }
-    .footer-links a { color: #94A3B8; text-decoration: none; transition: color 0.2s; }
+    .footer-links li { margin-bottom: 8px; }
+    .footer-links a { color: #94A3B8; text-decoration: none; }
     .footer-links a:hover { color: var(--suthi-pink-light); }
 
-    .footer-bottom {
-      text-align: center;
-      padding-top: 24px;
-      font-size: 0.85rem;
-    }
-
-    /* Responsive */
     @media (max-width: 992px) {
       .hero-container { grid-template-columns: 1fr; }
       .stats-grid-dashboard { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 768px) {
-      .nav-menu { display: none; }
-      .nav-menu.mobile-active {
-        display: flex; flex-direction: column;
-        position: absolute; top: 100%; left: 0; width: 100%;
-        background: #fff; padding: 20px; box-shadow: var(--shadow-md);
-      }
-      .mobile-menu-btn { display: block; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. Top Notice Bar -->
+  <!-- Top Notice Bar -->
   <div class="top-notice-bar">
     <div>
       <i class="fa-solid fa-graduation-cap"></i> ระบบบริหารงานวิชาการ โรงเรียนวัดสุทธิวราราม
     </div>
-    <div style="display:flex; gap:16px;">
-      <a href="https://online.checkgrade-suthi.com/" target="_blank"><i class="fa-solid fa-square-poll-vertical"></i> ตรวจสอบผลการเรียน</a>
-      <a href="https://stvolunteer.vercel.app/" target="_blank"><i class="fa-solid fa-hand-holding-heart"></i> ชั่วโมงจิตอาสา</a>
+    <div style="display:flex; gap:16px; align-items:center;">
+      <a href="https://online.checkgrade-suthi.com/" target="_blank"><i class="fa-solid fa-square-poll-vertical"></i> ตรวจเกรด</a>
+      <a href="https://stvolunteer.vercel.app/" target="_blank"><i class="fa-solid fa-hand-holding-heart"></i> จิตอาสา</a>
       <a href="https://suthiacademic.vercel.app/portal" target="_blank"><i class="fa-solid fa-right-to-bracket"></i> Suthi Portal</a>
     </div>
   </div>
@@ -609,28 +413,60 @@
         </div>
       </a>
 
-      <button class="mobile-menu-btn" id="mobileToggle"><i class="fa-solid fa-bars"></i></button>
-
-      <ul class="nav-menu" id="navMenu">
+      <ul class="nav-menu">
         <li><a href="#student-services" class="nav-link">บริการนักเรียน</a></li>
-        <li><a href="#teacher-systems" class="nav-link">ระบบวิชาการ/ครู</a></li>
+        <li><a href="#teacher-systems" class="nav-link">ระบบครู</a></li>
         <li><a href="#student-stats" class="nav-link">สถิตินักเรียน</a></li>
         <li><a href="#news-section" class="nav-link">ข่าวประกาศ</a></li>
-        <li>
-          <a href="https://suthiacademic.vercel.app/portal" target="_blank" class="btn-portal-cta">
-            <i class="fa-solid fa-rocket"></i> Suthi Portal
-          </a>
+        
+        <!-- Google Sign-In Admin Area -->
+        <li id="loginArea">
+          <!-- Google Auth Button will be rendered here -->
+          <div id="g_id_onload"
+            data-client_id="264161853999-68hu3e6cebc3c90i37sepnavgp37efjf.apps.googleusercontent.com"
+            data-callback="handleCredentialResponse"
+            data-auto_prompt="false">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-size="medium" data-theme="outline" data-text="signin_with" data-shape="pill" data-logo_alignment="left"></div>
+        </li>
+
+        <!-- Logged-in Admin User Profile Pill -->
+        <li id="adminProfileArea" style="display:none;">
+          <div class="admin-pill">
+            <img id="adminPhoto" src="" class="admin-avatar">
+            <span id="adminName" style="font-weight:600; font-size:0.82rem;"></span>
+            <button class="btn-logout" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> ออก</button>
+          </div>
         </li>
       </ul>
     </div>
   </nav>
 
-  <!-- 2. Hero Section -->
+  <!-- Admin Control Bar (Visible when Admin is Logged In) -->
+  <div class="admin-control-banner" id="adminControlBanner">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <i class="fa-solid fa-user-shield" style="font-size:1.6rem; color:#F472B6;"></i>
+      <div>
+        <h4 style="font-size:1.05rem;">โหมดผู้ดูแลระบบ (@suthi.ac.th)</h4>
+        <p style="font-size:0.8rem; color:#A5B4FC;">คุณได้รับสิทธิ์การปรับปรุงข่าวสารและอัปเดตสถิตินักเรียน</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button onclick="openNewsModal()" style="padding:8px 16px; background:#EC4899; color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer;">
+        <i class="fa-solid fa-plus-circle"></i> เพิ่มข่าวใหม่
+      </button>
+      <button onclick="openStatsModal()" style="padding:8px 16px; background:#8B5CF6; color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer;">
+        <i class="fa-solid fa-chart-line"></i> อัปเดตสถิตินักเรียน
+      </button>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-container">
       <div>
-        <div class="hero-badge-tag">
-          <i class="fa-solid fa-sparkles"></i> Academic Digital Platform 2026
+        <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 16px; background:#fff; border-radius:30px; font-size:0.85rem; font-weight:600; color:var(--suthi-pink-primary); margin-bottom:16px; box-shadow:var(--shadow-sm);">
+          <i class="fa-solid fa-shield-halved"></i> Google Workspace Secured System
         </div>
         <h1 class="hero-title">
           ศูนย์รวมระบบงานวิชาการ<br><span>โรงเรียนวัดสุทธิวราราม</span>
@@ -638,481 +474,278 @@
         <p class="hero-desc">
           ยกระดับการบริหารจัดการการศึกษา บริการตรวจผลเรียนออนไลน์ บันทึกกิจกรรม TCAS สถิตินักเรียน และระบบสนับสนุนการจัดการเรียนการสอนครบวงจร
         </p>
-
-        <div class="hero-quick-links">
-          <a href="https://online.checkgrade-suthi.com/" target="_blank" class="btn-portal-cta" style="background: linear-gradient(135deg, #0284C7, #0369A1);">
-            <i class="fa-solid fa-award"></i> ตรวจผลการเรียน
-          </a>
-          <a href="https://stvolunteer.vercel.app/" target="_blank" class="btn-portal-cta" style="background: linear-gradient(135deg, #16A34A, #15803D);">
-            <i class="fa-solid fa-heart-pulse"></i> เช็กจิตอาสา
-          </a>
-          <a href="https://sites.google.com/suthi.ac.th/acad/tcasverified" target="_blank" class="btn-portal-cta" style="background: linear-gradient(135deg, #D97706, #B45309);">
-            <i class="fa-solid fa-certificate"></i> TCAS Verified
-          </a>
-        </div>
       </div>
 
-      <!-- Quick Status Box -->
-      <div style="background: #fff; border-radius: 24px; padding: 28px; border: 1px solid #E2E8F0; box-shadow: var(--shadow-lg);">
-        <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:15px; color:var(--academic-navy);">
-          <i class="fa-solid fa-bolt" style="color:var(--suthi-pink-primary);"></i> บริการด่วนวิชาการ
-        </h3>
-        
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <a href="https://suthiacademic.vercel.app/doc" target="_blank" style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#F8FAFC; border-radius:12px; text-decoration:none; color:inherit; border:1px solid #E2E8F0;">
-            <i class="fa-solid fa-file-export" style="color:#2563EB;"></i>
-            <div>
-              <div style="font-weight:600; font-size:0.9rem;">ระบบผลิตเอกสารสื่อการสอน</div>
-              <div style="font-size:0.78rem; color:#64748B;">ส่งผลิตใบงานออนไลน์สำหรับครู</div>
-            </div>
+      <!-- Quick System Access -->
+      <div style="background:#fff; border-radius:24px; padding:24px; border:1px solid #E2E8F0; box-shadow:var(--shadow-lg);">
+        <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:12px;"><i class="fa-solid fa-bolt" style="color:var(--suthi-pink-primary);"></i> บริการด่วนวิชาการ</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <a href="https://suthiacademic.vercel.app/doc" target="_blank" style="display:flex; align-items:center; gap:10px; padding:10px; background:#F8FAFC; border-radius:10px; text-decoration:none; color:inherit; border:1px solid #E2E8F0;">
+            <i class="fa-solid fa-print" style="color:#2563EB;"></i> <b>ระบบผลิตเอกสารสื่อการสอน</b>
           </a>
-
-          <a href="https://suthiacademic.vercel.app/doctest" target="_blank" style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#F8FAFC; border-radius:12px; text-decoration:none; color:inherit; border:1px solid #E2E8F0;">
-            <i class="fa-solid fa-user-shield" style="color:#7C3AED;"></i>
-            <div>
-              <div style="font-weight:600; font-size:0.9rem;">ระบบอัดสำเนาแบบทดสอบ</div>
-              <div style="font-size:0.78rem; color:#64748B;">รักษาความลับขั้นสูงสุด งานวัดผล</div>
-            </div>
+          <a href="https://suthiacademic.vercel.app/doctest" target="_blank" style="display:flex; align-items:center; gap:10px; padding:10px; background:#F8FAFC; border-radius:10px; text-decoration:none; color:inherit; border:1px solid #E2E8F0;">
+            <i class="fa-solid fa-user-shield" style="color:#7C3AED;"></i> <b>ระบบอัดสำเนาแบบทดสอบ</b>
           </a>
-
-          <a href="https://suthiacademic.vercel.app/syllabus" target="_blank" style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#F8FAFC; border-radius:12px; text-decoration:none; color:inherit; border:1px solid #E2E8F0;">
-            <i class="fa-solid fa-book-bookmark" style="color:#059669;"></i>
-            <div>
-              <div style="font-weight:600; font-size:0.9rem;">ประมวลรายวิชา (Syllabus)</div>
-              <div style="font-size:0.78rem; color:#64748B;">คลังข้อมูลแผนการสอนทุกกลุ่มสาระฯ</div>
-            </div>
+          <a href="https://suthiacademic.vercel.app/syllabus" target="_blank" style="display:flex; align-items:center; gap:10px; padding:10px; background:#F8FAFC; border-radius:10px; text-decoration:none; color:inherit; border:1px solid #E2E8F0;">
+            <i class="fa-solid fa-book-bookmark" style="color:#059669;"></i> <b>ประมวลรายวิชา (Syllabus)</b>
           </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 3. Student Services Hub -->
-  <section class="section-container" id="student-services" style="margin-top: 60px;">
+  <!-- Student Services Hub -->
+  <section class="section-container" id="student-services" style="margin-top:50px;">
     <div class="section-header">
       <h2 class="section-title">ระบบบริการนักเรียนและผู้ปกครอง</h2>
-      <p class="section-subtitle">บริการตรวจผลการเรียน ชั่วโมงจิตอาสา และยื่นหลักฐานกิจกรรมออนไลน์</p>
+      <p style="color:#64748B;">บริการตรวจผลการเรียน ชั่วโมงจิตอาสา และยื่นหลักฐานกิจกรรมออนไลน์</p>
     </div>
 
     <div class="systems-grid">
-      <!-- 1. Check Grade -->
       <a href="https://online.checkgrade-suthi.com/" target="_blank" class="sys-card">
         <div>
-          <span class="sys-badge badge-blue">Student Grade</span>
-          <div class="sys-icon" style="background: linear-gradient(135deg, #0284C7, #0369A1);">
-            <i class="fa-solid fa-square-poll-vertical"></i>
-          </div>
-          <h3 class="sys-title">ระบบตรวจสอบผลการเรียน</h3>
-          <p class="sys-desc">เช็กผลการเรียนออนไลน์ รายวิชา ผลสัมฤทธิ์ทางการเรียน และรายงานเกรดเฉลี่ยสะสม</p>
-        </div>
-        <div class="sys-action-btn">
-          เข้าสู่ระบบตรวจเกรด <i class="fa-solid fa-arrow-right"></i>
+          <span class="sys-badge badge-blue">Grade Online</span>
+          <div class="sys-icon" style="background: linear-gradient(135deg, #0284C7, #0369A1);"><i class="fa-solid fa-square-poll-vertical"></i></div>
+          <h3 style="font-size:1.1rem; font-weight:700;">ระบบตรวจสอบผลการเรียน</h3>
+          <p style="font-size:0.88rem; color:#64748B; margin-top:6px;">เช็กผลการเรียนออนไลน์ รายวิชา และรายงานเกรดเฉลี่ยสะสม</p>
         </div>
       </a>
 
-      <!-- 2. Volunteer Hours -->
       <a href="https://stvolunteer.vercel.app/" target="_blank" class="sys-card">
         <div>
-          <span class="sys-badge badge-green">Volunteer System</span>
-          <div class="sys-icon" style="background: linear-gradient(135deg, #16A34A, #15803D);">
-            <i class="fa-solid fa-hand-holding-heart"></i>
-          </div>
-          <h3 class="sys-title">ตรวจสอบชั่วโมงจิตอาสา</h3>
-          <p class="sys-desc">ติดตามการสะสมชั่วโมงกิจกรรมจิตอาสาเพื่อการส่งเสริมคุณลักษณะและทุนการศึกษา</p>
-        </div>
-        <div class="sys-action-btn">
-          เช็กชั่วโมงจิตอาสา <i class="fa-solid fa-arrow-right"></i>
+          <span class="sys-badge badge-green">Volunteer</span>
+          <div class="sys-icon" style="background: linear-gradient(135deg, #16A34A, #15803D);"><i class="fa-solid fa-hand-holding-heart"></i></div>
+          <h3 style="font-size:1.1rem; font-weight:700;">ตรวจสอบชั่วโมงจิตอาสา</h3>
+          <p style="font-size:0.88rem; color:#64748B; margin-top:6px;">ติดตามการสะสมชั่วโมงกิจกรรมจิตอาสาพัฒนาผู้เรียน</p>
         </div>
       </a>
 
-      <!-- 3. TCAS Verified -->
       <a href="https://sites.google.com/suthi.ac.th/acad/tcasverified" target="_blank" class="sys-card">
         <div>
-          <span class="sys-badge badge-orange">Portfolio & TCAS</span>
-          <div class="sys-icon" style="background: linear-gradient(135deg, #D97706, #B45309);">
-            <i class="fa-solid fa-certificate"></i>
-          </div>
-          <h3 class="sys-title">TCAS Verified</h3>
-          <p class="sys-desc">ระบบบันทึกข้อมูลและยื่นหลักฐานกิจกรรมเพื่อการยืนยันผลงานเข้าศึกษาต่อระดับอุดมศึกษา</p>
-        </div>
-        <div class="sys-action-btn">
-          ยื่นหลักฐาน TCAS <i class="fa-solid fa-arrow-right"></i>
+          <span class="sys-badge badge-orange">TCAS Portfolio</span>
+          <div class="sys-icon" style="background: linear-gradient(135deg, #D97706, #B45309);"><i class="fa-solid fa-certificate"></i></div>
+          <h3 style="font-size:1.1rem; font-weight:700;">TCAS Verified</h3>
+          <p style="font-size:0.88rem; color:#64748B; margin-top:6px;">บันทึกและยื่นหลักฐานกิจกรรมเพื่อการรับรองผลงานเข้าศึกษาต่อ</p>
         </div>
       </a>
 
-      <!-- 4. Suthi Portal -->
       <a href="https://suthiacademic.vercel.app/portal" target="_blank" class="sys-card">
         <div>
-          <span class="sys-badge badge-purple">Academic Portal</span>
-          <div class="sys-icon" style="background: linear-gradient(135deg, #7C3AED, #6366F1);">
-            <i class="fa-solid fa-laptop-code"></i>
-          </div>
-          <h3 class="sys-title">Suthi Academic Portal</h3>
-          <p class="sys-desc">ศูนย์กลางบริการงานวิชาการ ลงทะเบียนเรียน ยื่นคำร้องวิชาการ และงานตารางสอน</p>
-        </div>
-        <div class="sys-action-btn">
-          เปิดใช้งาน Portal <i class="fa-solid fa-arrow-right"></i>
+          <span class="sys-badge badge-purple">Suthi Portal</span>
+          <div class="sys-icon" style="background: linear-gradient(135deg, #7C3AED, #6366F1);"><i class="fa-solid fa-laptop-code"></i></div>
+          <h3 style="font-size:1.1rem; font-weight:700;">Suthi Academic Portal</h3>
+          <p style="font-size:0.88rem; color:#64748B; margin-top:6px;">ศูนย์กลางบริการงานวิชาการ ลงทะเบียนเรียน และคำร้องออนไลน์</p>
         </div>
       </a>
     </div>
   </section>
 
-  <!-- 4. Internal Academic Systems (For Teachers & Staff) -->
+  <!-- Teacher Systems Grid -->
   <section class="section-container" id="teacher-systems">
     <div class="section-header">
       <h2 class="section-title">ระบบบริหารจัดการและสนับสนุนการสอน</h2>
-      <p class="section-subtitle">สำหรับครูและบุคลากรทางส่งเสริมการเรียนรู้ กลุ่มบริหารวิชาการ</p>
+      <p style="color:#64748B;">สำหรับครูและบุคลากรทางส่งเสริมการเรียนรู้</p>
     </div>
 
     <div class="systems-grid">
-      <!-- Doc Production -->
       <a href="https://suthiacademic.vercel.app/doc" target="_blank" class="sys-card">
         <div>
-          <span class="sys-badge badge-pink">Media & Sheet</span>
-          <div class="sys-icon" style="background: linear-gradient(135deg, #E86DAA, #D47FA6);">
-            <i class="fa-solid fa-print"></i>
-          </div>
-          <h3 class="sys-title">ระบบบริหารงานผลิตเอกสาร</h3>
-          <p class="sys-desc">จัดการสื่อการสอน ใบงาน และสั่งพิมพ์ผลิตเอกสารประกอบการเรียนการสอนออนไลน์</p>
-        </div>
-        <div class="sys-action-btn">
-          ส่งผลิตเอกสาร <i class="fa-solid fa-arrow-right"></i>
+          <span class="sys-badge badge-pink">Media & Print</span>
+          <div class="sys-icon" style="background: linear-gradient(135deg, #E86DAA, #D47FA6);"><i class="fa-solid fa-print"></i></div>
+          <h3 style="font-size:1.1rem; font-weight:700;">ระบบบริหารงานผลิตเอกสาร</h3>
+          <p style="font-size:0.88rem; color:#64748B; margin-top:6px;">ส่งผลิตสื่อการสอนและใบงานออนไลน์สำหรับครู</p>
         </div>
       </a>
 
-      <!-- Secure Test Copying -->
       <a href="https://suthiacademic.vercel.app/doctest" target="_blank" class="sys-card">
         <div>
-          <span class="sys-badge badge-purple">Secure Examination</span>
-          <div class="sys-icon" style="background: linear-gradient(135deg, #4338CA, #3730A3);">
-            <i class="fa-solid fa-user-shield"></i>
-          </div>
-          <h3 class="sys-title">ระบบอัดสำเนาแบบทดสอบ</h3>
-          <p class="sys-desc">ระบบสั่งอัดสำเนาข้อสอบความปลอดภัยสูง สำหรับงานวัดและประเมินผลการศึกษา</p>
-        </div>
-        <div class="sys-action-btn">
-          ส่งอัดสำเนาข้อสอบ <i class="fa-solid fa-arrow-right"></i>
+          <span class="sys-badge badge-purple">Exam Copy</span>
+          <div class="sys-icon" style="background: linear-gradient(135deg, #4338CA, #3730A3);"><i class="fa-solid fa-user-shield"></i></div>
+          <h3 style="font-size:1.1rem; font-weight:700;">ระบบอัดสำเนาแบบทดสอบ</h3>
+          <p style="font-size:0.88rem; color:#64748B; margin-top:6px;">อัดสำเนาข้อสอบความลับสูง งานวัดและประเมินผล</p>
         </div>
       </a>
 
-      <!-- Syllabus -->
       <a href="https://suthiacademic.vercel.app/syllabus" target="_blank" class="sys-card">
         <div>
-          <span class="sys-badge badge-green">Course Syllabus</span>
-          <div class="sys-icon" style="background: linear-gradient(135deg, #059669, #047857);">
-            <i class="fa-solid fa-book-open-reader"></i>
-          </div>
-          <h3 class="sys-title">ประมวลรายวิชา (Syllabus)</h3>
-          <p class="sys-desc">คลังข้อมูล Syllabus โครงสร้างรายวิชา และแผนการจัดการเรียนรู้ 8 กลุ่มสาระฯ</p>
-        </div>
-        <div class="sys-action-btn">
-          ค้นหา Syllabus <i class="fa-solid fa-arrow-right"></i>
+          <span class="sys-badge badge-green">Syllabus</span>
+          <div class="sys-icon" style="background: linear-gradient(135deg, #059669, #047857);"><i class="fa-solid fa-book-open-reader"></i></div>
+          <h3 style="font-size:1.1rem; font-weight:700;">ประมวลรายวิชา (Syllabus)</h3>
+          <p style="font-size:0.88rem; color:#64748B; margin-top:6px;">คลังข้อมูล Syllabus และแผนการสอน 8 กลุ่มสาระฯ</p>
         </div>
       </a>
 
-      <!-- Material Warehouse -->
       <a href="https://suthiacademic.vercel.app/pickuppaper" target="_blank" class="sys-card">
         <div>
-          <span class="sys-badge badge-orange">Warehouse & Stock</span>
-          <div class="sys-icon" style="background: linear-gradient(135deg, #EA580C, #C2410C);">
-            <i class="fa-solid fa-boxes-stacked"></i>
-          </div>
-          <h3 class="sys-title">ระบบควบคุมคลังวัสดุ</h3>
-          <p class="sys-desc">ตรวจสอบ เบิกจ่าย กระดาษ อุปกรณ์การเรียนการสอน และทรัพยากรส่วนกลาง</p>
-        </div>
-        <div class="sys-action-btn">
-          เบิกจ่ายวัสดุวิชาการ <i class="fa-solid fa-arrow-right"></i>
+          <span class="sys-badge badge-orange">Inventory</span>
+          <div class="sys-icon" style="background: linear-gradient(135deg, #EA580C, #C2410C);"><i class="fa-solid fa-boxes-stacked"></i></div>
+          <h3 style="font-size:1.1rem; font-weight:700;">ระบบควบคุมคลังวัสดุ</h3>
+          <p style="font-size:0.88rem; color:#64748B; margin-top:6px;">ตรวจสอบและเบิกจ่ายวัสดุอุปกรณ์วิชาการส่วนกลาง</p>
         </div>
       </a>
     </div>
   </section>
 
-  <!-- 5. Student Statistics per Semester (Google Sheet Data Integration) -->
+  <!-- Student Statistics per Semester -->
   <section class="section-container" id="student-stats">
     <div class="section-header">
       <h2 class="section-title">สถิตินักเรียนแต่ละภาคเรียน</h2>
-      <p class="section-subtitle">รายงานข้อมูลจำนวนนักเรียนจำแนกตามระดับชั้นและภาคเรียน (ดึงข้อมูลจาก Google Sheet)</p>
+      <p style="color:#64748B;">ข้อมูลสถิติจำนวนนักเรียนดึงสดจาก Google Sheet ฐานข้อมูลวิชาการ</p>
     </div>
 
     <div class="stats-card-box">
-      <div class="stats-header-bar">
-        <div>
-          <h3 style="font-size:1.2rem; font-weight:700; color:var(--academic-navy);">
-            <i class="fa-solid fa-chart-column" style="color:var(--suthi-pink-primary);"></i> สรุปจำนวนนักเรียน โรงเรียนวัดสุทธิวราราม
-          </h3>
-          <p style="font-size:0.85rem; color:#64748B;">ข้อมูลอัปเดตจากฐานข้อมูลกลางกลุ่มบริหารวิชาการ</p>
-        </div>
-
-        <!-- Google Sheet External Direct Link -->
-        <a href="https://docs.google.com/spreadsheets/d/150Kok72tM5XGSXl3x5ZKatqV8XcpZB2C1XRugg88kaA/edit?usp=sharing" target="_blank" class="sheet-link-badge">
-          <i class="fa-solid fa-file-excel"></i> เปิด Google Sheet สถิติฉบับเต็ม <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+        <h3 style="font-size:1.15rem; font-weight:700;"><i class="fa-solid fa-chart-column" style="color:var(--suthi-pink-primary);"></i> รายงานจำนวนนักเรียนจำแนกตามชั้นเรียน</h3>
+        <a href="https://docs.google.com/spreadsheets/d/150Kok72tM5XGSXl3x5ZKatqV8XcpZB2C1XRugg88kaA/edit?usp=sharing" target="_blank" style="padding:6px 14px; background:#ECFDF5; color:#047857; border:1px solid #A7F3D0; border-radius:20px; font-size:0.85rem; font-weight:600; text-decoration:none;">
+          <i class="fa-solid fa-file-excel"></i> เปิด Google Sheet <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
       </div>
 
-      <!-- Interactive Charts Container -->
       <div class="stats-grid-dashboard">
         <div class="chart-container-box">
-          <div class="chart-title">
-            <i class="fa-solid fa-chart-bar" style="color:#0284C7;"></i> จำนวนนักเรียนจำแนกตามระดับชั้น (ม.1 - ม.6)
-          </div>
+          <div style="font-weight:700; margin-bottom:12px; font-size:0.95rem;"><i class="fa-solid fa-chart-bar" style="color:#0284C7;"></i> จำนวนนักเรียน ม.1 - ม.6</div>
           <canvas id="gradeChart" height="220"></canvas>
         </div>
 
         <div class="chart-container-box">
-          <div class="chart-title">
-            <i class="fa-solid fa-chart-pie" style="color:#7C3AED;"></i> สัดส่วนนักเรียน ม.ต้น vs ม.ปลาย
-          </div>
+          <div style="font-weight:700; margin-bottom:12px; font-size:0.95rem;"><i class="fa-solid fa-chart-pie" style="color:#7C3AED;"></i> สัดส่วน ม.ต้น vs ม.ปลาย</div>
           <canvas id="ratioChart" height="220"></canvas>
         </div>
       </div>
 
-      <!-- Data Table Rendered from Spreadsheet -->
       <div class="stats-table-wrapper">
         <table class="stats-table" id="studentStatsTable">
           <thead>
             <tr>
               <th>ภาคเรียน/ปีการศึกษา</th>
-              <th>มัธยมศึกษาปีที่ 1</th>
-              <th>มัธยมศึกษาปีที่ 2</th>
-              <th>มัธยมศึกษาปีที่ 3</th>
-              <th>มัธยมศึกษาปีที่ 4</th>
-              <th>มัธยมศึกษาปีที่ 5</th>
-              <th>มัธยมศึกษาปีที่ 6</th>
-              <th>รวมทั้งสิ้น</th>
+              <th>ม.1</th>
+              <th>ม.2</th>
+              <th>ม.3</th>
+              <th>ม.4</th>
+              <th>ม.5</th>
+              <th>ม.6</th>
+              <th>รวมทั้งหมด</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Loaded dynamically from Google Sheet or Fallback -->
-          </tbody>
+          <tbody><!-- Rendered by JS --></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- 6. Academic News & Announcements -->
+  <!-- News Section -->
   <section class="section-container" id="news-section">
     <div class="section-header">
       <h2 class="section-title">ข่าวสารและประกาศวิชาการ</h2>
-      <p class="section-subtitle">ติดตามตารางสอบ กำหนดการลงทะเบียน และประกาศสำคัญ</p>
+      <p style="color:#64748B;">ประกาศตารางสอบ กำหนดการ และข่าวประชาสัมพันธ์กลุ่มบริหารวิชาการ</p>
     </div>
 
-    <div class="news-toolbar">
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="cat-btn active" onclick="filterNews('all')">ทั้งหมด</button>
-        <button class="cat-btn" onclick="filterNews('การสอบ')">การสอบ</button>
-        <button class="cat-btn" onclick="filterNews('ลงทะเบียน')">ลงทะเบียน</button>
-        <button class="cat-btn" onclick="filterNews('ประกาศทั่วไป')">ประกาศทั่วไป</button>
-      </div>
-
-      <button class="btn-add-news" onclick="openNewsModal()">
-        <i class="fa-solid fa-plus-circle"></i> เพิ่มข่าวสารวิชาการ
-      </button>
-    </div>
-
-    <div class="news-grid" id="newsGrid">
-      <!-- Rendered dynamically -->
-    </div>
+    <div class="news-grid" id="newsGrid"><!-- Rendered by JS --></div>
   </section>
 
-  <!-- 7. Modal Add News -->
+  <!-- Modal: Add News (For Logged In Admin) -->
   <div class="modal-overlay" id="newsModal">
     <div class="modal-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h3 style="font-size:1.25rem;"><i class="fa-solid fa-pen-to-square" style="color:var(--suthi-pink-primary);"></i> เพิ่มประกาศวิชาการ</h3>
-        <button onclick="closeNewsModal()" style="background:none; border:none; font-size:1.4rem; color:#94A3B8; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <h3 style="font-size:1.2rem;"><i class="fa-solid fa-pen-to-square" style="color:var(--suthi-pink-primary);"></i> เพิ่มข่าวสารวิชาการ (@suthi.ac.th)</h3>
+        <button onclick="closeNewsModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <form id="addNewsForm" onsubmit="handleNewsSubmit(event)">
-        <div style="margin-bottom:15px;">
-          <label style="display:block; font-size:0.88rem; font-weight:600; margin-bottom:5px;">หัวข้อข่าว</label>
-          <input type="text" id="newsTitle" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:10px;" required>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.88rem; font-weight:600;">หัวข้อข่าว</label>
+          <input type="text" id="newsTitle" class="form-control" required>
         </div>
 
-        <div style="margin-bottom:15px;">
-          <label style="display:block; font-size:0.88rem; font-weight:600; margin-bottom:5px;">หมวดหมู่</label>
-          <select id="newsCategory" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:10px;" required>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.88rem; font-weight:600;">หมวดหมู่</label>
+          <select id="newsCategory" class="form-control" required>
             <option value="การสอบ">การสอบ</option>
             <option value="ลงทะเบียน">ลงทะเบียน</option>
             <option value="ประกาศทั่วไป">ประกาศทั่วไป</option>
           </select>
         </div>
 
-        <div style="margin-bottom:15px;">
-          <label style="display:block; font-size:0.88rem; font-weight:600; margin-bottom:5px;">รายละเอียด</label>
-          <textarea id="newsDesc" rows="3" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:10px;" required></textarea>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.88rem; font-weight:600;">รายละเอียด</label>
+          <textarea id="newsDesc" rows="3" class="form-control" required></textarea>
         </div>
 
         <div style="margin-bottom:15px;">
-          <label style="display:block; font-size:0.88rem; font-weight:600; margin-bottom:5px;">ลิงก์ปลายทาง (ถ้ามี)</label>
-          <input type="url" id="newsLink" placeholder="https://online.checkgrade-suthi.com/" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:10px;">
+          <label style="font-size:0.88rem; font-weight:600;">ลิงก์ปลายทาง (ถ้ามี)</label>
+          <input type="url" id="newsLink" class="form-control" placeholder="https://online.checkgrade-suthi.com/">
         </div>
 
-        <button type="submit" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--portal-purple), #6366F1); color:#fff; border:none; border-radius:12px; font-weight:600; font-family:'Prompt',sans-serif; cursor:pointer;">
-          บันทึกประกาศ
+        <button type="submit" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--portal-purple), #6366F1); color:#fff; border:none; border-radius:10px; font-weight:700; cursor:pointer;">
+          บันทึกประกาศข่าวลง Google Sheet
         </button>
       </form>
     </div>
   </div>
 
-  <!-- 8. Footer -->
+  <!-- Modal: Update Stats (For Logged In Admin) -->
+  <div class="modal-overlay" id="statsModal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <h3 style="font-size:1.2rem;"><i class="fa-solid fa-chart-line" style="color:var(--portal-purple);"></i> เพิ่มสถิตินักเรียนรายภาคเรียน</h3>
+        <button onclick="closeStatsModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="addStatsForm" onsubmit="handleStatsSubmit(event)">
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.88rem; font-weight:600;">ภาคเรียน/ปีการศึกษา</label>
+          <input type="text" id="statSemester" placeholder="เช่น 1/2569" class="form-control" required>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+          <div><label style="font-size:0.8rem;">ม.1</label><input type="number" id="statM1" class="form-control" required></div>
+          <div><label style="font-size:0.8rem;">ม.2</label><input type="number" id="statM2" class="form-control" required></div>
+          <div><label style="font-size:0.8rem;">ม.3</label><input type="number" id="statM3" class="form-control" required></div>
+          <div><label style="font-size:0.8rem;">ม.4</label><input type="number" id="statM4" class="form-control" required></div>
+          <div><label style="font-size:0.8rem;">ม.5</label><input type="number" id="statM5" class="form-control" required></div>
+          <div><label style="font-size:0.8rem;">ม.6</label><input type="number" id="statM6" class="form-control" required></div>
+        </div>
+
+        <button type="submit" style="width:100%; padding:12px; background:linear-gradient(135deg, #10B981, #059669); color:#fff; border:none; border-radius:10px; font-weight:700; cursor:pointer;">
+          บันทึกสถิติลง Google Sheet
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
   <footer>
     <div class="footer-container">
       <div>
-        <h3 style="color:#fff; margin-bottom:12px; font-family:'Prompt',sans-serif;">กลุ่มบริหารวิชาการ โรงเรียนวัดสุทธิวราราม</h3>
+        <h3 style="color:#fff; margin-bottom:10px;">กลุ่มบริหารวิชาการ โรงเรียนวัดสุทธิวราราม</h3>
         <p><i class="fa-solid fa-location-dot"></i> 252 ถนนเจริญกรุง แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120</p>
-        <p style="margin-top:6px;"><i class="fa-solid fa-phone"></i> โทรศัพท์: 02-211-4192 (งานวิชาการ)</p>
       </div>
-
       <div>
-        <h4 style="color:#fff; margin-bottom:12px; font-family:'Prompt',sans-serif;">บริการนักเรียน</h4>
+        <h4 style="color:#fff; margin-bottom:10px;">บริการระบบนักเรียน</h4>
         <ul class="footer-links">
-          <li><a href="https://online.checkgrade-suthi.com/" target="_blank"><i class="fa-solid fa-chevron-right"></i> ตรวจสอบผลการเรียน</a></li>
-          <li><a href="https://stvolunteer.vercel.app/" target="_blank"><i class="fa-solid fa-chevron-right"></i> ตรวจสอบชั่วโมงจิตอาสา</a></li>
-          <li><a href="https://sites.google.com/suthi.ac.th/acad/tcasverified" target="_blank"><i class="fa-solid fa-chevron-right"></i> TCAS Verified</a></li>
-          <li><a href="https://suthiacademic.vercel.app/portal" target="_blank"><i class="fa-solid fa-chevron-right"></i> Suthi Academic Portal</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4 style="color:#fff; margin-bottom:12px; font-family:'Prompt',sans-serif;">ระบบงานวิชาการ</h4>
-        <ul class="footer-links">
-          <li><a href="https://suthiacademic.vercel.app/doc" target="_blank"><i class="fa-solid fa-chevron-right"></i> บริหารงานผลิตเอกสาร</a></li>
-          <li><a href="https://suthiacademic.vercel.app/doctest" target="_blank"><i class="fa-solid fa-chevron-right"></i> อัดสำเนาแบบทดสอบ</a></li>
-          <li><a href="https://suthiacademic.vercel.app/syllabus" target="_blank"><i class="fa-solid fa-chevron-right"></i> ประมวลรายวิชา (Syllabus)</a></li>
-          <li><a href="https://suthiacademic.vercel.app/pickuppaper" target="_blank"><i class="fa-solid fa-chevron-right"></i> ระบบควบคุมคลังวัสดุ</a></li>
+          <li><a href="https://online.checkgrade-suthi.com/" target="_blank">ตรวจสอบผลการเรียน</a></li>
+          <li><a href="https://stvolunteer.vercel.app/" target="_blank">ชั่วโมงจิตอาสา</a></li>
+          <li><a href="https://sites.google.com/suthi.ac.th/acad/tcasverified" target="_blank">TCAS Verified</a></li>
         </ul>
       </div>
     </div>
-
-    <div class="footer-bottom">
-      <p>© 2026 กลุ่มบริหารวิชาการ โรงเรียนวัดสุทธิวราราม | Wat Suthiwararam School Academic Affairs</p>
+    <div style="text-align:center; padding-top:20px; font-size:0.8rem; color:#64748B;">
+      © 2026 กลุ่มบริหารวิชาการ โรงเรียนวัดสุทธิวราราม | Wat Suthiwararam School
     </div>
   </footer>
 
-  <!-- JavaScript Logic -->
+  <!-- Logic JavaScript -->
   <script>
-    // 1. Fetch & Render Student Statistics from Google Sheet CSV
-    const SHEET_ID = "150Kok72tM5XGSXl3x5ZKatqV8XcpZB2C1XRugg88kaA";
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+    // URL ของ Google Apps Script (ให้วาง URL ที่ได้จากการ Deploy Apps Script ที่นี่)
+    const APPS_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL"; 
 
-    const defaultStatsData = [
+    let currentAdmin = null;
+    let statsDataStore = [
       { semester: "2/2568", m1: 420, m2: 415, m3: 408, m4: 430, m5: 425, m6: 410 },
-      { semester: "1/2568", m1: 422, m2: 418, m3: 410, m4: 432, m5: 428, m6: 412 },
-      { semester: "2/2567", m1: 418, m2: 412, m3: 405, m4: 425, m5: 420, m6: 408 }
+      { semester: "1/2568", m1: 422, m2: 418, m3: 410, m4: 432, m5: 428, m6: 412 }
     ];
 
-    async function loadGoogleSheetData() {
-      try {
-        const response = await fetch(CSV_URL);
-        if(!response.ok) throw new Error('Sheet network response failed');
-        const csvText = await response.text();
-        const parsedData = parseCSV(csvText);
-        
-        if(parsedData.length > 0) {
-          renderStatsTable(parsedData);
-          initCharts(parsedData[0]);
-        } else {
-          renderStatsTable(defaultStatsData);
-          initCharts(defaultStatsData[0]);
-        }
-      } catch (err) {
-        console.warn('Google Sheet CSV load failed, using structured default data:', err);
-        renderStatsTable(defaultStatsData);
-        initCharts(defaultStatsData[0]);
-      }
-    }
-
-    function parseCSV(text) {
-      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      if(lines.length < 2) return [];
-      
-      const results = [];
-      for(let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',').map(c => c.replace(/^"(.*)"$/, '$1'));
-        if(cols.length >= 7) {
-          results.push({
-            semester: cols[0] || `ภาคเรียน ${i}`,
-            m1: parseInt(cols[1]) || 0,
-            m2: parseInt(cols[2]) || 0,
-            m3: parseInt(cols[3]) || 0,
-            m4: parseInt(cols[4]) || 0,
-            m5: parseInt(cols[5]) || 0,
-            m6: parseInt(cols[6]) || 0
-          });
-        }
-      }
-      return results;
-    }
-
-    function renderStatsTable(data) {
-      const tbody = document.querySelector('#studentStatsTable tbody');
-      tbody.innerHTML = '';
-
-      data.forEach(item => {
-        const total = item.m1 + item.m2 + item.m3 + item.m4 + item.m5 + item.m6;
-        const row = `
-          <tr>
-            <td><strong>${item.semester}</strong></td>
-            <td>${item.m1.toLocaleString()} คน</td>
-            <td>${item.m2.toLocaleString()} คน</td>
-            <td>${item.m3.toLocaleString()} คน</td>
-            <td>${item.m4.toLocaleString()} คน</td>
-            <td>${item.m5.toLocaleString()} คน</td>
-            <td>${item.m6.toLocaleString()} คน</td>
-            <td><strong style="color:var(--suthi-pink-primary);">${total.toLocaleString()} คน</strong></td>
-          </tr>
-        `;
-        tbody.insertAdjacentHTML('beforeend', row);
-      });
-    }
-
-    function initCharts(latest) {
-      // 1. Grade Bar Chart
-      const ctxBar = document.getElementById('gradeChart').getContext('2d');
-      new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-          labels: ['ม.1', 'ม.2', 'ม.3', 'ม.4', 'ม.5', 'ม.6'],
-          datasets: [{
-            label: `จำนวนนักเรียน (ภาคเรียน ${latest.semester})`,
-            data: [latest.m1, latest.m2, latest.m3, latest.m4, latest.m5, latest.m6],
-            backgroundColor: [
-              '#3B82F6', '#0284C7', '#0D9488',
-              '#8B5CF6', '#EC4899', '#F59E0B'
-            ],
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-
-      // 2. Junior vs Senior Doughnut Chart
-      const ctxPie = document.getElementById('ratioChart').getContext('2d');
-      const juniorTotal = latest.m1 + latest.m2 + latest.m3;
-      const seniorTotal = latest.m4 + latest.m5 + latest.m6;
-
-      new Chart(ctxPie, {
-        type: 'doughnut',
-        data: {
-          labels: ['มัธยมศึกษาตอนต้น (ม.1-ม.3)', 'มัธยมศึกษาตอนปลาย (ม.4-ม.6)'],
-          datasets: [{
-            data: [juniorTotal, seniorTotal],
-            backgroundColor: ['#0284C7', '#E86DAA']
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { position: 'bottom' } }
-        }
-      });
-    }
-
-    // 2. News Management Logic
-    let newsData = [
+    let newsDataStore = [
       {
         id: 1,
         title: "ระบบตรวจสอบผลการเรียนออนไลน์ เปิดให้ตรวจเกรดแล้ววันนี้",
@@ -1125,78 +758,205 @@
         id: 2,
         title: "ยื่นหลักฐานกิจกรรม TCAS Verified สำหรับนักเรียน ม.6",
         category: "ลงทะเบียน",
-        desc: "ขอให้นักเรียนชั้นมัธยมศึกษาปีที่ 6 อัปโหลดเกียรติบัตรและหลักฐานกิจกรรมผ่านระบบ TCAS Verified",
+        desc: "ขอให้นักเรียนชั้น ม.6 อัปโหลดเกียรติบัตรผ่านระบบ TCAS Verified",
         date: "28 ก.ย. 2569",
         link: "https://sites.google.com/suthi.ac.th/acad/tcasverified"
-      },
-      {
-        id: 3,
-        title: "ตรวจสอบชั่วโมงจิตอาสาประจำภาคเรียน",
-        category: "ประกาศทั่วไป",
-        desc: "เช็กการสะสมชั่วโมงจิตอาสาเพื่อประกอบการยื่นขอทุนการศึกษาและกิจกรรมพัฒนาผู้เรียน",
-        date: "20 ก.ย. 2569",
-        link: "https://stvolunteer.vercel.app/"
       }
     ];
 
-    let currentFilter = 'all';
+    // JWT Token Parser
+    function parseJwt(token) {
+      try {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Google Sign-In Credential Response Handler
+    function handleCredentialResponse(response) {
+      const user = parseJwt(response.credential);
+      if (!user) {
+        alert("ไม่สามารถยืนยันตัวตนได้ กรุณาลองใหม่อีกครั้ง");
+        return;
+      }
+
+      // Check Domain Restriction: Only @suthi.ac.th
+      if (user.email && user.email.endsWith("@suthi.ac.th")) {
+        currentAdmin = user;
+        document.getElementById('loginArea').style.display = 'none';
+        document.getElementById('adminProfileArea').style.display = 'block';
+        document.getElementById('adminPhoto').src = user.picture || '';
+        document.getElementById('adminName').innerText = user.name || user.email;
+        document.getElementById('adminControlBanner').classList.add('active');
+        alert(`ยินดีต้อนรับคุณ ${user.name} เข้าสู่ระบบบริหารจัดการวิชาการ`);
+      } else {
+        alert(`ขออภัย อีเมล (${user.email}) ไม่ใช่อีเมลองค์กร @suthi.ac.th ไม่สามารถเข้าสู่ระบบผู้ดูแลได้`);
+      }
+    }
+
+    function logoutAdmin() {
+      currentAdmin = null;
+      document.getElementById('loginArea').style.display = 'block';
+      document.getElementById('adminProfileArea').style.display = 'none';
+      document.getElementById('adminControlBanner').classList.remove('active');
+      alert("ออกจากระบบเรียบร้อยแล้ว");
+    }
+
+    // Load Data from Google Apps Script Backend
+    async function loadBackendData() {
+      if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
+        try {
+          const res = await fetch(APPS_SCRIPT_URL);
+          const data = await res.json();
+          if (data.stats && data.stats.length > 0) statsDataStore = data.stats;
+          if (data.news && data.news.length > 0) newsDataStore = data.news;
+        } catch (e) {
+          console.warn("Backend API not reachable, falling back to local dataset.", e);
+        }
+      }
+      renderStatsTable(statsDataStore);
+      initCharts(statsDataStore[0]);
+      renderNews();
+    }
+
+    function renderStatsTable(data) {
+      const tbody = document.querySelector('#studentStatsTable tbody');
+      tbody.innerHTML = '';
+      data.forEach(item => {
+        const total = item.m1 + item.m2 + item.m3 + item.m4 + item.m5 + item.m6;
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr>
+            <td><strong>${item.semester}</strong></td>
+            <td>${item.m1.toLocaleString()} คน</td>
+            <td>${item.m2.toLocaleString()} คน</td>
+            <td>${item.m3.toLocaleString()} คน</td>
+            <td>${item.m4.toLocaleString()} คน</td>
+            <td>${item.m5.toLocaleString()} คน</td>
+            <td>${item.m6.toLocaleString()} คน</td>
+            <td><strong style="color:var(--suthi-pink-primary);">${total.toLocaleString()} คน</strong></td>
+          </tr>
+        `);
+      });
+    }
+
+    function initCharts(latest) {
+      const ctxBar = document.getElementById('gradeChart').getContext('2d');
+      new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: ['ม.1', 'ม.2', 'ม.3', 'ม.4', 'ม.5', 'ม.6'],
+          datasets: [{
+            data: [latest.m1, latest.m2, latest.m3, latest.m4, latest.m5, latest.m6],
+            backgroundColor: ['#3B82F6', '#0284C7', '#0D9488', '#8B5CF6', '#EC4899', '#F59E0B'],
+            borderRadius: 6
+          }]
+        },
+        options: { plugins: { legend: { display: false } }, responsive: true }
+      });
+
+      const ctxPie = document.getElementById('ratioChart').getContext('2d');
+      new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+          labels: ['ม.ต้น (ม.1-ม.3)', 'ม.ปลาย (ม.4-ม.6)'],
+          datasets: [{
+            data: [latest.m1 + latest.m2 + latest.m3, latest.m4 + latest.m5 + latest.m6],
+            backgroundColor: ['#0284C7', '#E86DAA']
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } }, responsive: true }
+      });
+    }
 
     function renderNews() {
       const grid = document.getElementById('newsGrid');
       grid.innerHTML = '';
-
-      const filtered = currentFilter === 'all' ? newsData : newsData.filter(n => n.category === currentFilter);
-
-      filtered.forEach(item => {
+      newsDataStore.forEach(item => {
         grid.insertAdjacentHTML('beforeend', `
           <div class="news-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
               <span class="sys-badge badge-purple">${item.category}</span>
-              <span style="font-size:0.8rem; color:#94A3B8;">${item.date}</span>
+              <span style="font-size:0.78rem; color:#94A3B8;">${item.date}</span>
             </div>
-            <h3 style="font-size:1.05rem; font-weight:700; color:var(--academic-navy); margin-bottom:8px;">${item.title}</h3>
-            <p style="font-size:0.88rem; color:#64748B; margin-bottom:15px; flex-grow:1;">${item.desc}</p>
+            <h3 style="font-size:1.05rem; font-weight:700;">${item.title}</h3>
+            <p style="font-size:0.88rem; color:#64748B; margin:8px 0 15px; flex-grow:1;">${item.desc}</p>
             <a href="${item.link || '#'}" target="_blank" style="color:var(--suthi-pink-primary); text-decoration:none; font-weight:600; font-size:0.88rem;">
-              เปิดลิงก์ระบบ <i class="fa-solid fa-arrow-right"></i>
+              ดูรายละเอียดระบบ <i class="fa-solid fa-arrow-right"></i>
             </a>
           </div>
         `);
       });
     }
 
-    function filterNews(cat) {
-      currentFilter = cat;
-      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-      renderNews();
-    }
-
+    // Admin Handlers
     function openNewsModal() { document.getElementById('newsModal').classList.add('active'); }
     function closeNewsModal() { document.getElementById('newsModal').classList.remove('active'); }
+    function openStatsModal() { document.getElementById('statsModal').classList.add('active'); }
+    function closeStatsModal() { document.getElementById('statsModal').classList.remove('active'); }
 
-    function handleNewsSubmit(e) {
+    async function handleNewsSubmit(e) {
       e.preventDefault();
-      const title = document.getElementById('newsTitle').value;
-      const category = document.getElementById('newsCategory').value;
-      const desc = document.getElementById('newsDesc').value;
-      const link = document.getElementById('newsLink').value || '#';
+      if (!currentAdmin) { alert("กรุณาล็อกอินด้วยบัญชี @suthi.ac.th ก่อนดำเนินการ"); return; }
 
-      newsData.unshift({ id: newsData.length + 1, title, category, desc, date: 'วันนี้', link });
+      const newNews = {
+        title: document.getElementById('newsTitle').value,
+        category: document.getElementById('newsCategory').value,
+        desc: document.getElementById('newsDesc').value,
+        link: document.getElementById('newsLink').value || '#',
+        date: "วันนี้",
+        author: currentAdmin.email
+      };
+
+      newsDataStore.unshift(newNews);
       renderNews();
       closeNewsModal();
+
+      // Post to Apps Script
+      if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
+        fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: "addNews", data: newNews })
+        });
+      }
+      alert("เพิ่มข่าวสารวิชาการเรียบร้อยแล้ว");
       document.getElementById('addNewsForm').reset();
     }
 
-    // Mobile Navbar Toggle
-    document.getElementById('mobileToggle').addEventListener('click', () => {
-      document.getElementById('navMenu').classList.toggle('mobile-active');
-    });
+    async function handleStatsSubmit(e) {
+      e.preventDefault();
+      if (!currentAdmin) { alert("กรุณาล็อกอินด้วยบัญชี @suthi.ac.th ก่อนดำเนินการ"); return; }
 
-    // Initialize Page
-    document.addEventListener('DOMContentLoaded', () => {
-      loadGoogleSheetData();
-      renderNews();
-    });
+      const newStat = {
+        semester: document.getElementById('statSemester').value,
+        m1: Number(document.getElementById('statM1').value),
+        m2: Number(document.getElementById('statM2').value),
+        m3: Number(document.getElementById('statM3').value),
+        m4: Number(document.getElementById('statM4').value),
+        m5: Number(document.getElementById('statM5').value),
+        m6: Number(document.getElementById('statM6').value)
+      };
+
+      statsDataStore.unshift(newStat);
+      renderStatsTable(statsDataStore);
+      closeStatsModal();
+
+      if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
+        fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: "updateStats", data: newStat })
+        });
+      }
+      alert("อัปเดตสถิตินักเรียนเรียบร้อยแล้ว");
+      document.getElementById('addStatsForm').reset();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadBackendData);
   </script>
 </body>
 </html>
