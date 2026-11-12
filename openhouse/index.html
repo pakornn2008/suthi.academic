@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPEN HOUSE โรงเรียนวัดสุทธิวราราม 2569</title>
+    
+    <!-- ฟอนต์ Google Sans สำหรับหัวข้อ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+    
+    <!-- ฟอนต์ Sarabun สำหรับเนื้อหา -->
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-pink: #E91E63;
+            --primary-green: #2E7D32;
+            --light-pink: #FCE4EC;
+            --light-green: #E8F5E9;
+            --dark-gray: #333333;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6, .brand-text {
+            font-family: 'Google Sans', 'Sarabun', sans-serif;
+            margin: 0;
+        }
+
+        /* Header Section */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-container img {
+            height: 60px;
+            width: auto;
+        }
+
+        .brand-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .brand-text span {
+            color: var(--primary-pink);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--light-pink) 0%, var(--light-green) 100%);
+            padding: 80px 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--primary-pink);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 10px;
+        }
+
+        .hero h2 {
+            font-size: 1.8rem;
+            color: var(--primary-pink);
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: var(--dark-gray);
+        }
+
+        .hero .date {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background-color: var(--primary-green);
+            color: var(--white);
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Schedule Section */
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary-green);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-pink);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Timeline / Cards */
+        .schedule-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .schedule-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .time-badge {
+            background-color: var(--primary-pink);
+            color: var(--white);
+            width: 150px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .card-content {
+            padding: 25px;
+            flex-grow: 1;
+        }
+
+        .card-content h3 {
+            color: var(--primary-green);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .card-content ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .card-content li {
+            margin-bottom: 8px;
+        }
+
+        .location {
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #666;
+            background: #f0f0f0;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .location::before {
+            content: '📍 ';
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-green);
+            color: var(--white);
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .schedule-card {
+                flex-direction: column;
+            }
+            .time-badge {
+                width: 100%;
+                padding: 15px;
+                justify-content: flex-start;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="https://suthi.ac.th/wp-content/uploads/2022/11/SUTHIWARARAM_SCHOOL_LOGO.png" alt="โลโก้โรงเรียนวัดสุทธิวราราม">
+            <div class="brand-text">
+                WAT SUTHIWARARAM <br><span>OPEN HOUSE</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h2>"ชื่อเรื่อง รอ"</h2>
+        <h1>งานแสดงผลงานกิจกรรมนักเรียน<br>และนิทรรศการวิชาการ OPEN HOUSE</h1>
+        <p>โรงเรียนวัดสุทธิวราราม ประจำปีการศึกษา 2569</p>
+        <div class="date">📅 วันพฤหัสบดีที่ 4 กุมภาพันธ์ พ.ศ. 2570</div>
+    </section>
+
+    <div class="container">
+        <h2 class="section-title">กำหนดการจัดกิจกรรม</h2>
+
+        <!-- 07.30 - 08.00 -->
+        <div class="schedule-card">
+            <div class="time-badge">07.30 - 08.00 น.</div>
+            <div class="card-content">
+                <h3>ลงทะเบียนผู้เข้าร่วมงาน</h3>
+                <ul>
+                    <li>ผู้มาร่วมงานลงทะเบียน (ห้องประชุมศตวัชรบุษกร ชั้น 10)</li>
+                    <li>ตัวแทนนักเรียนจากโรงเรียนประถมศึกษา ลงทะเบียนเข้าร่วมแข่งขันทักษะทางวิชาการ<br>
+                    <small><i>(มอบเงินรางวัลและเกียรติบัตรบนเวทีหลังเสร็จสิ้นการแข่งขัน)</i></small></li>
+                </ul>
+                <div class="location">ห้องประชุมศตวัชรบุษกร ชั้น 10 / ตามห้องเรียนที่กำหนด</div>
+            </div>
+        </div>
+
+        <!-- 08.00 - 08.30 -->
+        <div class="schedule-card">
+            <div class="time-badge">08.00 - 08.30 น.</div>
+            <div class="card-content">
+                <h3>พิธีเปิดการแนะแนวการศึกษาต่อ</h3>
+                <ul>
+                    <li><strong>นางสาวเยาวดี รูปพรม</strong> รองผู้อำนวยการกลุ่มบริหารวิชาการ กล่าวรายงานการจัดกิจกรรมแนะแนวการศึกษาต่อ</li>
+                    <li><strong>นายเรวัตต์ นกสว่าง</strong> ผู้อำนวยการโรงเรียนวัดสุทธิวราราม กล่าวต้อนรับคณะผู้บริหาร ครู นักเรียน และผู้ปกครองที่มาร่วมงาน และกล่าวเปิดการแนะแนวการศึกษาต่อ</li>
+                    <li>ครูแนะแนวชี้แจงนโยบาย เกณฑ์การรับนักเรียน ม.1 ปีการศึกษา 2570 ของสพฐ. และของโรงเรียนวัดสุทธิวราราม</li>
+                </ul>
+                <div class="location">ห้องประชุมศตวัชรบุษกร ชั้น 10</div>
+            </div>
+        </div>
+
+        <!-- 08.30 - 09.30 -->
+        <div class="schedule-card">
+            <div class="time-badge">08.30 - 09.30 น.</div>
+            <div class="card-content">
+                <h3>พิธีเปิดงาน OPEN HOUSE</h3>
+                <ul>
+                    <li><strong>นางสาวเยาวดี รูปพรม</strong> รองผู้อำนวยการกลุ่มบริหารวิชาการ กล่าวรายงานการจัดกิจกรรมวันแสดงผลงานนักเรียน</li>
+                    <li><strong>นายเรวัตต์ นกสว่าง</strong> ผู้อำนวยการโรงเรียนวัดสุทธิวราราม กล่าวเปิดการจัดกิจกรรมวันแสดงผลงานกิจกรรมชุมนุม และกดปุ่มเปิดงาน</li>
+                </ul>
+                <div class="location">เวทีสนาม โรงเรียนวัดสุทธิวราราม</div>
+            </div>
+        </div>
+
+        <!-- 09.00 - 12.00 -->
+        <div class="schedule-card">
+            <div class="time-badge" style="background-color: var(--primary-green);">09.00 - 12.00 น.</div>
+            <div class="card-content">
+                <h3>การแข่งขันทางวิชาการ</h3>
+                <ul>
+                    <li>การแข่งขันทางวิชาการของ 8 กลุ่มสาระการเรียนรู้</li>
+                </ul>
+                <div class="location">ตามห้องเรียนที่กำหนด</div>
+            </div>
+        </div>
+
+        <!-- 09.30 เป็นต้นไป -->
+        <div class="schedule-card">
+            <div class="time-badge" style="background-color: var(--primary-green);">09.30 น. เป็นต้นไป</div>
+            <div class="card-content">
+                <h3>กิจกรรม OPEN HOUSE</h3>
+                <ul>
+                    <li>รับชมกิจกรรมบนเวที 📍 <i>เวทีสนาม</i></li>
+                    <li>รับชมการแสดงของชุมนุมต่าง ๆ 📍 <i>กลางสนาม</i></li>
+                    <li>ร่วมสนุกกับการแสดงผลงานเชิงสร้างสรรค์ของกลุ่มสาระการเรียนรู้ต่างๆ (รับของรางวัล) 📍 <i>ตามห้องเรียนที่กำหนด</i></li>
+                    <li>ร่วมสนุกกับบูธต่าง ๆ อีกมากมาย และการแข่งขันทางวิชาการของ 8 กลุ่มสาระการเรียนรู้ / 1 กิจกรรมพัฒนาผู้เรียน 📍 <i>ตามห้องเรียนที่กำหนด</i></li>
+                    <li>บูธจำหน่ายอาหาร และสินค้า ผลงานนักเรียน 📍 <i>สนามโรงเรียนวัดสุทธิวราราม</i></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2569 โรงเรียนวัดสุทธิวราราม (Wat Suthiwararam School)</p>
+    </footer>
+
+</body>
+</html>
