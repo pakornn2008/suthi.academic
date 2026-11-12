@@ -1,515 +1,896 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPEN HOUSE โรงเรียนวัดสุทธิวราราม 2569</title>
+    <title>OPEN HOUSE โรงเรียนวัดสุทธิวราราม ประจำปีการศึกษา 2569</title>
     
-    <!-- ฟอนต์ Google Sans & Sarabun -->
+    <!-- ฟอนต์ Google Sans (สำหรับหัวข้อ) & Sarabun (สำหรับเนื้อหา) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
     
     <!-- ไอคอน FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- AOS Animation CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <style>
-        :root {
-            --primary-pink: #E91E63;
-            --primary-green: #2E7D32;
-            --light-pink: #FCE4EC;
-            --light-green: #E8F5E9;
-            --dark-gray: #333333;
-            --white: #ffffff;
-            --shadow: 0 8px 30px rgba(0,0,0,0.08);
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        display: ['"Google Sans"', 'Sarabun', 'sans-serif'],
+                    },
+                    colors: {
+                        'suthi-pink': '#E91E63',
+                        'suthi-pink-dark': '#C2185B',
+                        'suthi-pink-light': '#FCE4EC',
+                        'suthi-green': '#2E7D32',
+                        'suthi-green-dark': '#1B5E20',
+                        'suthi-green-light': '#E8F5E9',
+                    }
+                }
+            }
         }
+    </script>
 
+    <style>
+        /* Custom Scrollbar & Smooth Transitions */
         body {
             font-family: 'Sarabun', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            color: var(--dark-gray);
-            line-height: 1.6;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, .brand-text {
+        h1, h2, h3, h4, h5, .font-heading {
             font-family: 'Google Sans', 'Sarabun', sans-serif;
-            margin: 0;
         }
 
-        /* --- Header & Nav --- */
-        header {
-            background-color: var(--white);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            padding: 10px 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .glass-header {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
+        .hero-bg {
+            background: 
+                radial-gradient(circle at 88% 12%, rgba(233, 30, 99, 0.13) 0%, transparent 45%),
+                radial-gradient(circle at 12% 88%, rgba(46, 125, 50, 0.15) 0%, transparent 45%),
+                linear-gradient(180deg, #FFFFFF 0%, #F1F8F4 100%);
         }
 
-        .logo-container img {
-            height: 50px;
+        /* Modal Transitions */
+        .modal-backdrop {
+            transition: opacity 0.25s ease;
         }
-
-        .brand-text {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-green);
-            line-height: 1.2;
-        }
-        .brand-text span { color: var(--primary-pink); }
-
-        .btn-register {
-            background: linear-gradient(135deg, var(--primary-pink), #C2185B);
-            color: var(--white);
-            padding: 10px 24px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
-        }
-
-        /* --- Hero Section --- */
-        .hero {
-            background: linear-gradient(135deg, rgba(252, 228, 236, 0.9) 0%, rgba(232, 245, 233, 0.9) 100%), url('https://suthi.ac.th/wp-content/uploads/2022/11/bg-school.jpg') center/cover;
-            padding: 100px 20px;
-            text-align: center;
-            border-bottom: 5px solid var(--primary-pink);
-            position: relative;
-        }
-
-        .hero-badge {
-            background-color: var(--primary-pink);
-            color: var(--white);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-        .hero h1 {
-            font-size: 2.8rem;
-            color: var(--primary-green);
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
-        }
-
-        .hero h2 {
-            font-size: 1.8rem;
-            color: var(--primary-pink);
-            margin-bottom: 25px;
-        }
-
-        .hero .date {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-            padding: 12px 30px;
-            background-color: var(--primary-green);
-            color: var(--white);
-            border-radius: 30px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-        }
-
-        /* --- Downloads Section --- */
-        .downloads {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-        .btn-outline {
-            border: 2px solid var(--primary-green);
-            color: var(--primary-green);
-            background: var(--white);
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-outline:hover {
-            background: var(--primary-green);
-            color: var(--white);
-        }
-
-        /* --- Container & Title --- */
-        .container {
-            max-width: 1100px;
-            margin: 60px auto;
-            padding: 0 20px;
-        }
-        .section-title {
-            text-align: center;
-            font-size: 2.2rem;
-            color: var(--primary-green);
-            margin-bottom: 50px;
-        }
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 80px; height: 4px;
-            background-color: var(--primary-pink);
-            margin: 15px auto 0;
-            border-radius: 2px;
-        }
-
-        /* --- Timeline Schedule --- */
-        .schedule-card {
-            background: var(--white);
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            margin-bottom: 25px;
-            display: flex;
-            overflow: hidden;
-            transition: transform 0.3s;
-            border-left: 5px solid var(--primary-pink);
-        }
-        .schedule-card:hover { transform: translateY(-5px); }
-        
-        .time-badge {
-            background-color: rgba(233, 30, 99, 0.1);
-            color: var(--primary-pink);
-            width: 160px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            font-weight: 700;
-            flex-shrink: 0;
-            border-right: 1px dashed rgba(0,0,0,0.1);
-        }
-        .time-badge.green {
-            background-color: rgba(46, 125, 50, 0.1);
-            color: var(--primary-green);
-            border-left-color: var(--primary-green);
-        }
-
-        .card-content { padding: 25px; flex-grow: 1; }
-        .card-content h3 { color: var(--primary-green); font-size: 1.4rem; margin-bottom: 12px; }
-        .card-content ul { margin: 0; padding-left: 20px; color: #555; }
-        .card-content li { margin-bottom: 8px; }
-
-        .location {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 15px;
-            font-size: 0.95rem;
-            color: #666;
-            background: #f1f3f5;
-            padding: 6px 15px;
-            border-radius: 20px;
-        }
-
-        /* --- Gallery & Map Section --- */
-        .two-cols {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 60px;
-        }
-        .placeholder-box {
-            background: #e9ecef;
-            border-radius: 15px;
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #adb5bd;
-            font-size: 1.2rem;
-            border: 2px dashed #ced4da;
-        }
-
-        /* --- Travel / Location --- */
-        .travel-info {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            margin-top: 60px;
-            text-align: center;
-        }
-        .map-container {
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 20px;
-            height: 400px;
-        }
-        .transport-modes {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .transport-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
-        }
-        .transport-item i { color: var(--primary-pink); font-size: 1.5rem; }
-
-        /* --- Footer --- */
-        footer {
-            background-color: var(--dark-gray);
-            color: var(--white);
-            padding: 50px 20px 20px;
-            margin-top: 80px;
-        }
-        .footer-content {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        .footer-col h4 {
-            color: var(--primary-pink);
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-        }
-        .footer-col p, .footer-col a {
-            color: #bbb;
-            text-decoration: none;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .footer-col a:hover { color: var(--white); }
-        .social-links a {
-            display: inline-block;
-            margin-right: 15px;
-            font-size: 1.5rem;
-        }
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #444;
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        /* --- Responsive --- */
-        @media (max-width: 768px) {
-            .schedule-card { flex-direction: column; }
-            .time-badge { width: 100%; padding: 15px; justify-content: flex-start; border-right: none; border-bottom: 1px dashed rgba(0,0,0,0.1); }
-            .hero h1 { font-size: 2.2rem; }
-            .two-cols { grid-template-columns: 1fr; }
-            .btn-register span { display: none; } /* ซ่อนข้อความปุ่มในจอมือถือ เหลือแต่ไอคอน */
+        .modal-panel {
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
         }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-suthi-pink selection:text-white">
 
-    <!-- Header -->
-    <header>
-        <a href="#" class="logo-container">
-            <img src="https://suthi.ac.th/wp-content/uploads/2022/11/SUTHIWARARAM_SCHOOL_LOGO.png" alt="โลโก้โรงเรียนวัดสุทธิวราราม">
-            <div class="brand-text">
-                WAT SUTHIWARARAM<br><span>OPEN HOUSE</span>
+    <!-- ================= HEADER & NAVIGATION ================= -->
+    <header class="glass-header sticky top-0 z-50 border-b border-slate-200/80 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo & Title -->
+                <a href="#" class="flex items-center gap-3.5 group">
+                    <img src="https://suthi.ac.th/wp-content/uploads/2022/11/SUTHIWARARAM_SCHOOL_LOGO.png" 
+                         alt="โลโก้โรงเรียนวัดสุทธิวราราม" 
+                         onerror="this.src='https://placehold.co/60x60/E91E63/FFFFFF?text=ส.ท.'"
+                         class="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <div>
+                        <div class="font-heading font-bold text-base sm:text-lg text-suthi-green leading-tight">
+                            โรงเรียนวัดสุทธิวราราม
+                        </div>
+                        <div class="font-heading font-bold text-xs sm:text-sm text-suthi-pink tracking-wide">
+                            WAT SUTHIWARARAM OPEN HOUSE
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <nav class="hidden lg:flex items-center gap-7">
+                    <a href="#about" class="text-slate-700 hover:text-suthi-pink font-semibold text-sm transition-colors">แนะนำโรงเรียน</a>
+                    <a href="#schedule" class="text-slate-700 hover:text-suthi-pink font-semibold text-sm transition-colors">กำหนดการ</a>
+                    <a href="#zones" class="text-slate-700 hover:text-suthi-green font-semibold text-sm transition-colors">แผนผังงาน</a>
+                    <a href="#gallery" class="text-slate-700 hover:text-suthi-pink font-semibold text-sm transition-colors">ภาพบรรยากาศ</a>
+                    <a href="#travel" class="text-slate-700 hover:text-suthi-green font-semibold text-sm transition-colors">การเดินทาง</a>
+                    <button onclick="openRegisterModal()" 
+                            class="font-heading bg-gradient-to-r from-suthi-pink to-suthi-pink-dark hover:from-suthi-pink-dark hover:to-suthi-pink text-white px-5 py-2.5 rounded-full font-bold text-sm shadow-md shadow-pink-500/25 hover:shadow-lg hover:shadow-pink-500/40 transform hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer">
+                        <i class="fas fa-user-check"></i> ลงทะเบียนร่วมงาน
+                    </button>
+                </nav>
+
+                <!-- Mobile Action & Menu Button -->
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button onclick="openRegisterModal()" 
+                            class="font-heading bg-suthi-pink text-white px-3.5 py-2 rounded-full font-bold text-xs shadow-sm flex items-center gap-1.5">
+                        <i class="fas fa-edit"></i> ลงทะเบียน
+                    </button>
+                    <button id="mobile-menu-toggle" class="p-2 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none" aria-label="เปิดเมนู">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
             </div>
-        </a>
-        <a href="#register" class="btn-register">
-            <i class="fas fa-edit"></i> <span>ลงทะเบียนเข้าร่วมงาน</span>
-        </a>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-100 px-4 pt-2 pb-5 space-y-1 shadow-xl">
+            <a href="#about" class="mobile-link block px-4 py-3 rounded-xl font-semibold text-slate-700 hover:bg-suthi-pink-light hover:text-suthi-pink">แนะนำโรงเรียน</a>
+            <a href="#schedule" class="mobile-link block px-4 py-3 rounded-xl font-semibold text-slate-700 hover:bg-suthi-pink-light hover:text-suthi-pink">กำหนดการ</a>
+            <a href="#zones" class="mobile-link block px-4 py-3 rounded-xl font-semibold text-slate-700 hover:bg-suthi-green-light hover:text-suthi-green">แผนผังจุดจัดกิจกรรม</a>
+            <a href="#gallery" class="mobile-link block px-4 py-3 rounded-xl font-semibold text-slate-700 hover:bg-suthi-pink-light hover:text-suthi-pink">ภาพบรรยากาศ</a>
+            <a href="#travel" class="mobile-link block px-4 py-3 rounded-xl font-semibold text-slate-700 hover:bg-suthi-green-light hover:text-suthi-green">แผนที่และการเดินทาง</a>
+        </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div data-aos="fade-up">
-            <div class="hero-badge">ฉบับร่าง</div>
-            <h2>"ชื่อเรื่อง รอ"</h2>
-            <h1>งานแสดงผลงานกิจกรรมนักเรียน<br>และนิทรรศการวิชาการ OPEN HOUSE</h1>
-            <p style="font-size: 1.2rem; color: #555; max-width: 700px; margin: 0 auto;">
-                โรงเรียนวัดสุทธิวราราม ประจำปีการศึกษา 2569
-            </p>
-            <div class="date">
-                <i class="far fa-calendar-alt"></i> วันพฤหัสบดีที่ 4 กุมภาพันธ์ พ.ศ. 2570
-            </div>
+    <!-- ================= HERO SECTION ================= -->
+    <section class="hero-bg relative pt-14 pb-20 sm:pt-20 sm:pb-24 border-b-4 border-suthi-green overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10" data-aos="fade-up">
             
-            <div class="downloads">
-                <a href="#" class="btn-outline"><i class="fas fa-file-pdf"></i> เกณฑ์การแข่งขันทักษะวิชาการ</a>
-                <a href="#" class="btn-outline"><i class="fas fa-file-alt"></i> ระเบียบการรับนักเรียน ม.1</a>
+            <!-- Draft Status Badge -->
+            <div class="inline-flex items-center gap-2 bg-suthi-pink-light text-suthi-pink border border-pink-300/70 px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold mb-6 shadow-sm">
+                <i class="fas fa-file-signature"></i>
+                <span>กำหนดการฉบับร่าง • ประจำปีการศึกษา 2569</span>
+            </div>
+
+            <!-- Editable / Highlighted Theme Box -->
+            <div class="mb-5">
+                <div class="inline-block bg-white border-2 border-dashed border-suthi-pink px-6 sm:px-9 py-2.5 rounded-2xl shadow-sm relative group">
+                    <span class="absolute -top-2.5 right-3 bg-suthi-pink text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        รออัปเดตชื่อธีม
+                    </span>
+                    <h2 class="font-heading text-xl sm:text-3xl font-bold text-suthi-pink">
+                        "ชื่อเรื่อง รอ"
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Main Event Title -->
+            <h1 class="font-heading text-3xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-suthi-green-dark leading-tight mb-4">
+                งานแสดงผลงานกิจกรรมนักเรียน<br class="hidden sm:inline">
+                และนิทรรศการวิชาการ <span class="text-suthi-pink">OPEN HOUSE</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-base sm:text-xl text-slate-600 max-w-3xl mx-auto mb-8 font-medium leading-relaxed">
+                โรงเรียนวัดสุทธิวราราม เปิดบ้านต้อนรับนักเรียน ผู้ปกครอง และผู้สนใจเข้าชมศักยภาพทางวิชาการและกิจกรรมสร้างสรรค์
+            </p>
+
+            <!-- Date Pill -->
+            <div class="mb-9">
+                <div class="inline-flex items-center gap-3 bg-suthi-green text-white px-6 sm:px-8 py-3.5 rounded-full text-base sm:text-xl font-heading font-bold shadow-lg shadow-green-800/20">
+                    <i class="far fa-calendar-check text-xl"></i>
+                    <span>วันพฤหัสบดีที่ 4 กุมภาพันธ์ พ.ศ. 2570</span>
+                </div>
+            </div>
+
+            <!-- Primary & Secondary Call-To-Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
+                <button onclick="openRegisterModal()" 
+                        class="w-full sm:w-auto font-heading bg-gradient-to-r from-suthi-pink to-suthi-pink-dark hover:from-suthi-pink-dark hover:to-suthi-pink text-white px-8 py-4 rounded-full text-lg font-bold shadow-xl shadow-pink-500/30 hover:shadow-pink-500/45 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3 cursor-pointer">
+                    <i class="fas fa-edit text-xl"></i>
+                    <span>ลงทะเบียนเข้าร่วมงานล่วงหน้า</span>
+                </button>
+                <a href="#schedule" 
+                   class="w-full sm:w-auto font-heading bg-white hover:bg-suthi-green text-suthi-green hover:text-white border-2 border-suthi-green px-7 py-3.5 rounded-full text-base sm:text-lg font-bold shadow-sm transition-all flex items-center justify-center gap-2.5">
+                    <i class="fas fa-clock"></i>
+                    <span>ดูกำหนดการทั้งหมด</span>
+                </a>
+            </div>
+
+            <!-- Document Download Buttons (PDF) -->
+            <div class="flex flex-wrap justify-center gap-3 pt-2">
+                <button onclick="openDocModal('เกณฑ์การแข่งขันทักษะวิชาการ (PDF)', 'เอกสารรายละเอียดกติกา ระดับชั้น และสถานที่แข่งขันทักษะทางวิชาการทั้ง 8 กลุ่มสาระการเรียนรู้ สำหรับตัวแทนนักเรียนระดับประถมศึกษา')" 
+                        class="bg-white/90 hover:bg-white text-slate-700 hover:text-suthi-pink border border-slate-200 hover:border-suthi-pink px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer">
+                    <i class="fas fa-file-pdf text-red-600 text-base"></i>
+                    <span>ดาวน์โหลดเกณฑ์การแข่งขันทักษะวิชาการ (PDF)</span>
+                </button>
+                <button onclick="openDocModal('เกณฑ์การรับนักเรียน ม.1 ปีการศึกษา 2570 (PDF)', 'ประกาศและแนวทางการรับสมัครนักเรียนชั้นมัธยมศึกษาปีที่ 1 ประจำปีการศึกษา 2570 ตามนโยบาย สพฐ. และโรงเรียนวัดสุทธิวราราม')" 
+                        class="bg-white/90 hover:bg-white text-slate-700 hover:text-suthi-green border border-slate-200 hover:border-suthi-green px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer">
+                    <i class="fas fa-file-pdf text-red-600 text-base"></i>
+                    <span>เกณฑ์การรับนักเรียน ม.1 ปีการศึกษา 2570 (PDF)</span>
+                </button>
             </div>
         </div>
     </section>
 
-    <!-- Schedule Section -->
-    <div class="container" id="schedule">
-        <h2 class="section-title" data-aos="fade-up">กำหนดการจัดกิจกรรม</h2>
-
-        <!-- 07.30 - 08.00 -->
-        <div class="schedule-card" data-aos="fade-up" data-aos-delay="100">
-            <div class="time-badge">07.30 - 08.00 น.</div>
-            <div class="card-content">
-                <h3>ลงทะเบียนผู้เข้าร่วมงาน</h3>
-                <ul>
-                    <li>ผู้มาร่วมงานลงทะเบียน (ห้องประชุมศตวัชรบุษกร ชั้น 10)</li>
-                    <li>ตัวแทนนักเรียนจากโรงเรียนประถมศึกษา ลงทะเบียนเข้าร่วมแข่งขันทักษะทางวิชาการ<br>
-                    <small style="color:var(--primary-pink);"><i>* มอบเงินรางวัลและเกียรติบัตรบนเวทีหลังเสร็จสิ้นการแข่งขัน</i></small></li>
-                </ul>
-                <div class="location"><i class="fas fa-map-marker-alt"></i> ห้องประชุมศตวัชรบุษกร ชั้น 10 / ตามห้องเรียนที่กำหนด</div>
-            </div>
+    <!-- ================= VIDEO INTRODUCTION SECTION ================= -->
+    <section id="about" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <span class="font-heading text-suthi-pink font-bold text-xs sm:text-sm uppercase tracking-widest block mb-1.5">
+                Discover Wat Suthiwararam
+            </span>
+            <h2 class="font-heading text-2xl sm:text-4xl font-bold text-suthi-green-dark">
+                ทำความรู้จักโรงเรียนวัดสุทธิวราราม
+            </h2>
+            <div class="w-20 h-1.5 bg-gradient-to-r from-suthi-pink to-suthi-green mx-auto mt-3.5 rounded-full"></div>
         </div>
 
-        <!-- 08.00 - 08.30 -->
-        <div class="schedule-card" data-aos="fade-up" data-aos-delay="200">
-            <div class="time-badge">08.00 - 08.30 น.</div>
-            <div class="card-content">
-                <h3>พิธีเปิดการแนะแนวการศึกษาต่อ</h3>
-                <ul>
-                    <li><strong>นางสาวเยาวดี รูปพรม</strong> รองผู้อำนวยการกลุ่มบริหารวิชาการ กล่าวรายงานการจัดกิจกรรม</li>
-                    <li><strong>นายเรวัตต์ นกสว่าง</strong> ผู้อำนวยการโรงเรียนวัดสุทธิวราราม กล่าวต้อนรับและกล่าวเปิดการแนะแนว</li>
-                    <li>ครูแนะแนวชี้แจงนโยบาย เกณฑ์การรับนักเรียน ม.1 ปีการศึกษา 2570 ของสพฐ. และโรงเรียนวัดสุทธิวราราม</li>
-                </ul>
-                <div class="location"><i class="fas fa-map-marker-alt"></i> ห้องประชุมศตวัชรบุษกร ชั้น 10</div>
-            </div>
-        </div>
-
-        <!-- 08.30 - 09.30 -->
-        <div class="schedule-card" data-aos="fade-up" data-aos-delay="300">
-            <div class="time-badge">08.30 - 09.30 น.</div>
-            <div class="card-content">
-                <h3>พิธีเปิดงาน OPEN HOUSE</h3>
-                <ul>
-                    <li><strong>นางสาวเยาวดี รูปพรม</strong> กล่าวรายงานการจัดกิจกรรมวันแสดงผลงานนักเรียน</li>
-                    <li><strong>นายเรวัตต์ นกสว่าง</strong> กล่าวเปิดการจัดกิจกรรมวันแสดงผลงานกิจกรรมชุมนุม และกดปุ่มเปิดงาน</li>
-                </ul>
-                <div class="location"><i class="fas fa-map-marker-alt"></i> เวทีสนาม โรงเรียนวัดสุทธิวราราม</div>
-            </div>
-        </div>
-
-        <!-- 09.00 - 12.00 -->
-        <div class="schedule-card" style="border-left-color: var(--primary-green);" data-aos="fade-up" data-aos-delay="400">
-            <div class="time-badge green">09.00 - 12.00 น.</div>
-            <div class="card-content">
-                <h3>การแข่งขันทางวิชาการ</h3>
-                <ul>
-                    <li>การแข่งขันทางวิชาการของ 8 กลุ่มสาระการเรียนรู้</li>
-                </ul>
-                <div class="location"><i class="fas fa-map-marker-alt"></i> ตามห้องเรียนที่กำหนด</div>
-            </div>
-        </div>
-
-        <!-- 09.30 เป็นต้นไป -->
-        <div class="schedule-card" style="border-left-color: var(--primary-green);" data-aos="fade-up" data-aos-delay="500">
-            <div class="time-badge green">09.30 น. เป็นต้นไป</div>
-            <div class="card-content">
-                <h3>กิจกรรม OPEN HOUSE มีดังนี้</h3>
-                <ul>
-                    <li>รับชมกิจกรรมบนเวที (เวทีสนาม)</li>
-                    <li>รับชมการแสดงของชุมนุมต่าง ๆ (กลางสนาม)</li>
-                    <li>ร่วมสนุกกับการแสดงผลงานเชิงสร้างสรรค์ของกลุ่มสาระการเรียนรู้ต่างๆ พร้อมรับของรางวัล</li>
-                    <li>ร่วมสนุกกับบูธต่าง ๆ และการแข่งขันวิชาการ / กิจกรรมพัฒนาผู้เรียน (ตามห้องเรียน)</li>
-                    <li>บูธจำหน่ายอาหาร สินค้า และผลงานนักเรียน (สนามโรงเรียน)</li>
-                </ul>
-                <div class="location"><i class="fas fa-map-marker-alt"></i> สนามโรงเรียน / เวทีสนาม / ตามห้องเรียนที่กำหนด</div>
-            </div>
-        </div>
-
-        <!-- Gallery & Map -->
-        <div class="two-cols" data-aos="fade-up">
-            <div>
-                <h3 style="color: var(--primary-green); margin-bottom: 15px;"><i class="fas fa-images"></i> ภาพบรรยากาศปีก่อน</h3>
-                <div class="placeholder-box">
-                    [ พื้นที่สำหรับใส่รูปภาพแกลเลอรี ]
-                </div>
-            </div>
-            <div>
-                <h3 style="color: var(--primary-green); margin-bottom: 15px;"><i class="fas fa-map"></i> แผนผังการจัดงาน</h3>
-                <div class="placeholder-box">
-                    [ พื้นที่สำหรับใส่รูปภาพแผนผังโรงเรียน ]
-                </div>
-            </div>
-        </div>
-
-        <!-- Location Info -->
-        <div class="travel-info" data-aos="zoom-in">
-            <h2 style="color: var(--primary-green); margin-bottom: 10px;">การเดินทางมาโรงเรียน</h2>
-            <p>โรงเรียนวัดสุทธิวราราม ถนนเจริญกรุง แขวงยานนาวา เขตสาทร กรุงเทพมหานคร</p>
-            
-            <div class="transport-modes">
-                <div class="transport-item">
-                    <i class="fas fa-bus"></i>
-                    <span><strong>รถเมล์สาย:</strong> 1, 15, 17, 35, 75, 163, 504, 547</span>
-                </div>
-                <div class="transport-item">
-                    <i class="fas fa-train"></i>
-                    <span><strong>BTS:</strong> สถานีสะพานตากสิน (ต่อรถเมล์หรือเดิน)</span>
+        <div class="bg-white rounded-3xl p-6 sm:p-9 shadow-lg border border-slate-100 border-t-4 border-t-suthi-pink grid grid-cols-1 lg:grid-cols-12 gap-8 items-center" data-aos="fade-up" data-aos-delay="100">
+            <!-- YouTube Responsive Embed -->
+            <div class="lg:col-span-7">
+                <div class="relative w-full pb-[56.25%] rounded-2xl overflow-hidden shadow-md bg-slate-900">
+                    <iframe class="absolute inset-0 w-full h-full border-0"
+                            src="https://www.youtube.com/embed/ygdEd6NzPzU" 
+                            title="INTRODUCTION SUTHIWARARAM SCHOOL (แนะนำโรงเรียนวัดสุทธิวราราม)" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen>
+                    </iframe>
                 </div>
             </div>
 
-            <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.976077595514!2d100.5113943!3d13.7153673!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e298c47d7c6b55%3A0xc62269c73b0632b7!2sWat%20Suthiwararam%20School!5e0!3m2!1sth!2sth!4v1700000000000!5m2!1sth!2sth" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <!-- Facility Highlights -->
+            <div class="lg:col-span-5 space-y-4">
+                <div class="inline-flex items-center gap-2 bg-suthi-green-light text-suthi-green px-3 py-1 rounded-lg text-xs font-bold">
+                    <i class="fas fa-school"></i> บรรยากาศและสิ่งอำนวยความสะดวก
+                </div>
+                <h3 class="font-heading text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                    แหล่งเรียนรู้ทันสมัย ส่งเสริมศักยภาพรอบด้าน
+                </h3>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                    สัมผัสความพร้อมด้านอาคารเรียน ห้องปฏิบัติการเฉพาะทาง และกิจกรรมพัฒนาผู้เรียนที่หล่อหลอมความเป็นสุภาพบุรุษสุทธิวรารามอย่างสมภาคภูมิ
+                </p>
+
+                <ul class="space-y-3 pt-2">
+                    <li class="flex items-start gap-3 text-sm sm:text-base font-medium text-slate-700">
+                        <span class="w-7 h-7 rounded-full bg-suthi-pink-light text-suthi-pink flex items-center justify-center shrink-0 mt-0.5">
+                            <i class="fas fa-building text-xs"></i>
+                        </span>
+                        <span><strong>ห้องประชุมศตวัชรบุษกร ชั้น 10</strong> และอาคารเรียนทันสมัย</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm sm:text-base font-medium text-slate-700">
+                        <span class="w-7 h-7 rounded-full bg-suthi-green-light text-suthi-green flex items-center justify-center shrink-0 mt-0.5">
+                            <i class="fas fa-flask text-xs"></i>
+                        </span>
+                        <span><strong>ห้องเรียนโครงการพิเศษ GIFTED</strong> วิทยาศาสตร์-คณิตศาสตร์</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm sm:text-base font-medium text-slate-700">
+                        <span class="w-7 h-7 rounded-full bg-suthi-pink-light text-suthi-pink flex items-center justify-center shrink-0 mt-0.5">
+                            <i class="fas fa-music text-xs"></i>
+                        </span>
+                        <span><strong>ดนตรีไทย นาฏศิลป์ และวงโยธวาทิต</strong> สร้างชื่อเสียงระดับนานาชาติ</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm sm:text-base font-medium text-slate-700">
+                        <span class="w-7 h-7 rounded-full bg-suthi-green-light text-suthi-green flex items-center justify-center shrink-0 mt-0.5">
+                            <i class="fas fa-laptop-code text-xs"></i>
+                        </span>
+                        <span><strong>ห้องปฏิบัติการคอมพิวเตอร์</strong> และห้องสมุดเฉลิมพระเกียรติฯ</span>
+                    </li>
+                </ul>
             </div>
         </div>
+    </section>
 
-    </div>
+    <!-- ================= EVENT TIMELINE SCHEDULE ================= -->
+    <section id="schedule" class="bg-slate-100/70 py-16 sm:py-20 border-y border-slate-200/70">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <span class="font-heading text-suthi-pink font-bold text-xs sm:text-sm uppercase tracking-widest block mb-1.5">
+                    Event Timeline
+                </span>
+                <h2 class="font-heading text-2xl sm:text-4xl font-bold text-suthi-green-dark">
+                    กำหนดการจัดกิจกรรม
+                </h2>
+                <p class="text-slate-600 mt-2 font-medium">วันพฤหัสบดีที่ 4 กุมภาพันธ์ พ.ศ. 2570 • โรงเรียนวัดสุทธิวราราม (ฉบับร่าง)</p>
+                <div class="w-20 h-1.5 bg-gradient-to-r from-suthi-pink to-suthi-green mx-auto mt-3.5 rounded-full"></div>
+            </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-col">
-                <img src="https://suthi.ac.th/wp-content/uploads/2022/11/SUTHIWARARAM_SCHOOL_LOGO.png" alt="โลโก้" style="height: 60px; filter: brightness(0) invert(1); margin-bottom: 15px;">
-                <p><strong>โรงเรียนวัดสุทธิวราราม</strong><br>Wat Suthiwararam School</p>
-            </div>
-            <div class="footer-col">
-                <h4>ติดต่อสอบถาม</h4>
-                <p><i class="fas fa-map-marker-alt"></i> 252 ถนนเจริญกรุง แขวงยานนาวา เขตสาทร กทม. 10120</p>
-                <p><i class="fas fa-phone-alt"></i> 02-211-1601</p>
-                <p><i class="fas fa-envelope"></i> admin@suthi.ac.th</p>
-            </div>
-            <div class="footer-col">
-                <h4>ติดตามเรา</h4>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/watsuthi" target="_blank"><i class="fab fa-facebook"></i></a>
-                    <a href="https://suthi.ac.th" target="_blank"><i class="fas fa-globe"></i></a>
+            <div class="space-y-6">
+                <!-- Slot 1: 07.30 - 08.00 น. (Pink Theme) -->
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-200/80 overflow-hidden flex flex-col md:flex-row" data-aos="fade-up">
+                    <div class="md:w-52 bg-gradient-to-br from-suthi-pink-light to-pink-50 border-b-2 md:border-b-0 md:border-r-4 border-suthi-pink p-5 flex flex-row md:flex-col items-center justify-between md:justify-center text-center shrink-0">
+                        <span class="font-heading text-lg sm:text-xl font-extrabold text-suthi-pink-dark">07.30 - 08.00 น.</span>
+                        <span class="text-xs font-bold text-suthi-pink bg-white/80 px-2.5 py-1 rounded-full md:mt-2">ช่วงลงทะเบียน</span>
+                    </div>
+                    <div class="p-6 sm:p-7 flex-grow">
+                        <h3 class="font-heading text-lg sm:text-xl font-bold text-slate-900 mb-3">
+                            ลงทะเบียนผู้เข้าร่วมงาน และตัวแทนนักเรียนแข่งขันวิชาการ
+                        </h3>
+                        <ul class="list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
+                            <li>ผู้มาร่วมงานลงทะเบียน ณ <strong>ห้องประชุมศตวัชรบุษกร ชั้น 10</strong></li>
+                            <li>ตัวแทนนักเรียนจากโรงเรียนประถมศึกษา ลงทะเบียนเข้าร่วมแข่งขันทักษะทางวิชาการ</li>
+                        </ul>
+                        <div class="mt-3.5 bg-amber-50 border border-amber-200 text-amber-800 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-start gap-2">
+                            <i class="fas fa-trophy text-amber-500 mt-0.5"></i>
+                            <span><strong>หมายเหตุ:</strong> มอบเงินรางวัลและใบเกียรติบัตรบนเวทีในวันงาน หลังเสร็จสิ้นการแข่งขัน</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                <i class="fas fa-map-marker-alt text-suthi-pink"></i> ห้องประชุมศตวัชรบุษกร ชั้น 10
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                <i class="fas fa-door-open text-suthi-pink"></i> แข่งขันตามห้องเรียนที่กำหนด
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slot 2: 08.00 - 08.30 น. (Pink Theme) -->
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-200/80 overflow-hidden flex flex-col md:flex-row" data-aos="fade-up" data-aos-delay="50">
+                    <div class="md:w-52 bg-gradient-to-br from-suthi-pink-light to-pink-50 border-b-2 md:border-b-0 md:border-r-4 border-suthi-pink p-5 flex flex-row md:flex-col items-center justify-between md:justify-center text-center shrink-0">
+                        <span class="font-heading text-lg sm:text-xl font-extrabold text-suthi-pink-dark">08.00 - 08.30 น.</span>
+                        <span class="text-xs font-bold text-suthi-pink bg-white/80 px-2.5 py-1 rounded-full md:mt-2">แนะแนวการศึกษาต่อ</span>
+                    </div>
+                    <div class="p-6 sm:p-7 flex-grow">
+                        <h3 class="font-heading text-lg sm:text-xl font-bold text-slate-900 mb-3">
+                            พิธีเปิดการแนะแนวการศึกษาต่อ และชี้แจงเกณฑ์การรับนักเรียน ม.1
+                        </h3>
+                        <ul class="list-disc pl-5 space-y-2.5 text-slate-700 text-sm sm:text-base">
+                            <li><strong>นางสาวเยาวดี รูปพรม</strong> รองผู้อำนวยการกลุ่มบริหารวิชาการ กล่าวรายงานการจัดกิจกรรมแนะแนวการศึกษาต่อ</li>
+                            <li><strong>นายเรวัตต์ นกสว่าง</strong> ผู้อำนวยการโรงเรียนวัดสุทธิวราราม กล่าวต้อนรับคณะผู้บริหาร ครู นักเรียน และผู้ปกครองที่มาร่วมงาน และกล่าวเปิดการแนะแนวการศึกษาต่อ</li>
+                            <li>ครูแนะแนวชี้แจงนโยบาย เกณฑ์การรับนักเรียน ม.1 ปีการศึกษา 2570 ของ สพฐ. และของโรงเรียนวัดสุทธิวราราม</li>
+                        </ul>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                <i class="fas fa-map-marker-alt text-suthi-pink"></i> ห้องประชุมศตวัชรบุษกร ชั้น 10
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slot 3: 08.30 - 09.30 น. (Pink Theme) -->
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-200/80 overflow-hidden flex flex-col md:flex-row" data-aos="fade-up" data-aos-delay="100">
+                    <div class="md:w-52 bg-gradient-to-br from-suthi-pink-light to-pink-50 border-b-2 md:border-b-0 md:border-r-4 border-suthi-pink p-5 flex flex-row md:flex-col items-center justify-between md:justify-center text-center shrink-0">
+                        <span class="font-heading text-lg sm:text-xl font-extrabold text-suthi-pink-dark">08.30 - 09.30 น.</span>
+                        <span class="text-xs font-bold text-suthi-pink bg-white/80 px-2.5 py-1 rounded-full md:mt-2">พิธีเปิดงาน</span>
+                    </div>
+                    <div class="p-6 sm:p-7 flex-grow">
+                        <h3 class="font-heading text-lg sm:text-xl font-bold text-slate-900 mb-3">
+                            พิธีเปิดงาน OPEN HOUSE <span class="text-suthi-pink">"รอชื่องาน"</span> ประจำปีการศึกษา 2569
+                        </h3>
+                        <ul class="list-disc pl-5 space-y-2.5 text-slate-700 text-sm sm:text-base">
+                            <li><strong>นางสาวเยาวดี รูปพรม</strong> รองผู้อำนวยการกลุ่มบริหารวิชาการ กล่าวรายงานการจัดกิจกรรมวันแสดงผลงานนักเรียน</li>
+                            <li><strong>นายเรวัตต์ นกสว่าง</strong> ผู้อำนวยการโรงเรียนวัดสุทธิวราราม กล่าวเปิดการจัดกิจกรรมวันแสดงผลงานกิจกรรมชุมนุม</li>
+                            <li><strong>นายเรวัตต์ นกสว่าง</strong> ผู้อำนวยการโรงเรียนวัดสุทธิวราราม กดปุ่มเปิดงานอย่างเป็นทางการ</li>
+                        </ul>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                <i class="fas fa-map-marker-alt text-suthi-pink"></i> เวทีสนาม โรงเรียนวัดสุทธิวราราม
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slot 4: 09.00 - 12.00 น. (Green Theme) -->
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-200/80 overflow-hidden flex flex-col md:flex-row" data-aos="fade-up" data-aos-delay="150">
+                    <div class="md:w-52 bg-gradient-to-br from-suthi-green-light to-emerald-50 border-b-2 md:border-b-0 md:border-r-4 border-suthi-green p-5 flex flex-row md:flex-col items-center justify-between md:justify-center text-center shrink-0">
+                        <span class="font-heading text-lg sm:text-xl font-extrabold text-suthi-green-dark">09.00 - 12.00 น.</span>
+                        <span class="text-xs font-bold text-suthi-green bg-white/80 px-2.5 py-1 rounded-full md:mt-2">การแข่งขันวิชาการ</span>
+                    </div>
+                    <div class="p-6 sm:p-7 flex-grow">
+                        <h3 class="font-heading text-lg sm:text-xl font-bold text-slate-900 mb-3">
+                            การแข่งขันทางวิชาการของ 8 กลุ่มสาระการเรียนรู้
+                        </h3>
+                        <ul class="list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
+                            <li>การแข่งขันทักษะทางวิชาการสำหรับตัวแทนนักเรียนระดับประถมศึกษา ครบทั้ง 8 กลุ่มสาระการเรียนรู้</li>
+                        </ul>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                <i class="fas fa-chalkboard-teacher text-suthi-green"></i> ตามห้องเรียนที่กำหนด
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slot 5: 09.30 น. เป็นต้นไป (Green Theme) -->
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-200/80 overflow-hidden flex flex-col md:flex-row" data-aos="fade-up" data-aos-delay="200">
+                    <div class="md:w-52 bg-gradient-to-br from-suthi-green-light to-emerald-50 border-b-2 md:border-b-0 md:border-r-4 border-suthi-green p-5 flex flex-row md:flex-col items-center justify-between md:justify-center text-center shrink-0">
+                        <span class="font-heading text-lg sm:text-xl font-extrabold text-suthi-green-dark leading-tight">09.30 น.<br class="hidden md:inline"> เป็นต้นไป</span>
+                        <span class="text-xs font-bold text-suthi-green bg-white/80 px-2.5 py-1 rounded-full md:mt-2">กิจกรรมตลอดวัน</span>
+                    </div>
+                    <div class="p-6 sm:p-7 flex-grow">
+                        <h3 class="font-heading text-lg sm:text-xl font-bold text-slate-900 mb-3">
+                            กิจกรรม OPEN HOUSE และนิทรรศการวิชาการ
+                        </h3>
+                        <ul class="list-disc pl-5 space-y-2.5 text-slate-700 text-sm sm:text-base">
+                            <li>รับชมกิจกรรมและการแสดงความสามารถพิเศษบนเวที <span class="text-slate-500 text-xs sm:text-sm">(เวทีสนาม โรงเรียนวัดสุทธิวราราม)</span></li>
+                            <li>รับชมการแสดงของชุมนุมต่าง ๆ กลางสนาม <span class="text-slate-500 text-xs sm:text-sm">(สนามโรงเรียนวัดสุทธิวราราม)</span></li>
+                            <li>ร่วมสนุกกับการแสดงผลงานเชิงสร้างสรรค์ของกลุ่มสาระการเรียนรู้ต่าง ๆ รับของรางวัล <span class="text-slate-500 text-xs sm:text-sm">(ตามห้องเรียนที่กำหนด)</span></li>
+                            <li>ร่วมสนุกกับบูธต่าง ๆ อีกมากมาย และการแข่งขันทางวิชาการของ 8 กลุ่มสาระการเรียนรู้ / 1 กิจกรรมพัฒนาผู้เรียน <span class="text-slate-500 text-xs sm:text-sm">(ตามห้องเรียนที่กำหนด)</span></li>
+                            <li>บูธจำหน่ายอาหาร และสินค้า ผลงานนักเรียน <span class="text-slate-500 text-xs sm:text-sm">(สนามโรงเรียนวัดสุทธิวราราม)</span></li>
+                        </ul>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                <i class="fas fa-microphone-alt text-suthi-green"></i> เวทีสนาม
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                <i class="fas fa-users text-suthi-pink"></i> สนามโรงเรียนวัดสุทธิวราราม
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                <i class="fas fa-school text-suthi-green"></i> ตามห้องเรียนที่กำหนด
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="copyright">
-            &copy; 2569 งานสื่อสารองค์กร โรงเรียนวัดสุทธิวราราม. All Rights Reserved.
+    </section>
+
+    <!-- ================= EVENT ZONES / INTERACTIVE MAP GUIDE ================= -->
+    <section id="zones" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <span class="font-heading text-suthi-pink font-bold text-xs sm:text-sm uppercase tracking-widest block mb-1.5">
+                Event Zones & Map Guide
+            </span>
+            <h2 class="font-heading text-2xl sm:text-4xl font-bold text-suthi-green-dark">
+                แผนผังจุดจัดกิจกรรมหลัก
+            </h2>
+            <p class="text-slate-600 mt-2">สำรวจจุดสำคัญทั้ง 4 โซนภายในโรงเรียนวัดสุทธิวราราม เพื่อวางแผนการเดินชมงาน</p>
+            <div class="w-20 h-1.5 bg-gradient-to-r from-suthi-pink to-suthi-green mx-auto mt-3.5 rounded-full"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Zone 1 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 border-b-4 border-b-suthi-green hover:-translate-y-1.5" data-aos="fade-up" data-aos-delay="50">
+                <div class="w-12 h-12 rounded-2xl bg-suthi-green-light text-suthi-green flex items-center justify-center text-xl mb-5">
+                    <i class="fas fa-building"></i>
+                </div>
+                <span class="text-xs font-bold text-suthi-green uppercase tracking-wider">Zone 01</span>
+                <h3 class="font-heading text-lg font-bold text-slate-900 mt-1 mb-2.5">
+                    ห้องประชุมศตวัชรบุษกร ชั้น 10
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    จุดลงทะเบียนผู้เข้าร่วมงาน พิธีเปิดการแนะแนวการศึกษาต่อ และฟังคำชี้แจงเกณฑ์การรับนักเรียน ม.1 ปีการศึกษา 2570
+                </p>
+            </div>
+
+            <!-- Zone 2 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 border-b-4 border-b-suthi-pink hover:-translate-y-1.5" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-12 h-12 rounded-2xl bg-suthi-pink-light text-suthi-pink flex items-center justify-center text-xl mb-5">
+                    <i class="fas fa-star"></i>
+                </div>
+                <span class="text-xs font-bold text-suthi-pink uppercase tracking-wider">Zone 02</span>
+                <h3 class="font-heading text-lg font-bold text-slate-900 mt-1 mb-2.5">
+                    เวทีสนามโรงเรียน
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    พิธีเปิดงาน OPEN HOUSE การแสดงความสามารถพิเศษบนเวทีตลอดวัน และพิธีมอบเงินรางวัลพร้อมเกียรติบัตร
+                </p>
+            </div>
+
+            <!-- Zone 3 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 border-b-4 border-b-suthi-green hover:-translate-y-1.5" data-aos="fade-up" data-aos-delay="150">
+                <div class="w-12 h-12 rounded-2xl bg-suthi-green-light text-suthi-green flex items-center justify-center text-xl mb-5">
+                    <i class="fas fa-store"></i>
+                </div>
+                <span class="text-xs font-bold text-suthi-green uppercase tracking-wider">Zone 03</span>
+                <h3 class="font-heading text-lg font-bold text-slate-900 mt-1 mb-2.5">
+                    สนามโรงเรียนวัดสุทธิวราราม
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    ลานแสดงผลงานกิจกรรมชุมนุมกลางสนาม และโซนบูธจำหน่ายอาหาร เครื่องดื่ม และสินค้าผลงานสร้างสรรค์ของนักเรียน
+                </p>
+            </div>
+
+            <!-- Zone 4 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 border-b-4 border-b-suthi-pink hover:-translate-y-1.5" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-12 h-12 rounded-2xl bg-suthi-pink-light text-suthi-pink flex items-center justify-center text-xl mb-5">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <span class="text-xs font-bold text-suthi-pink uppercase tracking-wider">Zone 04</span>
+                <h3 class="font-heading text-lg font-bold text-slate-900 mt-1 mb-2.5">
+                    อาคารเรียน 8 กลุ่มสาระฯ
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    สนามแข่งขันทักษะทางวิชาการ 8 กลุ่มสาระการเรียนรู้ / 1 กิจกรรมพัฒนาผู้เรียน และฐานกิจกรรมเชิงสร้างสรรค์รับของรางวัล
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ATMOSPHERE GALLERY (WITH LIGHTBOX) ================= -->
+    <section id="gallery" class="bg-slate-100/70 py-16 sm:py-20 border-y border-slate-200/70">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <span class="font-heading text-suthi-pink font-bold text-xs sm:text-sm uppercase tracking-widest block mb-1.5">
+                    Atmosphere & Highlights
+                </span>
+                <h2 class="font-heading text-2xl sm:text-4xl font-bold text-suthi-green-dark">
+                    ภาพบรรยากาศกิจกรรมที่ผ่านมา
+                </h2>
+                <p class="text-slate-600 mt-2 text-sm sm:text-base">คลิกที่ภาพเพื่อขยายดูรายละเอียดบรรยากาศความสนุกและวิชาการ</p>
+                <div class="w-20 h-1.5 bg-gradient-to-r from-suthi-pink to-suthi-green mx-auto mt-3.5 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-aos="fade-up" data-aos-delay="100">
+                <!-- Card 1 -->
+                <div onclick="openLightbox('พิธีเปิดงาน OPEN HOUSE และแนะแนวการศึกษาต่อ', 'บรรยากาศพิธีเปิดงานอย่างยิ่งใหญ่ ณ เวทีสนาม และกิจกรรมแนะแนวการศึกษาต่อ ณ ห้องประชุมศตวัชรบุษกร ชั้น 10', 'https://placehold.co/800x550/E91E63/FFFFFF?text=Opening+Ceremony+%26+Guidance')" 
+                     class="group relative h-60 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl cursor-pointer bg-slate-200">
+                    <img src="https://placehold.co/600x420/E91E63/FFFFFF?text=Opening+Ceremony" 
+                         alt="พิธีเปิดงาน OPEN HOUSE" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col justify-end p-5">
+                        <span class="text-xs font-bold text-pink-300 mb-1"><i class="fas fa-expand-alt mr-1"></i> คลิกเพื่อขยาย</span>
+                        <h4 class="font-heading text-white font-bold text-base leading-snug">พิธีเปิดงาน OPEN HOUSE และแนะแนวการศึกษาต่อ</h4>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div onclick="openLightbox('การแข่งขันทักษะทางวิชาการ 8 กลุ่มสาระฯ', 'ตัวแทนนักเรียนระดับประถมศึกษาร่วมประลองทักษะทางวิชาการทั้ง 8 กลุ่มสาระการเรียนรู้ ชิงเงินรางวัลและเกียรติบัตร', 'https://placehold.co/800x550/2E7D32/FFFFFF?text=Academic+Competition+8+Subjects')" 
+                     class="group relative h-60 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl cursor-pointer bg-slate-200">
+                    <img src="https://placehold.co/600x420/2E7D32/FFFFFF?text=Academic+Competition" 
+                         alt="การแข่งขันทักษะทางวิชาการ" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col justify-end p-5">
+                        <span class="text-xs font-bold text-emerald-300 mb-1"><i class="fas fa-expand-alt mr-1"></i> คลิกเพื่อขยาย</span>
+                        <h4 class="font-heading text-white font-bold text-base leading-snug">การแข่งขันทักษะทางวิชาการ 8 กลุ่มสาระฯ</h4>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div onclick="openLightbox('การแสดงดนตรีและกิจกรรมชุมนุมกลางสนาม', 'ตื่นตาตื่นใจกับการแสดงวงโยธวาทิต ดนตรีสากล นาฏศิลป์ และนิทรรศการจากชุมนุมนักเรียนกว่า 30 ชุมนุม', 'https://placehold.co/800x550/C2185B/FFFFFF?text=Student+Clubs+%26+Music+Show')" 
+                     class="group relative h-60 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl cursor-pointer bg-slate-200">
+                    <img src="https://placehold.co/600x420/C2185B/FFFFFF?text=Clubs+%26+Stage+Show" 
+                         alt="การแสดงดนตรีและกิจกรรมชุมนุม" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col justify-end p-5">
+                        <span class="text-xs font-bold text-pink-300 mb-1"><i class="fas fa-expand-alt mr-1"></i> คลิกเพื่อขยาย</span>
+                        <h4 class="font-heading text-white font-bold text-base leading-snug">การแสดงดนตรีและกิจกรรมชุมนุมกลางสนาม</h4>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div onclick="openLightbox('บูธจำหน่ายอาหารและสินค้าผลงานนักเรียน', 'เลือกชิมอาหารอร่อยและอุดหนุนสินค้าไอเดียสร้างสรรค์ฝีมือนักเรียนวัดสุทธิวราราม ณ ลานสนามโรงเรียน', 'https://placehold.co/800x550/1B5E20/FFFFFF?text=Student+Market+%26+Food+Booths')" 
+                     class="group relative h-60 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl cursor-pointer bg-slate-200">
+                    <img src="https://placehold.co/600x420/1B5E20/FFFFFF?text=Food+%26+Student+Products" 
+                         alt="บูธจำหน่ายอาหารและสินค้า" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col justify-end p-5">
+                        <span class="text-xs font-bold text-emerald-300 mb-1"><i class="fas fa-expand-alt mr-1"></i> คลิกเพื่อขยาย</span>
+                        <h4 class="font-heading text-white font-bold text-base leading-snug">บูธจำหน่ายอาหารและสินค้าผลงานนักเรียน</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= LOCATION & TRAVEL SECTION ================= -->
+    <section id="travel" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <span class="font-heading text-suthi-pink font-bold text-xs sm:text-sm uppercase tracking-widest block mb-1.5">
+                Location & Directions
+            </span>
+            <h2 class="font-heading text-2xl sm:text-4xl font-bold text-suthi-green-dark">
+                แผนที่และการเดินทางมาโรงเรียน
+            </h2>
+            <div class="w-20 h-1.5 bg-gradient-to-r from-suthi-pink to-suthi-green mx-auto mt-3.5 rounded-full"></div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-lg border border-slate-100 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center" data-aos="fade-up" data-aos-delay="100">
+            <!-- Travel Instructions -->
+            <div class="lg:col-span-5 space-y-5">
+                <div>
+                    <h3 class="font-heading text-2xl font-bold text-suthi-green mb-1.5">
+                        โรงเรียนวัดสุทธิวราราม
+                    </h3>
+                    <p class="text-slate-600 text-sm sm:text-base flex items-start gap-2">
+                        <i class="fas fa-map-pin text-suthi-pink mt-1"></i>
+                        <span>เลขที่ 252 ถนนเจริญกรุง แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120</span>
+                    </p>
+                </div>
+
+                <div class="space-y-3.5">
+                    <!-- BTS -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border-l-4 border-suthi-green flex items-start gap-3.5">
+                        <i class="fas fa-train-subway text-suthi-pink text-xl mt-0.5"></i>
+                        <div class="text-sm">
+                            <strong class="font-heading text-slate-900 block text-base mb-0.5">รถไฟฟ้า BTS</strong>
+                            <span class="text-slate-600">ลงสถานี <strong>สะพานตากสิน (S6)</strong> ทางออก 3 หรือ 4 เดินต่อประมาณ 600 เมตร หรือต่อรถประจำทาง/วินมอเตอร์ไซค์หน้าโรบินสันบางรัก</span>
+                        </div>
+                    </div>
+
+                    <!-- Bus -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border-l-4 border-suthi-pink flex items-start gap-3.5">
+                        <i class="fas fa-bus text-suthi-green text-xl mt-0.5"></i>
+                        <div class="text-sm">
+                            <strong class="font-heading text-slate-900 block text-base mb-0.5">รถประจำทาง (รถเมล์)</strong>
+                            <span class="text-slate-600">สาย <strong>1, 15, 17, 35, 75, 163, 504, 547</strong> ลงป้ายหน้าโรงเรียนวัดสุทธิวราราม</span>
+                        </div>
+                    </div>
+
+                    <!-- Boat -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border-l-4 border-suthi-green flex items-start gap-3.5">
+                        <i class="fas fa-ship text-suthi-pink text-xl mt-0.5"></i>
+                        <div class="text-sm">
+                            <strong class="font-heading text-slate-900 block text-base mb-0.5">เรือด่วนเจ้าพระยา</strong>
+                            <span class="text-slate-600">ขึ้นที่ <strong>ท่าเรือสาทร (ตากสิน)</strong> เดินออกมายังถนนเจริญกรุง เลี้ยวขวาเดินตรงมาประมาณ 600 เมตร</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Maps Embed -->
+            <div class="lg:col-span-7">
+                <div class="w-full h-80 sm:h-96 rounded-2xl overflow-hidden border-2 border-slate-200 shadow-inner">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3876.002975856343!2d100.51120267589473!3d13.718266598067397!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e298c47d7c6b55%3A0xc62269c73b0632b7!2sWat%20Suthiwararam%20School!5e0!3m2!1sth!2sth!4v1700000000000!5m2!1sth!2sth" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="แผนที่โรงเรียนวัดสุทธิวราราม">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-slate-900 text-slate-200 pt-14 pb-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-10 border-b border-slate-800">
+                <!-- Brand & Motto -->
+                <div class="md:col-span-5 space-y-4">
+                    <div class="flex items-center gap-3.5">
+                        <img src="https://suthi.ac.th/wp-content/uploads/2022/11/SUTHIWARARAM_SCHOOL_LOGO.png" 
+                             alt="โลโก้โรงเรียนวัดสุทธิวราราม" 
+                             onerror="this.src='https://placehold.co/60x60/E91E63/FFFFFF?text=ส.ท.'"
+                             class="h-14 w-auto bg-white p-1.5 rounded-xl">
+                        <div>
+                            <h4 class="font-heading text-lg font-bold text-white">โรงเรียนวัดสุทธิวราราม</h4>
+                            <p class="text-xs text-pink-400 font-semibold">WAT SUTHIWARARAM SCHOOL</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        <strong class="text-emerald-400">"สุทธิวิชชา สัจจะ กตัญญู"</strong><br>
+                        งานแสดงผลงานกิจกรรมนักเรียนและนิทรรศการวิชาการ OPEN HOUSE ประจำปีการศึกษา 2569
+                    </p>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="md:col-span-4 space-y-3">
+                    <h4 class="font-heading text-base font-bold text-suthi-pink uppercase tracking-wider mb-3">
+                        ติดต่อสอบถามข้อมูล
+                    </h4>
+                    <p class="text-sm text-slate-300 flex items-start gap-3">
+                        <i class="fas fa-map-marker-alt text-suthi-pink mt-1"></i>
+                        <span>252 ถนนเจริญกรุง แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120</span>
+                    </p>
+                    <p class="text-sm text-slate-300 flex items-center gap-3">
+                        <i class="fas fa-phone-alt text-suthi-pink"></i>
+                        <a href="tel:022111601" class="hover:text-white transition-colors">โทรศัพท์: 02-211-1601</a>
+                    </p>
+                    <p class="text-sm text-slate-300 flex items-center gap-3">
+                        <i class="fas fa-globe text-suthi-pink"></i>
+                        <a href="https://suthi.ac.th" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">เว็บไซต์หลัก: www.suthi.ac.th</a>
+                    </p>
+                </div>
+
+                <!-- Social Links -->
+                <div class="md:col-span-3 space-y-3">
+                    <h4 class="font-heading text-base font-bold text-suthi-pink uppercase tracking-wider mb-3">
+                        ติดตามข่าวสาร
+                    </h4>
+                    <p class="text-sm text-slate-400">
+                        อัปเดตกำหนดการและผลการแข่งขันได้ที่ช่องทางทางการของโรงเรียน
+                    </p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="https://www.facebook.com/watsuthi" target="_blank" rel="noopener noreferrer" 
+                           title="Facebook โรงเรียนวัดสุทธิวราราม"
+                           class="w-11 h-11 rounded-full bg-slate-800 hover:bg-[#1877F2] text-white flex items-center justify-center text-lg transition-all transform hover:-translate-y-1">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://youtu.be/ygdEd6NzPzU" target="_blank" rel="noopener noreferrer" 
+                           title="YouTube แนะนำโรงเรียนวัดสุทธิวราราม"
+                           class="w-11 h-11 rounded-full bg-slate-800 hover:bg-[#FF0000] text-white flex items-center justify-center text-lg transition-all transform hover:-translate-y-1">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="https://suthi.ac.th" target="_blank" rel="noopener noreferrer" 
+                           title="เว็บไซต์โรงเรียนวัดสุทธิวราราม"
+                           class="w-11 h-11 rounded-full bg-slate-800 hover:bg-suthi-green text-white flex items-center justify-center text-lg transition-all transform hover:-translate-y-1">
+                            <i class="fas fa-globe"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 text-center text-xs sm:text-sm text-slate-500">
+                &copy; 2569 โรงเรียนวัดสุทธิวราราม (Wat Suthiwararam School) • งานแสดงผลงานกิจกรรมนักเรียนและนิทรรศการวิชาการ OPEN HOUSE
+            </div>
         </div>
     </footer>
+
+    <!-- ================= MODAL 1: REGISTRATION PREVIEW MODAL ================= -->
+    <div id="register-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm modal-backdrop">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 relative modal-panel">
+            <button onclick="closeRegisterModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer" aria-label="ปิดหน้าต่าง">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-2xl bg-suthi-pink-light text-suthi-pink flex items-center justify-center text-xl">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div>
+                    <h3 class="font-heading text-xl font-bold text-slate-900">ลงทะเบียนเข้าร่วมงานล่วงหน้า</h3>
+                    <p class="text-xs text-slate-500">SUTHI OPEN HOUSE • วันพฤหัสบดีที่ 4 กุมภาพันธ์ 2570</p>
+                </div>
+            </div>
+
+            <form id="register-form" onsubmit="handleRegisterSubmit(event)" class="space-y-4 mt-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">ประเภทผู้เข้าร่วมงาน</label>
+                    <select required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-suthi-pink focus:ring-2 focus:ring-suthi-pink/20 outline-none text-sm bg-slate-50">
+                        <option value="student">นักเรียน (ผู้สนใจศึกษาต่อ / เข้าชมงาน)</option>
+                        <option value="competitor">ตัวแทนนักเรียนประถมศึกษา (เข้าร่วมแข่งขันทักษะวิชาการ)</option>
+                        <option value="parent">ผู้ปกครอง / ครู / บุคคลทั่วไป</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">ชื่อ - นามสกุล</label>
+                    <input type="text" required placeholder="ระบุชื่อและนามสกุล" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-suthi-pink focus:ring-2 focus:ring-suthi-pink/20 outline-none text-sm">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">โรงเรียน / สังกัด</label>
+                        <input type="text" required placeholder="ชื่อโรงเรียนปัจจุบัน" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-suthi-green focus:ring-2 focus:ring-suthi-green/20 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">ระดับชั้น</label>
+                        <select required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-suthi-green focus:ring-2 focus:ring-suthi-green/20 outline-none text-sm bg-slate-50">
+                            <option value="p6">ประถมศึกษาปีที่ 6 (ป.6)</option>
+                            <option value="p4-5">ประถมศึกษาปีที่ 4 - 5</option>
+                            <option value="m3">มัธยมศึกษาปีที่ 3 (ม.3)</option>
+                            <option value="other">ผู้ปกครอง / อื่นๆ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">เบอร์โทรศัพท์ติดต่อ</label>
+                    <input type="tel" required placeholder="08X-XXX-XXXX" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-suthi-pink focus:ring-2 focus:ring-suthi-pink/20 outline-none text-sm">
+                </div>
+
+                <button type="submit" class="w-full font-heading bg-gradient-to-r from-suthi-pink to-suthi-pink-dark text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer mt-2">
+                    ยืนยันการลงทะเบียน
+                </button>
+            </form>
+
+            <!-- Success Feedback Box -->
+            <div id="register-success" class="hidden text-center py-6 space-y-3">
+                <div class="w-16 h-16 rounded-full bg-suthi-green-light text-suthi-green flex items-center justify-center text-3xl mx-auto">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h4 class="font-heading text-xl font-bold text-suthi-green-dark">ลงทะเบียนล่วงหน้าสำเร็จ!</h4>
+                <p class="text-sm text-slate-600">
+                    ระบบได้บันทึกข้อมูลตัวอย่างเรียบร้อยแล้ว พบกันวันพฤหัสบดีที่ 4 กุมภาพันธ์ 2570 ณ ห้องประชุมศตวัชรบุษกร ชั้น 10 โรงเรียนวัดสุทธิวราราม
+                </p>
+                <button onclick="closeRegisterModal()" class="mt-2 bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-semibold cursor-pointer">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL 2: DOCUMENT PREVIEW MODAL ================= -->
+    <div id="doc-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-100 relative text-center">
+            <button onclick="closeDocModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fas fa-file-pdf"></i>
+            </div>
+            <h3 id="doc-modal-title" class="font-heading text-lg font-bold text-slate-900 mb-2">ชื่อเอกสาร</h3>
+            <p id="doc-modal-desc" class="text-sm text-slate-600 mb-5 leading-relaxed">รายละเอียดเอกสาร</p>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-500 mb-5">
+                <i class="fas fa-info-circle text-suthi-pink mr-1"></i> คุณสามารถนำลิงก์ไฟล์ PDF จาก Google Drive หรือเว็บไซต์โรงเรียนมาผูกกับปุ่มนี้ได้ทันทีเมื่อเผยแพร่เอกสารจริง
+            </div>
+            <button onclick="closeDocModal()" class="w-full font-heading bg-suthi-green hover:bg-suthi-green-dark text-white font-bold py-2.5 rounded-xl transition-colors cursor-pointer">
+                รับทราบ
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= MODAL 3: GALLERY LIGHTBOX MODAL ================= -->
+    <div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm">
+        <div onclick="event.stopPropagation()" class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative">
+            <button onclick="closeLightbox()" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition-colors cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="lightbox-img" src="" alt="ภาพขยาย" class="w-full max-h-[65vh] object-cover bg-slate-900">
+            <div class="p-6">
+                <h3 id="lightbox-title" class="font-heading text-xl font-bold text-slate-900 mb-1">หัวข้อภาพ</h3>
+                <p id="lightbox-desc" class="text-sm text-slate-600">คำอธิบายภาพ</p>
+            </div>
+        </div>
+    </div>
 
     <!-- AOS Animation Script -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Initialize Animations
-        AOS.init({
-            duration: 800, // ความเร็วของการแอนิเมชัน
-            once: true, // ให้แสดงผลแอนิเมชันแค่ครั้งเดียวตอนเลื่อนลงมาเจอ
-            offset: 100
+        // Initialize Scroll Animations
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({
+                duration: 750,
+                once: true,
+                offset: 70
+            });
+        });
+
+        // Mobile Navigation Toggle
+        const mobileBtn = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Registration Modal Logic
+        const registerModal = document.getElementById('register-modal');
+        const registerForm = document.getElementById('register-form');
+        const registerSuccess = document.getElementById('register-success');
+
+        function openRegisterModal() {
+            registerForm.classList.remove('hidden');
+            registerSuccess.classList.add('hidden');
+            registerForm.reset();
+            registerModal.classList.remove('hidden');
+            registerModal.classList.add('flex');
+        }
+
+        function closeRegisterModal() {
+            registerModal.classList.add('hidden');
+            registerModal.classList.remove('flex');
+        }
+
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            registerForm.classList.add('hidden');
+            registerSuccess.classList.remove('hidden');
+        }
+
+        // Document Modal Logic
+        const docModal = document.getElementById('doc-modal');
+        function openDocModal(title, desc) {
+            document.getElementById('doc-modal-title').textContent = title;
+            document.getElementById('doc-modal-desc').textContent = desc;
+            docModal.classList.remove('hidden');
+            docModal.classList.add('flex');
+        }
+        function closeDocModal() {
+            docModal.classList.add('hidden');
+            docModal.classList.remove('flex');
+        }
+
+        // Lightbox Gallery Logic
+        const lightboxModal = document.getElementById('lightbox-modal');
+        function openLightbox(title, desc, imgSrc) {
+            document.getElementById('lightbox-title').textContent = title;
+            document.getElementById('lightbox-desc').textContent = desc;
+            document.getElementById('lightbox-img').src = imgSrc;
+            lightboxModal.classList.remove('hidden');
+            lightboxModal.classList.add('flex');
+        }
+        function closeLightbox() {
+            lightboxModal.classList.add('hidden');
+            lightboxModal.classList.remove('flex');
+        }
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeRegisterModal();
+                closeDocModal();
+                closeLightbox();
+            }
         });
     </script>
 </body>
