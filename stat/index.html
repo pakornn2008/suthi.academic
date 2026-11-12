@@ -1,1720 +1,1964 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import {
-  Users,
-  School,
-  BookOpen,
-  GraduationCap,
-  Home,
-  ArrowRightLeft,
-  BarChart3,
-  Search,
-  Download,
-  Printer,
-  ShieldCheck,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  ChevronRight,
-  X,
-  CheckCircle2,
-  Layers,
-  Calendar,
-  ExternalLink,
-  RefreshCw,
-  PieChart as PieChartIcon,
-  LineChart as LineChartIcon,
-  Award
-} from 'lucide-react';
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  ReferenceLine,
-  LabelList
-} from 'recharts';
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบสถิตินักเรียน - โรงเรียนวัดสุทธิวราราม</title>
+  <meta name="description" content="ระบบรายงานและเปรียบเทียบสถิติจำนวนนักเรียน โรงเรียนวัดสุทธิวราราม รหัสโรงเรียน 10012030 สังกัด สพม.กรุงเทพมหานคร เขต 2" />
 
-// ============================================================================
-// 1. ข้อมูลพื้นฐานและฐานข้อมูลจริงของโรงเรียนวัดสุทธิวราราม (รหัส 10012030)
-// ============================================================================
-const SCHOOL_INFO = {
-  name: 'โรงเรียนวัดสุทธิวราราม',
-  systemTitle: 'ระบบสถิตินักเรียน',
-  code: '10012030',
-  affiliation: 'สพม.กรุงเทพมหานคร เขต 2',
-  type: 'โรงเรียนชายล้วน 100% • 72 ห้องเรียน (ระดับชั้นละ 12 ห้อง)',
-  logoUrl: 'https://suthi.ac.th/wp-content/uploads/2022/07/SUTHIWARARAM_SCHOOL_LOGO-1-200x300.png',
-  sheetUrl: 'https://docs.google.com/spreadsheets/d/1qN_lNbNkY3I7ty0uAmSB8sAiBjkVFMAxXOXA8WKf1TM/edit?usp=sharing',
-  sheetCsvUrl: 'https://docs.google.com/spreadsheets/d/1qN_lNbNkY3I7ty0uAmSB8sAiBjkVFMAxXOXA8WKf1TM/export?format=csv'
-};
+  <!-- Google Fonts: Google Sans & Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 
-// ข้อมูลสถิตินักเรียนจริงครบทั้ง 4 ภาคเรียน (เรียงจากล่าสุดลงไป)
-const RAW_TERMS_DATA = [
-  {
-    id: '2-2569',
-    termLabel: '2/2569',
-    fullLabel: 'ปีการศึกษา 2569 ภาคเรียนที่ 2',
-    year: '2569',
-    term: '2',
-    isLatest: true,
-    grades: {
-      m1: { students: 453, rooms: 12 },
-      m2: { students: 432, rooms: 12 },
-      m3: { students: 410, rooms: 12 },
-      m4: { students: 432, rooms: 12 },
-      m5: { students: 389, rooms: 12 },
-      m6: { students: 388, rooms: 12 },
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --font-heading: 'Google Sans', 'Sarabun', sans-serif;
+      --font-body: 'Sarabun', sans-serif;
+      --brand-pink: #D83A6F;
+      --brand-navy: #111C35;
+      --bg-canvas: #F4F7FB;
     }
-  },
-  {
-    id: '1-2569',
-    termLabel: '1/2569',
-    fullLabel: 'ปีการศึกษา 2569 ภาคเรียนที่ 1',
-    year: '2569',
-    term: '1',
-    isLatest: false,
-    grades: {
-      m1: { students: 452, rooms: 12 },
-      m2: { students: 447, rooms: 12 },
-      m3: { students: 414, rooms: 12 },
-      m4: { students: 436, rooms: 12 },
-      m5: { students: 392, rooms: 12 },
-      m6: { students: 390, rooms: 12 },
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-canvas);
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-  },
-  {
-    id: '2-2568',
-    termLabel: '2/2568',
-    fullLabel: 'ปีการศึกษา 2568 ภาคเรียนที่ 2',
-    year: '2568',
-    term: '2',
-    isLatest: false,
-    grades: {
-      m1: { students: 463, rooms: 12 },
-      m2: { students: 460, rooms: 12 },
-      m3: { students: 358, rooms: 12 },
-      m4: { students: 432, rooms: 12 },
-      m5: { students: 398, rooms: 12 },
-      m6: { students: 406, rooms: 12 },
+
+    /* กำหนดฟอนต์ Google Sans สำหรับหัวข้อ ตัวเลข KPI ชื่อระบบ และปุ่มเมนู */
+    h1, h2, h3, h4, .font-heading, .kpi-number, nav button, .pill-btn {
+      font-family: var(--font-heading);
     }
-  },
-  {
-    id: '1-2568',
-    termLabel: '1/2568',
-    fullLabel: 'ปีการศึกษา 2568 ภาคเรียนที่ 1',
-    year: '2568',
-    term: '1',
-    isLatest: false,
-    grades: {
-      m1: { students: 469, rooms: 12 },
-      m2: { students: 466, rooms: 12 },
-      m3: { students: 359, rooms: 12 },
-      m4: { students: 434, rooms: 12 },
-      m5: { students: 400, rooms: 12 },
-      m6: { students: 408, rooms: 12 },
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
     }
-  }
-];
 
-const GRADE_KEYS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
-
-const GRADE_META = {
-  m1: { code: 'ม.1', fullName: 'มัธยมศึกษาปีที่ 1 (ม.1)', shortName: 'มัธยมศึกษาปีที่ 1', level: 'ม.ต้น', levelKey: 'lower', color: '#2563EB' },
-  m2: { code: 'ม.2', fullName: 'มัธยมศึกษาปีที่ 2 (ม.2)', shortName: 'มัธยมศึกษาปีที่ 2', level: 'ม.ต้น', levelKey: 'lower', color: '#3B82F6' },
-  m3: { code: 'ม.3', fullName: 'มัธยมศึกษาปีที่ 3 (ม.3)', shortName: 'มัธยมศึกษาปีที่ 3', level: 'ม.ต้น', levelKey: 'lower', color: '#0EA5E9' },
-  m4: { code: 'ม.4', fullName: 'มัธยมศึกษาปีที่ 4 (ม.4)', shortName: 'มัธยมศึกษาปีที่ 4', level: 'ม.ปลาย', levelKey: 'upper', color: '#D83A6F' },
-  m5: { code: 'ม.5', fullName: 'มัธยมศึกษาปีที่ 5 (ม.5)', shortName: 'มัธยมศึกษาปีที่ 5', level: 'ม.ปลาย', levelKey: 'upper', color: '#EC4899' },
-  m6: { code: 'ม.6', fullName: 'มัธยมศึกษาปีที่ 6 (ม.6)', shortName: 'มัธยมศึกษาปีที่ 6', level: 'ม.ปลาย', levelKey: 'upper', color: '#8B5CF6' },
-};
-
-const OBEC_STANDARD_PER_ROOM = 40; // เกณฑ์มาตรฐาน สพฐ. 40 คน/ห้อง (480 คน/ชั้น 12 ห้อง)
-const OBEC_MAX_PER_GRADE = 480;
-
-// ============================================================================
-// 2. ฟังก์ชันคำนวณสถิติเชิงลึก
-// ============================================================================
-function processTermRecord(record) {
-  const g = record.grades;
-  const lowerStudents = g.m1.students + g.m2.students + g.m3.students;
-  const lowerRooms = g.m1.rooms + g.m2.rooms + g.m3.rooms;
-  const upperStudents = g.m4.students + g.m5.students + g.m6.students;
-  const upperRooms = g.m4.rooms + g.m5.rooms + g.m6.rooms;
-  const totalStudents = lowerStudents + upperStudents;
-  const totalRooms = lowerRooms + upperRooms;
-
-  const gradeList = GRADE_KEYS.map((key) => {
-    const item = g[key];
-    const meta = GRADE_META[key];
-    return {
-      key,
-      ...meta,
-      students: item.students,
-      rooms: item.rooms,
-      avgPerRoom: +(item.students / item.rooms).toFixed(2),
-      sharePct: +((item.students / totalStudents) * 100).toFixed(2),
-      capacityPct: +((item.students / OBEC_MAX_PER_GRADE) * 100).toFixed(2),
-    };
-  });
-
-  return {
-    ...record,
-    lower: {
-      students: lowerStudents,
-      rooms: lowerRooms,
-      avgPerRoom: +(lowerStudents / lowerRooms).toFixed(2),
-      sharePct: +((lowerStudents / totalStudents) * 100).toFixed(2),
-      capacityPct: +((lowerStudents / (lowerRooms * OBEC_STANDARD_PER_ROOM)) * 100).toFixed(2),
-    },
-    upper: {
-      students: upperStudents,
-      rooms: upperRooms,
-      avgPerRoom: +(upperStudents / upperRooms).toFixed(2),
-      sharePct: +((upperStudents / totalStudents) * 100).toFixed(2),
-      capacityPct: +((upperStudents / (upperRooms * OBEC_STANDARD_PER_ROOM)) * 100).toFixed(2),
-    },
-    total: {
-      students: totalStudents,
-      rooms: totalRooms,
-      avgPerRoom: +(totalStudents / totalRooms).toFixed(2),
-      sharePct: 100.0,
-      capacityPct: +((totalStudents / (totalRooms * OBEC_STANDARD_PER_ROOM)) * 100).toFixed(2),
-    },
-    gradeList,
-  };
-}
-
-function getDelta(current, previous) {
-  if (previous === null || previous === undefined) return null;
-  const diff = current - previous;
-  const pct = previous !== 0 ? +((diff / previous) * 100).toFixed(2) : 0;
-  return { diff, pct };
-}
-
-// ============================================================================
-// 3. UI Helper Components (ตรงตามสไตล์ภาพต้นแบบโรงเรียนวัดสุทธิวราราม)
-// ============================================================================
-function SchoolLogo({ className = 'h-11 w-auto' }) {
-  const [err, setErr] = useState(false);
-
-  if (err) {
-    return (
-      <div className={`flex items-center justify-center bg-[#111C35] text-white rounded-xl px-2.5 py-1.5 font-bold text-xs ${className}`}>
-        ส.ธ.
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src={SCHOOL_INFO.logoUrl}
-      alt="ตราประจำโรงเรียนวัดสุทธิวราราม"
-      onError={() => setErr(true)}
-      className={`object-contain select-none ${className}`}
-    />
-  );
-}
-
-// ป้ายแสดงผลต่าง (Delta Badge) สไตล์ Pill อ่านง่ายเหมือนป้ายสถานะในภาพต้นแบบ
-function DeltaPill({ delta, showUnit = true, size = 'sm' }) {
-  if (!delta) {
-    return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
-        ไม่เปรียบเทียบ
-      </span>
-    );
-  }
-
-  const { diff, pct } = delta;
-  const isUp = diff > 0;
-  const isZero = diff === 0;
-
-  let classes = 'bg-slate-100 text-slate-600';
-  let Icon = Minus;
-
-  if (!isZero) {
-    if (isUp) {
-      classes = 'bg-emerald-50 text-emerald-700 border border-emerald-200/70';
-      Icon = TrendingUp;
-    } else {
-      classes = 'bg-rose-50 text-rose-600 border border-rose-200/70';
-      Icon = TrendingDown;
+    /* ซ่อน Scrollbar ของแถบเลื่อนแนวนอนบนมือถือแต่ยังเลื่อนได้ */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
     }
-  }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
 
-  const sign = diff > 0 ? '+' : '';
-  const pad = size === 'xs' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-0.5 text-xs';
+    /* Animation นุ่มนวล */
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-panel {
+      animation: fadeSlideUp 0.28s ease-out forwards;
+    }
 
-  return (
-    <span className={`inline-flex items-center gap-1 rounded-full font-semibold tabular-nums ${pad} ${classes}`}>
-      <Icon className="w-3 h-3 shrink-0" />
-      <span>
-        {sign}{diff.toLocaleString()}{showUnit ? ' คน' : ''} ({sign}{pct.toFixed(2)}%)
-      </span>
-    </span>
-  );
-}
+    /* สไตล์สำหรับการสั่งพิมพ์รายงาน */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: none !important;
+      }
+      header {
+        position: static !important;
+        border-bottom: 2px solid #111C35 !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-[#D83A6F] selection:text-white">
 
-// Custom Tooltip สำหรับ Recharts
-function CustomTooltip({ active, payload, label, unit = 'คน' }) {
-  if (!active || !payload || !payload.length) return null;
+  <!-- Toast แจ้งเตือนการทำงาน -->
+  <div id="toast-box" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 bg-[#111C35] text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-700 text-sm transition-all">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+    <span id="toast-text" class="font-medium">ดำเนินการเรียบร้อยแล้ว</span>
+  </div>
 
-  return (
-    <div className="bg-[#111C35]/95 backdrop-blur-xs text-white px-4 py-3 rounded-xl shadow-xl border border-slate-700 text-xs">
-      <div className="font-bold text-pink-300 text-sm mb-1.5 pb-1 border-b border-white/10">
-        {label}
-      </div>
-      <div className="space-y-1">
-        {payload.map((entry, idx) => (
-          <div key={idx} className="flex items-center justify-between gap-4">
-            <span className="flex items-center gap-1.5 text-slate-200">
-              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color || entry.fill }} />
-              {entry.name}:
-            </span>
-            <span className="font-bold text-white tabular-nums">
-              {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value} {unit}
-            </span>
+  <!-- =======================================================================
+       1. TOP NAVIGATION BAR (เอกลักษณ์โรงเรียนวัดสุทธิวราราม)
+  ======================================================================== -->
+  <header class="sticky top-0 z-30 bg-white border-b border-slate-200/90 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-[74px] flex items-center justify-between gap-3">
+      
+      <!-- ด้านซ้าย: โลโก้โรงเรียนวัดสุทธิวราราม + ชื่อระบบ -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="relative flex items-center justify-center">
+          <img
+            id="school-logo-img"
+            src="https://suthi.ac.th/wp-content/uploads/2022/07/SUTHIWARARAM_SCHOOL_LOGO-1-200x300.png"
+            alt="ตราประจำโรงเรียนวัดสุทธิวราราม"
+            class="h-10 sm:h-12 w-auto object-contain select-none"
+            onerror="this.style.display='none'; document.getElementById('school-logo-fallback').classList.remove('hidden');"
+          />
+          <!-- Fallback SVG โลโก้สถาบันกรณีโหลดภาพภายนอกไม่ได้ -->
+          <div id="school-logo-fallback" class="hidden w-10 h-11 rounded-xl bg-[#111C35] text-white flex flex-col items-center justify-center shadow-xs border border-amber-400/50">
+            <span class="font-heading text-xs font-bold tracking-wider text-amber-300">ส.ธ.</span>
+            <span class="text-[8px] text-slate-300">10012030</span>
           </div>
-        ))}
+        </div>
+        <div class="leading-tight">
+          <h1 class="text-base sm:text-lg font-bold text-[#D83A6F] tracking-tight">
+            โรงเรียนวัดสุทธิวราราม
+          </h1>
+          <p class="text-xs sm:text-[13px] text-slate-500 font-medium">
+            ระบบสถิตินักเรียน
+          </p>
+        </div>
+      </div>
+
+      <!-- ตรงกลาง: เมนูหลักแบบ Pill Tabs (Desktop) -->
+      <nav aria-label="เมนูหลัก" class="hidden md:flex items-center gap-1.5 no-print">
+        <button
+          type="button"
+          data-tab="home"
+          onclick="switchMainTab('home')"
+          class="nav-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer bg-[#D83A6F] text-white shadow-sm shadow-pink-600/20"
+        >
+          <i data-lucide="home" class="w-4 h-4"></i>
+          <span>หน้าแรก (ภาพรวมสถิติ)</span>
+        </button>
+
+        <button
+          type="button"
+          data-tab="compare"
+          onclick="switchMainTab('compare')"
+          class="nav-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer text-slate-600 hover:text-[#111C35] hover:bg-slate-100"
+        >
+          <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+          <span>เปรียบเทียบรายปี / เทอม</span>
+        </button>
+
+        <button
+          type="button"
+          data-tab="charts"
+          onclick="switchMainTab('charts')"
+          class="nav-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer text-slate-600 hover:text-[#111C35] hover:bg-slate-100"
+        >
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          <span>กราฟวิเคราะห์เชิงลึก</span>
+        </button>
+      </nav>
+
+      <!-- ด้านขวา: ปุ่มส่งออก CSV, พิมพ์รายงาน และป้ายรหัสสถานศึกษา (ไม่มีลิงก์ออกไปชีต) -->
+      <div class="flex items-center gap-2 no-print">
+        <button
+          type="button"
+          onclick="exportCSV()"
+          title="ดาวน์โหลดรายงานสถิติเป็นไฟล์ CSV"
+          class="pill-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 transition-colors cursor-pointer"
+        >
+          <i data-lucide="download" class="w-3.5 h-3.5 text-blue-600"></i>
+          <span class="hidden sm:inline">ส่งออก CSV</span>
+        </button>
+
+        <button
+          type="button"
+          onclick="window.print()"
+          title="พิมพ์รายงานสถิตินักเรียน"
+          class="pill-btn hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 transition-colors cursor-pointer"
+        >
+          <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-600"></i>
+          <span class="hidden lg:inline">พิมพ์รายงาน</span>
+        </button>
+
+        <!-- ป้ายรหัสสถานศึกษาแบบ Static Badge (ไม่เป็นลิงก์) -->
+        <div
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 border border-slate-200/90 text-xs font-semibold select-none"
+          title="รหัสสถานศึกษา โรงเรียนวัดสุทธิวราราม"
+        >
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#D83A6F]"></i>
+          <span class="font-heading tabular-nums">รหัส 10012030</span>
+        </div>
       </div>
     </div>
-  );
-}
 
-// ============================================================================
-// 4. Main Application Component
-// ============================================================================
-export default function App() {
-  // โหลดฟอนต์ Prompt และ Sarabun จาก Google Fonts
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
+    <!-- เมนูหลักแบบ Pill Tabs เลื่อนแนวนอนได้ (Mobile & Tablet) -->
+    <div class="md:hidden flex items-center gap-2 px-4 py-2.5 bg-slate-50/90 border-t border-slate-100 overflow-x-auto no-scrollbar no-print">
+      <button
+        type="button"
+        data-tab="home"
+        onclick="switchMainTab('home')"
+        class="nav-tab-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all bg-[#D83A6F] text-white shadow-2xs"
+      >
+        <i data-lucide="home" class="w-3.5 h-3.5"></i>
+        <span>หน้าแรก (ภาพรวมสถิติ)</span>
+      </button>
 
-    const style = document.createElement('style');
-    style.innerHTML = `
-      @media print {
-        body { background: #ffffff !important; }
-        .no-print { display: none !important; }
-        .shadow-sm, .shadow-md { box-shadow: none !important; }
+      <button
+        type="button"
+        data-tab="compare"
+        onclick="switchMainTab('compare')"
+        class="nav-tab-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all bg-white text-slate-600 border border-slate-200"
+      >
+        <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
+        <span>เปรียบเทียบรายปี / เทอม</span>
+      </button>
+
+      <button
+        type="button"
+        data-tab="charts"
+        onclick="switchMainTab('charts')"
+        class="nav-tab-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all bg-white text-slate-600 border border-slate-200"
+      >
+        <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
+        <span>กราฟวิเคราะห์เชิงลึก</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =======================================================================
+       MAIN CONTENT
+  ======================================================================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6 pb-12 space-y-6">
+
+    <!-- แถบสถานะข้อมูลทางการและภาคเรียนที่กำลังแสดง -->
+    <div class="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-[13px] text-slate-600">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/90 text-[#111C35] font-semibold shadow-2xs">
+          <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#D83A6F]"></i>
+          <span id="current-term-banner">กำลังแสดงข้อมูล: ปีการศึกษา 2569 ภาคเรียนที่ 2</span>
+          <span id="latest-badge" class="ml-1 px-2 py-0.5 bg-pink-50 text-[#D83A6F] rounded-full text-[11px] font-bold">
+            ล่าสุด
+          </span>
+        </span>
+        <span class="hidden sm:inline text-slate-400">•</span>
+        <span class="text-slate-600">โรงเรียนชายล้วน 100% (72 ห้องเรียน)</span>
+      </div>
+
+      <!-- ป้ายรับรองข้อมูลทางการ (ไม่มีลิงก์ออกไปชีต) -->
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50/90 text-emerald-700 border border-emerald-200/70 text-xs font-semibold">
+        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+        <span>ข้อมูลทางการ สพม.กทม. เขต 2</span>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         SECTION 1: 4 การ์ด KPI ด้านบน (4-Column Pastel Icon KPI Cards)
+    ====================================================================== -->
+    <section aria-label="สรุปสถิตินักเรียนสำคัญ" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- KPI 1: ยอดนักเรียนทั้งหมด -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs sm:text-[13px] font-medium text-slate-500">ยอดนักเรียนทั้งหมด</div>
+            <div class="kpi-number text-2xl sm:text-[28px] font-bold text-[#0F172A] tabular-nums leading-tight mt-0.5">
+              <span id="kpi-total-students">2,504</span>
+              <span class="text-xs font-normal text-slate-400 ml-1">คน</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3.5 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-slate-400">เทียบเทอมก่อน (QoQ):</span>
+            <span id="kpi-total-qoq"></span>
+          </div>
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-slate-400">เทียบปีก่อน (YoY):</span>
+            <span id="kpi-total-yoy"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 2: มัธยมศึกษาตอนต้น -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs sm:text-[13px] font-medium text-slate-500">มัธยมศึกษาตอนต้น (ม.1–ม.3)</div>
+            <div class="kpi-number text-2xl sm:text-[28px] font-bold text-[#0F172A] tabular-nums leading-tight mt-0.5">
+              <span id="kpi-lower-students">1,295</span>
+              <span id="kpi-lower-share" class="text-xs font-semibold text-emerald-600 ml-1">(51.72%)</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3.5 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-slate-400">เทียบเทอมก่อน (QoQ):</span>
+            <span id="kpi-lower-qoq"></span>
+          </div>
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-slate-400">เทียบปีก่อน (YoY):</span>
+            <span id="kpi-lower-yoy"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 3: มัธยมศึกษาตอนปลาย -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-pink-50 text-[#D83A6F] flex items-center justify-center shrink-0">
+            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs sm:text-[13px] font-medium text-slate-500">มัธยมศึกษาตอนปลาย (ม.4–ม.6)</div>
+            <div class="kpi-number text-2xl sm:text-[28px] font-bold text-[#0F172A] tabular-nums leading-tight mt-0.5">
+              <span id="kpi-upper-students">1,209</span>
+              <span id="kpi-upper-share" class="text-xs font-semibold text-[#D83A6F] ml-1">(48.28%)</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3.5 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-slate-400">เทียบเทอมก่อน (QoQ):</span>
+            <span id="kpi-upper-qoq"></span>
+          </div>
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-slate-400">เทียบปีก่อน (YoY):</span>
+            <span id="kpi-upper-yoy"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 4: จำนวนห้องเรียนและค่าเฉลี่ยต่อห้อง -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+            <i data-lucide="school" class="w-6 h-6"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs sm:text-[13px] font-medium text-slate-500">ห้องเรียน / ค่าเฉลี่ยต่อห้อง</div>
+            <div class="kpi-number text-2xl sm:text-[28px] font-bold text-[#0F172A] tabular-nums leading-tight mt-0.5">
+              <span id="kpi-total-rooms">72</span>
+              <span class="text-xs font-normal text-slate-500">ห้อง</span>
+              <span id="kpi-avg-room" class="text-sm font-bold text-purple-600 ml-1">(34.78)</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3.5 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-slate-400">เกณฑ์มาตรฐาน สพฐ.:</span>
+            <span class="font-semibold text-slate-700 tabular-nums">40.00 คน/ห้อง</span>
+          </div>
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-slate-400">อัตราการใช้ความจุห้องเรียน:</span>
+            <span id="kpi-capacity-pct" class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-700 tabular-nums">86.94%</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         TAB 1: หน้าแรก (ภาพรวมสถิติรายระดับชั้นแบบ Row Cards)
+    ====================================================================== -->
+    <div id="panel-home" class="tab-panel animate-panel space-y-5">
+      
+      <!-- กล่องค้นหาและตัวกรองแบบแคปซูล (Search & Pill Filters) -->
+      <section aria-label="ตัวกรองข้อมูล" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-3.5 no-print">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          
+          <!-- ช่องค้นหาระดับชั้น -->
+          <div class="relative w-full lg:w-80 shrink-0">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input
+              type="text"
+              id="grade-search-input"
+              oninput="handleSearchInput(this.value)"
+              placeholder="ค้นหาระดับชั้น เช่น ม.1, ม.ต้น, ม.ปลาย..."
+              class="w-full pl-10 pr-9 py-2 rounded-full border border-slate-200 bg-white text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#111C35] transition-colors"
+            />
+            <button
+              type="button"
+              id="clear-search-btn"
+              onclick="clearSearchInput()"
+              class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              title="ล้างคำค้นหา"
+            >
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- ตัวกรองช่วงชั้นแบบแคปซูล -->
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 lg:pb-0">
+            <span class="text-xs font-semibold text-slate-400 shrink-0">ช่วงชั้น:</span>
+            <button
+              type="button"
+              data-level="all"
+              onclick="setLevelFilter('all')"
+              class="level-pill-btn pill-btn px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border transition-all cursor-pointer bg-[#111C35] text-white border-[#111C35]"
+            >
+              ทั้งหมด (6 ระดับชั้น)
+            </button>
+            <button
+              type="button"
+              data-level="lower"
+              onclick="setLevelFilter('lower')"
+              class="level-pill-btn pill-btn px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-all cursor-pointer bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+            >
+              มัธยมศึกษาตอนต้น (ม.1–ม.3)
+            </button>
+            <button
+              type="button"
+              data-level="upper"
+              onclick="setLevelFilter('upper')"
+              class="level-pill-btn pill-btn px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-all cursor-pointer bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+            >
+              มัธยมศึกษาตอนปลาย (ม.4–ม.6)
+            </button>
+          </div>
+        </div>
+
+        <!-- ตัวเลือกภาคเรียน -->
+        <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold text-slate-500 mr-1">เลือกภาคเรียนที่แสดง:</span>
+            <button
+              type="button"
+              data-term="2-2569"
+              onclick="setSelectedTerm('2-2569')"
+              class="term-pill-btn pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer bg-[#111C35] text-white border-[#111C35]"
+            >
+              2/2569 (ล่าสุด)
+            </button>
+            <button
+              type="button"
+              data-term="1-2569"
+              onclick="setSelectedTerm('1-2569')"
+              class="term-pill-btn pill-btn px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+            >
+              1/2569
+            </button>
+            <button
+              type="button"
+              data-term="2-2568"
+              onclick="setSelectedTerm('2-2568')"
+              class="term-pill-btn pill-btn px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+            >
+              2/2568
+            </button>
+            <button
+              type="button"
+              data-term="1-2568"
+              onclick="setSelectedTerm('1-2568')"
+              class="term-pill-btn pill-btn px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+            >
+              1/2568
+            </button>
+          </div>
+
+          <div class="text-xs text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-[#D83A6F]"></i>
+            <span>คลิกที่แถวระดับชั้นเพื่อดูกราฟแนวโน้ม 4 ภาคเรียน</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- รายการสถิติรายระดับชั้นแบบ Row Cards -->
+      <section aria-label="รายการสถิตินักเรียนรายระดับชั้น" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6">
+        <!-- Header คอลัมน์ (Desktop) -->
+        <div class="hidden lg:grid lg:grid-cols-12 gap-4 px-4 pb-3 border-b border-slate-100 text-xs font-semibold text-slate-400">
+          <div class="col-span-3">ระดับชั้น</div>
+          <div class="col-span-2">ช่วงชั้นและห้องเรียน</div>
+          <div class="col-span-3">จำนวนนักเรียน (ชายล้วน 100%)</div>
+          <div class="col-span-2">เทียบภาคเรียนก่อนหน้า</div>
+          <div class="col-span-1 text-right">เฉลี่ย/ห้อง</div>
+          <div class="col-span-1 text-right">ภาคเรียน</div>
+        </div>
+
+        <!-- Container สำหรับ Row Cards ที่สร้างด้วย JS -->
+        <div id="grade-rows-container" class="space-y-2.5 mt-3"></div>
+
+        <!-- แถวสรุปรวม ม.ต้น / ม.ปลาย / รวมทั้งหมด -->
+        <div id="grade-summary-footer" class="pt-4 mt-5 border-t border-slate-200/80 space-y-2.5"></div>
+      </section>
+    </div>
+
+    <!-- =====================================================================
+         TAB 2: เปรียบเทียบรายปี / เทอม
+    ====================================================================== -->
+    <div id="panel-compare" class="tab-panel hidden animate-panel space-y-6">
+      
+      <!-- แผงควบคุมการเลือกคู่เปรียบเทียบ -->
+      <section class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+              <i data-lucide="git-compare-arrows" class="w-5 h-5 text-[#D83A6F]"></i>
+              <span>เปรียบเทียบสถิตินักเรียนรายปีการศึกษา และรายภาคเรียน</span>
+            </h2>
+            <p class="text-sm text-slate-500 mt-0.5">
+              เลือกคู่ช่วงเวลาที่ต้องการเปรียบเทียบอย่างอิสระ หรือใช้ปุ่มลัดเพื่อดูความเปลี่ยนแปลงรายเทอมและรายปี
+            </p>
+          </div>
+
+          <!-- ปุ่มลัดเปรียบเทียบ -->
+          <div class="flex flex-wrap items-center gap-2 no-print">
+            <button
+              type="button"
+              onclick="applyComparePreset('2-2569', '1-2569')"
+              class="preset-btn pill-btn px-3.5 py-2 rounded-full text-xs font-semibold bg-pink-50 text-[#D83A6F] hover:bg-pink-100 border border-pink-200/70 transition-colors cursor-pointer"
+            >
+              รายเทอม: 2/2569 เทียบ 1/2569
+            </button>
+            <button
+              type="button"
+              onclick="applyComparePreset('2-2569', '2-2568')"
+              class="preset-btn pill-btn px-3.5 py-2 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/70 transition-colors cursor-pointer"
+            >
+              รายปี (เทอม 2): 2/2569 เทียบ 2/2568
+            </button>
+            <button
+              type="button"
+              onclick="applyComparePreset('1-2569', '1-2568')"
+              class="preset-btn pill-btn px-3.5 py-2 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer"
+            >
+              รายปี (เทอม 1): 1/2569 เทียบ 1/2568
+            </button>
+          </div>
+        </div>
+
+        <!-- Dropdown เลือกคู่ช่วงเวลา + ปุ่มสลับ -->
+        <div class="pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-11 gap-3 items-end no-print">
+          <div class="md:col-span-5">
+            <label for="compare-base-select" class="block text-xs font-semibold text-slate-500 mb-1.5">
+              ช่วงเวลาหลัก (ตัวตั้ง)
+            </label>
+            <select
+              id="compare-base-select"
+              onchange="renderComparisonView()"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#111C35]"
+            >
+              <option value="2-2569" selected>ปีการศึกษา 2569 ภาคเรียนที่ 2 (ล่าสุด)</option>
+              <option value="1-2569">ปีการศึกษา 2569 ภาคเรียนที่ 1</option>
+              <option value="2-2568">ปีการศึกษา 2568 ภาคเรียนที่ 2</option>
+              <option value="1-2568">ปีการศึกษา 2568 ภาคเรียนที่ 1</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-1 flex justify-center">
+            <button
+              type="button"
+              onclick="swapComparePeriods()"
+              title="สลับช่วงเวลาเปรียบเทียบ"
+              class="p-2.5 rounded-xl bg-slate-100 hover:bg-[#111C35] text-slate-700 hover:text-white transition-colors cursor-pointer"
+            >
+              <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="md:col-span-5">
+            <label for="compare-target-select" class="block text-xs font-semibold text-slate-500 mb-1.5">
+              ช่วงเวลาเปรียบเทียบ (ตัวเทียบ)
+            </label>
+            <select
+              id="compare-target-select"
+              onchange="renderComparisonView()"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#D83A6F]"
+            >
+              <option value="2-2569">ปีการศึกษา 2569 ภาคเรียนที่ 2 (ล่าสุด)</option>
+              <option value="1-2569" selected>ปีการศึกษา 2569 ภาคเรียนที่ 1</option>
+              <option value="2-2568">ปีการศึกษา 2568 ภาคเรียนที่ 2</option>
+              <option value="1-2568">ปีการศึกษา 2568 ภาคเรียนที่ 1</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- การ์ดสรุปผลต่างรวม 3 ใบ -->
+        <div id="compare-summary-cards" class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"></div>
+      </section>
+
+      <!-- ตารางเปรียบเทียบรายระดับชั้นอย่างละเอียด -->
+      <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-[#0F172A]" id="compare-table-title">
+              ตารางเปรียบเทียบรายระดับชั้น (2/2569 เทียบกับ 1/2569)
+            </h3>
+            <p class="text-xs text-slate-500">
+              แสดงจำนวนนักเรียน จำนวนห้องเรียน ค่าเฉลี่ยต่อห้อง ผลต่างจำนวนคน และร้อยละการเปลี่ยนแปลง
+            </p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left border-collapse">
+            <thead>
+              <tr id="compare-table-head" class="bg-slate-50 text-slate-600 border-b border-slate-200 text-xs"></tr>
+            </thead>
+            <tbody id="compare-table-body" class="divide-y divide-slate-100 tabular-nums"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ส่วนวิเคราะห์อัตราการเลื่อนชั้นและคงอยู่ข้ามปีการศึกษา (2568/2 -> 2569/1) -->
+      <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-[#0F172A] flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-5 h-5 text-emerald-600"></i>
+              <span>การวิเคราะห์อัตราการเลื่อนชั้นและคงอยู่ข้ามปีการศึกษา (2/2568 → 1/2569)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+              ติดตามจำนวนนักเรียนรุ่นเดียวกันเมื่อเลื่อนชั้นขึ้นสู่ปีการศึกษา 2569 ภาคเรียนที่ 1 รวมถึงยอดรับเข้าใหม่ ม.1 และ ม.4
+            </p>
+          </div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">
+            Cohort Progression Analysis
+          </span>
+        </div>
+
+        <div id="cohort-progression-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+    </div>
+
+    <!-- =====================================================================
+         TAB 3: กราฟวิเคราะห์เชิงลึก (Chart.js Suite)
+    ====================================================================== -->
+    <div id="panel-charts" class="tab-panel hidden animate-panel space-y-6">
+      
+      <!-- แถวที่ 1: กราฟแท่งเปรียบเทียบรายชั้น + กราฟโดนัทสัดส่วน ม.ต้น vs ม.ปลาย -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- กราฟแท่งเปรียบเทียบรายระดับชั้น -->
+        <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-[#0F172A]">
+                กราฟแท่งเปรียบเทียบจำนวนนักเรียนรายระดับชั้น (ม.1 – ม.6)
+              </h2>
+              <p class="text-xs text-slate-500">
+                เปรียบเทียบภาคเรียนล่าสุด (2/2569) กับภาคเรียนก่อนหน้า (1/2569) และปีก่อนหน้า (2/2568)
+              </p>
+            </div>
+          </div>
+          <div class="relative h-[320px] sm:h-[360px] w-full">
+            <canvas id="chart-grade-bars"></canvas>
+          </div>
+        </div>
+
+        <!-- กราฟโดนัทสัดส่วน ม.ต้น vs ม.ปลาย -->
+        <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6 flex flex-col justify-between">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-[#0F172A]">
+              สัดส่วนโครงสร้างช่วงชั้น (2/2569)
+            </h3>
+            <p class="text-xs text-slate-500">
+              เปรียบเทียบสัดส่วนนักเรียนระดับ ม.ต้น และ ม.ปลาย
+            </p>
+          </div>
+
+          <div class="relative h-[230px] w-full my-3 flex items-center justify-center">
+            <canvas id="chart-level-donut"></canvas>
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span class="text-xs text-slate-400">รวมทั้งหมด</span>
+              <span class="kpi-number text-2xl font-bold text-[#0F172A] tabular-nums">2,504</span>
+              <span class="text-[11px] text-slate-500">คน (72 ห้อง)</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 pt-3 border-t border-slate-100 text-xs">
+            <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-2.5">
+              <div class="flex items-center gap-1.5 font-semibold text-blue-800">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>
+                <span>ม.ต้น (ม.1–ม.3)</span>
+              </div>
+              <div class="kpi-number text-base font-bold text-blue-950 mt-1 tabular-nums">1,295 คน</div>
+              <div class="text-[11px] text-blue-600 tabular-nums">สัดส่วน 51.72%</div>
+            </div>
+
+            <div class="bg-pink-50/70 border border-pink-100 rounded-xl p-2.5">
+              <div class="flex items-center gap-1.5 font-semibold text-[#D83A6F]">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#D83A6F]"></span>
+                <span>ม.ปลาย (ม.4–ม.6)</span>
+              </div>
+              <div class="kpi-number text-base font-bold text-pink-950 mt-1 tabular-nums">1,209 คน</div>
+              <div class="text-[11px] text-[#D83A6F] tabular-nums">สัดส่วน 48.28%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- แถวที่ 2: กราฟเส้นแนวโน้ม 4 ภาคเรียน + กราฟเทียบเกณฑ์ สพฐ. 40 คน/ห้อง -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- กราฟเส้นแนวโน้ม 4 ภาคเรียน -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6">
+          <div class="mb-4">
+            <h3 class="text-base sm:text-lg font-bold text-[#0F172A]">
+              กราฟเส้นแนวโน้มจำนวนนักเรียน 4 ภาคเรียน (1/2568 – 2/2569)
+            </h3>
+            <p class="text-xs text-slate-500">
+              แสดงความเปลี่ยนแปลงของยอดรวมทั้งโรงเรียน ระดับ ม.ต้น และระดับ ม.ปลาย
+            </p>
+          </div>
+          <div class="relative h-[300px] sm:h-[330px] w-full">
+            <canvas id="chart-trend-lines"></canvas>
+          </div>
+        </div>
+
+        <!-- กราฟเปรียบเทียบค่าเฉลี่ยนักเรียนต่อห้องกับเกณฑ์มาตรฐาน สพฐ. (40 คน/ห้อง) -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6">
+          <div class="mb-4">
+            <h3 class="text-base sm:text-lg font-bold text-[#0F172A]">
+              ค่าเฉลี่ยนักเรียนต่อห้องเทียบเกณฑ์มาตรฐาน สพฐ. (2/2569)
+            </h3>
+            <p class="text-xs text-slate-500">
+              เส้นประสีแดงแสดงเกณฑ์มาตรฐาน สพฐ. ไม่เกิน 40 คน/ห้องเรียน
+            </p>
+          </div>
+          <div class="relative h-[300px] sm:h-[330px] w-full">
+            <canvas id="chart-room-density"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       MODAL รายละเอียดเจาะลึกรายระดับชั้น (เมื่อคลิกที่ Row Card ในหน้าแรก)
+  ======================================================================== -->
+  <div
+    id="grade-detail-modal"
+    onclick="closeGradeModal()"
+    class="fixed inset-0 z-50 hidden bg-slate-900/45 backdrop-blur-xs items-center justify-center p-4"
+  >
+    <div
+      onclick="event.stopPropagation()"
+      class="bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200 space-y-5 animate-panel"
+    >
+      <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3.5">
+        <div>
+          <span id="modal-level-badge" class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold mb-1.5 bg-blue-50 text-blue-600">
+            มัธยมศึกษาตอนต้น • 12 ห้องเรียน
+          </span>
+          <h3 id="modal-grade-title" class="text-lg sm:text-xl font-bold text-[#0F172A]">
+            มัธยมศึกษาปีที่ 1 (ม.1)
+          </h3>
+        </div>
+        <button
+          type="button"
+          onclick="closeGradeModal()"
+          class="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+          aria-label="ปิดหน้าต่าง"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- สถิติย้อนหลังครบทั้ง 4 ภาคเรียน -->
+      <div>
+        <div class="text-xs font-semibold text-slate-500 mb-2.5">
+          สถิติจำนวนนักเรียนและค่าเฉลี่ยต่อห้องครบทั้ง 4 ภาคเรียน
+        </div>
+        <div id="modal-terms-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 tabular-nums"></div>
+      </div>
+
+      <!-- กราฟแนวโน้ม 4 ภาคเรียนของระดับชั้นนี้ -->
+      <div class="bg-slate-50/70 rounded-xl p-3 border border-slate-100">
+        <div class="relative h-48 w-full">
+          <canvas id="chart-modal-grade"></canvas>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+        <span>เกณฑ์มาตรฐาน สพฐ. 40 คน/ห้อง (480 คน/12 ห้อง)</span>
+        <button
+          type="button"
+          onclick="closeGradeModal()"
+          class="pill-btn px-5 py-2 rounded-full bg-[#111C35] text-white text-xs font-semibold hover:bg-slate-800 transition-colors cursor-pointer"
+        >
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER
+  ======================================================================== -->
+  <footer class="bg-white border-t border-slate-200/80 py-5 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+      <div class="font-medium text-slate-600">
+        © โรงเรียนวัดสุทธิวราราม (รหัสโรงเรียน 10012030) • สังกัดสำนักงานเขตพื้นที่การศึกษามัธยมศึกษากรุงเทพมหานคร เขต 2
+      </div>
+      <div>
+        ระบบรายงานสถิติจำนวนนักเรียนอย่างเป็นทางการ (ปีการศึกษา 2568 – 2569)
+      </div>
+    </div>
+  </footer>
+
+  <!-- =======================================================================
+       JAVASCRIPT LOGIC & DATA ENGINE
+  ======================================================================== -->
+  <script>
+    // -------------------------------------------------------------------------
+    // 1. ฐานข้อมูลสถิตินักเรียนโรงเรียนวัดสุทธิวราราม (ฝังในโค้ดอย่างปลอดภัย)
+    // -------------------------------------------------------------------------
+    const TERMS_DB = {
+      '2-2569': {
+        id: '2-2569',
+        shortLabel: '2/2569',
+        fullLabel: 'ปีการศึกษา 2569 ภาคเรียนที่ 2',
+        year: '2569',
+        term: '2',
+        isLatest: true,
+        prevTermId: '1-2569',
+        prevYearId: '2-2568',
+        grades: {
+          m1: { students: 453, rooms: 12 },
+          m2: { students: 432, rooms: 12 },
+          m3: { students: 410, rooms: 12 },
+          m4: { students: 432, rooms: 12 },
+          m5: { students: 389, rooms: 12 },
+          m6: { students: 388, rooms: 12 }
+        }
+      },
+      '1-2569': {
+        id: '1-2569',
+        shortLabel: '1/2569',
+        fullLabel: 'ปีการศึกษา 2569 ภาคเรียนที่ 1',
+        year: '2569',
+        term: '1',
+        isLatest: false,
+        prevTermId: '2-2568',
+        prevYearId: '1-2568',
+        grades: {
+          m1: { students: 452, rooms: 12 },
+          m2: { students: 447, rooms: 12 },
+          m3: { students: 414, rooms: 12 },
+          m4: { students: 436, rooms: 12 },
+          m5: { students: 392, rooms: 12 },
+          m6: { students: 390, rooms: 12 }
+        }
+      },
+      '2-2568': {
+        id: '2-2568',
+        shortLabel: '2/2568',
+        fullLabel: 'ปีการศึกษา 2568 ภาคเรียนที่ 2',
+        year: '2568',
+        term: '2',
+        isLatest: false,
+        prevTermId: '1-2568',
+        prevYearId: null,
+        grades: {
+          m1: { students: 463, rooms: 12 },
+          m2: { students: 460, rooms: 12 },
+          m3: { students: 358, rooms: 12 },
+          m4: { students: 432, rooms: 12 },
+          m5: { students: 398, rooms: 12 },
+          m6: { students: 406, rooms: 12 }
+        }
+      },
+      '1-2568': {
+        id: '1-2568',
+        shortLabel: '1/2568',
+        fullLabel: 'ปีการศึกษา 2568 ภาคเรียนที่ 1',
+        year: '2568',
+        term: '1',
+        isLatest: false,
+        prevTermId: null,
+        prevYearId: null,
+        grades: {
+          m1: { students: 469, rooms: 12 },
+          m2: { students: 466, rooms: 12 },
+          m3: { students: 359, rooms: 12 },
+          m4: { students: 434, rooms: 12 },
+          m5: { students: 400, rooms: 12 },
+          m6: { students: 408, rooms: 12 }
+        }
       }
-      .tabular-nums { font-variant-numeric: tabular-nums; }
-    `;
-    document.head.appendChild(style);
-  }, []);
-
-  // State หลัก
-  const [activeNavTab, setActiveNavTab] = useState('home'); // 'home' | 'compare' | 'charts'
-  const [primaryTermId, setPrimaryTermId] = useState('2-2569');
-  const [compareTermId, setCompareTermId] = useState('1-2569'); // '1-2569' | '2-2568' | '1-2568' | 'none'
-  const [gradeFilter, setGradeFilter] = useState('all'); // 'all' | 'lower' | 'upper' | 'm1'..'m6'
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRowDetail, setSelectedRowDetail] = useState(null); // สำหรับเปิด Drawer เจาะลึกรายชั้น
-  const [toastMessage, setToastMessage] = useState('');
-  const [isSyncing, setIsSyncing] = useState(false);
-
-  const triggerToast = useCallback((msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 3500);
-  }, []);
-
-  // ประมวลผลข้อมูลทั้ง 4 ภาคเรียน
-  const allTerms = useMemo(() => RAW_TERMS_DATA.map(processTermRecord), []);
-  const primaryTerm = useMemo(
-    () => allTerms.find((t) => t.id === primaryTermId) || allTerms[0],
-    [allTerms, primaryTermId]
-  );
-  const compareTerm = useMemo(
-    () => (compareTermId === 'none' ? null : allTerms.find((t) => t.id === compareTermId) || null),
-    [allTerms, compareTermId]
-  );
-
-  // ข้อมูลคงที่สำหรับอ้างอิงในแท็บเปรียบเทียบเชิงลึก
-  const term2569_2 = useMemo(() => allTerms.find((t) => t.id === '2-2569'), [allTerms]);
-  const term2569_1 = useMemo(() => allTerms.find((t) => t.id === '1-2569'), [allTerms]);
-  const term2568_2 = useMemo(() => allTerms.find((t) => t.id === '2-2568'), [allTerms]);
-  const term2568_1 = useMemo(() => allTerms.find((t) => t.id === '1-2568'), [allTerms]);
-
-  // คำนวณผลต่างสำหรับ 4 KPI Cards ด้านบน
-  const kpiDeltas = useMemo(() => {
-    // หาเทอมก่อนหน้าและปีก่อนหน้าของ primaryTerm อัตโนมัติสำหรับแสดงรายละเอียดเพิ่มเติม
-    const prevTermMap = { '2-2569': '1-2569', '1-2569': '2-2568', '2-2568': '1-2568', '1-2568': null };
-    const prevYearMap = { '2-2569': '2-2568', '1-2569': '1-2568', '2-2568': null, '1-2568': null };
-
-    const autoPrevTerm = allTerms.find((t) => t.id === prevTermMap[primaryTerm.id]) || null;
-    const autoPrevYear = allTerms.find((t) => t.id === prevYearMap[primaryTerm.id]) || null;
-
-    return {
-      // เทียบกับภาคเรียนเปรียบเทียบที่ผู้ใช้เลือก
-      selectedTotal: compareTerm ? getDelta(primaryTerm.total.students, compareTerm.total.students) : null,
-      selectedLower: compareTerm ? getDelta(primaryTerm.lower.students, compareTerm.lower.students) : null,
-      selectedUpper: compareTerm ? getDelta(primaryTerm.upper.students, compareTerm.upper.students) : null,
-      // เทียบอัตโนมัติ (เทอมก่อน & ปีก่อน)
-      qoqTotal: autoPrevTerm ? getDelta(primaryTerm.total.students, autoPrevTerm.total.students) : null,
-      yoyTotal: autoPrevYear ? getDelta(primaryTerm.total.students, autoPrevYear.total.students) : null,
-      qoqLower: autoPrevTerm ? getDelta(primaryTerm.lower.students, autoPrevTerm.lower.students) : null,
-      yoyLower: autoPrevYear ? getDelta(primaryTerm.lower.students, autoPrevYear.lower.students) : null,
-      qoqUpper: autoPrevTerm ? getDelta(primaryTerm.upper.students, autoPrevTerm.upper.students) : null,
-      yoyUpper: autoPrevYear ? getDelta(primaryTerm.upper.students, autoPrevYear.upper.students) : null,
-      autoPrevTerm,
-      autoPrevYear,
     };
-  }, [allTerms, primaryTerm, compareTerm]);
 
-  // รายการระดับชั้นที่ผ่านการกรอง (Search + Pill Filter) สำหรับหน้าหลัก
-  const filteredGradeRows = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
+    const TERM_ORDER_CHRONOLOGICAL = ['1-2568', '2-2568', '1-2569', '2-2569'];
+    const GRADE_KEYS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
 
-    return primaryTerm.gradeList.filter((item) => {
-      // กรองตาม Pill Filter
-      if (gradeFilter === 'lower' && item.levelKey !== 'lower') return false;
-      if (gradeFilter === 'upper' && item.levelKey !== 'upper') return false;
-      if (GRADE_KEYS.includes(gradeFilter) && item.key !== gradeFilter) return false;
+    const GRADE_META = {
+      m1: { code: 'ม.1', fullName: 'มัธยมศึกษาปีที่ 1 (ม.1)', level: 'ม.ต้น', levelFull: 'มัธยมศึกษาตอนต้น', levelKey: 'lower', color: '#2563EB' },
+      m2: { code: 'ม.2', fullName: 'มัธยมศึกษาปีที่ 2 (ม.2)', level: 'ม.ต้น', levelFull: 'มัธยมศึกษาตอนต้น', levelKey: 'lower', color: '#3B82F6' },
+      m3: { code: 'ม.3', fullName: 'มัธยมศึกษาปีที่ 3 (ม.3)', level: 'ม.ต้น', levelFull: 'มัธยมศึกษาตอนต้น', levelKey: 'lower', color: '#0EA5E9' },
+      m4: { code: 'ม.4', fullName: 'มัธยมศึกษาปีที่ 4 (ม.4)', level: 'ม.ปลาย', levelFull: 'มัธยมศึกษาตอนปลาย', levelKey: 'upper', color: '#D83A6F' },
+      m5: { code: 'ม.5', fullName: 'มัธยมศึกษาปีที่ 5 (ม.5)', level: 'ม.ปลาย', levelFull: 'มัธยมศึกษาตอนปลาย', levelKey: 'upper', color: '#EC4899' },
+      m6: { code: 'ม.6', fullName: 'มัธยมศึกษาปีที่ 6 (ม.6)', level: 'ม.ปลาย', levelFull: 'มัธยมศึกษาตอนปลาย', levelKey: 'upper', color: '#8B5CF6' }
+    };
 
-      // กรองตามคำค้นหา
-      if (q) {
-        const matchCode = item.code.toLowerCase().includes(q);
-        const matchFull = item.fullName.toLowerCase().includes(q);
-        const matchLevel = item.level.toLowerCase().includes(q);
-        const matchStudents = String(item.students).includes(q);
-        return matchCode || matchFull || matchLevel || matchStudents;
-      }
-      return true;
-    });
-  }, [primaryTerm, gradeFilter, searchQuery]);
+    const OBEC_STD_PER_ROOM = 40;
+    const OBEC_MAX_PER_GRADE = 480;
 
-  // ข้อมูลเปรียบเทียบรายปี/เทอม ครบทุกมิติสำหรับแท็บที่ 2
-  const multiPeriodComparisonRows = useMemo(() => {
-    return GRADE_KEYS.map((key) => {
-      const meta = GRADE_META[key];
-      const s69_2 = term2569_2.grades[key].students;
-      const s69_1 = term2569_1.grades[key].students;
-      const s68_2 = term2568_2.grades[key].students;
-      const s68_1 = term2568_1.grades[key].students;
-      const rooms = term2569_2.grades[key].rooms;
+    // -------------------------------------------------------------------------
+    // 2. Application State
+    // -------------------------------------------------------------------------
+    let state = {
+      activeTab: 'home',
+      selectedTermId: '2-2569',
+      levelFilter: 'all',
+      searchQuery: ''
+    };
+
+    let chartInstances = {
+      gradeBars: null,
+      levelDonut: null,
+      trendLines: null,
+      roomDensity: null,
+      modalGrade: null
+    };
+
+    // -------------------------------------------------------------------------
+    // 3. Helper Functions สำหรับคำนวณสถิติ
+    // -------------------------------------------------------------------------
+    function getTermSummary(termId) {
+      const term = TERMS_DB[termId];
+      const g = term.grades;
+      const lowerStudents = g.m1.students + g.m2.students + g.m3.students;
+      const lowerRooms = g.m1.rooms + g.m2.rooms + g.m3.rooms;
+      const upperStudents = g.m4.students + g.m5.students + g.m6.students;
+      const upperRooms = g.m4.rooms + g.m5.rooms + g.m6.rooms;
+      const totalStudents = lowerStudents + upperStudents;
+      const totalRooms = lowerRooms + upperRooms;
 
       return {
-        key,
-        ...meta,
-        rooms,
-        s69_2,
-        s69_1,
-        s68_2,
-        s68_1,
-        avg69_2: +(s69_2 / rooms).toFixed(2),
-        qoq: getDelta(s69_2, s69_1), // 2/2569 vs 1/2569
-        yoy2: getDelta(s69_2, s68_2), // 2/2569 vs 2/2568
-        yoy1: getDelta(s69_1, s68_1), // 1/2569 vs 1/2568
+        ...term,
+        lower: {
+          students: lowerStudents,
+          rooms: lowerRooms,
+          avg: +(lowerStudents / lowerRooms).toFixed(2),
+          share: +((lowerStudents / totalStudents) * 100).toFixed(2)
+        },
+        upper: {
+          students: upperStudents,
+          rooms: upperRooms,
+          avg: +(upperStudents / upperRooms).toFixed(2),
+          share: +((upperStudents / totalStudents) * 100).toFixed(2)
+        },
+        total: {
+          students: totalStudents,
+          rooms: totalRooms,
+          avg: +(totalStudents / totalRooms).toFixed(2),
+          capacityPct: +((totalStudents / (totalRooms * OBEC_STD_PER_ROOM)) * 100).toFixed(2)
+        }
       };
-    });
-  }, [term2569_2, term2569_1, term2568_2, term2568_1]);
+    }
 
-  // การวิเคราะห์อัตราการเลื่อนชั้นและคงอยู่ข้ามปีการศึกษา (2/2568 -> 1/2569)
-  const cohortProgressionList = useMemo(() => {
-    return [
-      {
-        id: 'intake-m1',
-        group: 'รับเข้าใหม่ ม.1',
-        title: 'รับเข้าใหม่ ม.1 (1/2569 เทียบ 1/2568)',
-        fromTerm: 'ม.1 (1/2568)',
-        toTerm: 'ม.1 (1/2569)',
-        fromVal: term2568_1.grades.m1.students,
-        toVal: term2569_1.grades.m1.students,
-        diff: term2569_1.grades.m1.students - term2568_1.grades.m1.students,
-        rate: +(((term2569_1.grades.m1.students - term2568_1.grades.m1.students) / term2568_1.grades.m1.students) * 100).toFixed(2),
-        rateType: 'change',
-        desc: 'รับนักเรียนชั้น ม.1 ครบทั้ง 12 ห้องเรียน (เฉลี่ย 37.67 คน/ห้อง)',
-      },
-      {
-        id: 'm1-to-m2',
-        group: 'เลื่อนชั้น ม.ต้น',
-        title: 'ม.1 (2/2568) → เลื่อนชั้น ม.2 (1/2569)',
-        fromTerm: 'ม.1 (2/2568)',
-        toTerm: 'ม.2 (1/2569)',
-        fromVal: term2568_2.grades.m1.students,
-        toVal: term2569_1.grades.m2.students,
-        diff: term2569_1.grades.m2.students - term2568_2.grades.m1.students,
-        rate: +((term2569_1.grades.m2.students / term2568_2.grades.m1.students) * 100).toFixed(2),
-        rateType: 'retention',
-        desc: 'อัตราการคงอยู่และเลื่อนชั้นสูงถึง 96.54% (ลดลงเพียง 16 คน)',
-      },
-      {
-        id: 'm2-to-m3',
-        group: 'เลื่อนชั้น ม.ต้น',
-        title: 'ม.2 (2/2568) → เลื่อนชั้น ม.3 (1/2569)',
-        fromTerm: 'ม.2 (2/2568)',
-        toTerm: 'ม.3 (1/2569)',
-        fromVal: term2568_2.grades.m2.students,
-        toVal: term2569_1.grades.m3.students,
-        diff: term2569_1.grades.m3.students - term2568_2.grades.m2.students,
-        rate: +((term2569_1.grades.m3.students / term2568_2.grades.m2.students) * 100).toFixed(2),
-        rateType: 'retention',
-        desc: 'อัตราคงอยู่ 90.00% เข้าสู่ชั้นปีสุดท้ายของระดับมัธยมศึกษาตอนต้น',
-      },
-      {
-        id: 'm3-to-m4',
-        group: 'รอยต่อ ม.ต้น → ม.ปลาย',
-        title: 'จบ ม.3 (2/2568) → เข้าเรียน ม.4 (1/2569)',
-        fromTerm: 'ม.3 (2/2568)',
-        toTerm: 'ม.4 (1/2569)',
-        fromVal: term2568_2.grades.m3.students,
-        toVal: term2569_1.grades.m4.students,
-        diff: term2569_1.grades.m4.students - term2568_2.grades.m3.students,
-        rate: +(((term2569_1.grades.m4.students - term2568_2.grades.m3.students) / term2568_2.grades.m3.students) * 100).toFixed(2),
-        rateType: 'expansion',
-        desc: 'ยอดนักเรียนเพิ่มขึ้น +78 คน (+21.79%) จากการเปิดรับสมัครนักเรียนใหม่เข้า ม.4',
-      },
-      {
-        id: 'm4-to-m5',
-        group: 'เลื่อนชั้น ม.ปลาย',
-        title: 'ม.4 (2/2568) → เลื่อนชั้น ม.5 (1/2569)',
-        fromTerm: 'ม.4 (2/2568)',
-        toTerm: 'ม.5 (1/2569)',
-        fromVal: term2568_2.grades.m4.students,
-        toVal: term2569_1.grades.m5.students,
-        diff: term2569_1.grades.m5.students - term2568_2.grades.m4.students,
-        rate: +((term2569_1.grades.m5.students / term2568_2.grades.m4.students) * 100).toFixed(2),
-        rateType: 'retention',
-        desc: 'อัตราคงอยู่ 90.74% ตามแผนการเรียนระดับมัธยมศึกษาตอนปลาย',
-      },
-      {
-        id: 'm5-to-m6',
-        group: 'เลื่อนชั้น ม.ปลาย',
-        title: 'ม.5 (2/2568) → เลื่อนชั้น ม.6 (1/2569)',
-        fromTerm: 'ม.5 (2/2568)',
-        toTerm: 'ม.6 (1/2569)',
-        fromVal: term2568_2.grades.m5.students,
-        toVal: term2569_1.grades.m6.students,
-        diff: term2569_1.grades.m6.students - term2568_2.grades.m5.students,
-        rate: +((term2569_1.grades.m6.students / term2568_2.grades.m5.students) * 100).toFixed(2),
-        rateType: 'retention',
-        desc: 'อัตราคงอยู่สูงสุดถึง 97.99% เตรียมความพร้อมเข้าศึกษาต่อระดับอุดมศึกษา',
-      },
-    ];
-  }, [term2569_1, term2568_2, term2568_1]);
+    function calcDelta(curr, prev) {
+      if (prev === null || prev === undefined) return null;
+      const diff = curr - prev;
+      const pct = prev !== 0 ? +((diff / prev) * 100).toFixed(2) : 0;
+      return { diff, pct };
+    }
 
-  // ข้อมูลสำหรับกราฟ Recharts
-  const barChartComparisonData = useMemo(() => {
-    return GRADE_KEYS.map((key) => {
-      const meta = GRADE_META[key];
-      const base = {
-        grade: meta.code,
-        [primaryTerm.termLabel]: primaryTerm.grades[key].students,
-      };
-      if (compareTerm) {
-        base[compareTerm.termLabel] = compareTerm.grades[key].students;
+    function formatDeltaBadge(delta, showUnit = true) {
+      if (!delta) {
+        return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-400">ไม่มีข้อมูลก่อนหน้า</span>`;
       }
-      return base;
-    });
-  }, [primaryTerm, compareTerm]);
+      const { diff, pct } = delta;
+      const sign = diff > 0 ? '+' : '';
+      let style = 'bg-slate-100 text-slate-600';
+      let arrow = '•';
 
-  const trendChartData = useMemo(() => {
-    return [...allTerms].reverse().map((t) => ({
-      term: t.termLabel,
-      'รวมทั้งหมด': t.total.students,
-      'ม.ต้น (ม.1–ม.3)': t.lower.students,
-      'ม.ปลาย (ม.4–ม.6)': t.upper.students,
-    }));
-  }, [allTerms]);
+      if (diff > 0) {
+        style = 'bg-emerald-50 text-emerald-700 border border-emerald-200/80';
+        arrow = '▲';
+      } else if (diff < 0) {
+        style = 'bg-rose-50 text-rose-600 border border-rose-200/80';
+        arrow = '▼';
+      }
 
-  const densityChartData = useMemo(() => {
-    return primaryTerm.gradeList.map((g) => ({
-      grade: g.code,
-      'เฉลี่ยต่อห้อง': g.avgPerRoom,
-      color: g.color,
-    }));
-  }, [primaryTerm]);
-
-  const donutChartData = useMemo(() => {
-    return primaryTerm.gradeList.map((g) => ({
-      name: `${g.code} (${g.students} คน)`,
-      shortName: g.code,
-      value: g.students,
-      sharePct: g.sharePct,
-      color: g.color,
-    }));
-  }, [primaryTerm]);
-
-  // ซิงค์ข้อมูลจาก Google Sheets
-  const handleSyncSheets = async () => {
-    setIsSyncing(true);
-    try {
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), 3500);
-      await fetch(SCHOOL_INFO.sheetCsvUrl, { signal: controller.signal });
-      clearTimeout(id);
-    } catch {
-      // Fallback ใช้ข้อมูลจริงในระบบ
-    } finally {
-      setIsSyncing(false);
-      triggerToast('ตรวจสอบฐานข้อมูล Google Sheets เรียบร้อยแล้ว (ข้อมูลครบทั้ง 4 ภาคเรียน)');
+      const unitStr = showUnit ? ' คน' : '';
+      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold tabular-nums ${style}">
+        <span>${arrow}</span>
+        <span>${sign}${diff.toLocaleString()}${unitStr} (${sign}${pct.toFixed(2)}%)</span>
+      </span>`;
     }
-  };
 
-  // ส่งออกข้อมูลเป็น CSV
-  const handleExportCSV = () => {
-    const headers = [
-      'ปีการศึกษา',
-      'ภาคเรียน',
-      'ม.1 (คน)',
-      'ม.2 (คน)',
-      'ม.3 (คน)',
-      'รวม ม.ต้น (คน)',
-      'ม.4 (คน)',
-      'ม.5 (คน)',
-      'ม.6 (คน)',
-      'รวม ม.ปลาย (คน)',
-      'รวมทั้งหมด (คน)',
-      'จำนวนห้อง',
-      'เฉลี่ยนักเรียน/ห้อง'
-    ];
-
-    const rows = allTerms.map((t) => [
-      t.year,
-      t.term,
-      t.grades.m1.students,
-      t.grades.m2.students,
-      t.grades.m3.students,
-      t.lower.students,
-      t.grades.m4.students,
-      t.grades.m5.students,
-      t.grades.m6.students,
-      t.upper.students,
-      t.total.students,
-      t.total.rooms,
-      t.total.avgPerRoom,
-    ]);
-
-    const csv = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'สถิตินักเรียน_โรงเรียนวัดสุทธิวราราม_2568-2569.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    triggerToast('ดาวน์โหลดไฟล์รายงานสถิติ (CSV) เรียบร้อยแล้ว');
-  };
-
-  // สลับคู่เทียบ
-  const handleSwapTerms = () => {
-    if (!compareTerm) {
-      setCompareTermId(primaryTermId === '2-2569' ? '1-2569' : '2-2569');
-      return;
+    function showToast(message) {
+      const box = document.getElementById('toast-box');
+      const text = document.getElementById('toast-text');
+      text.textContent = message;
+      box.classList.remove('hidden');
+      box.classList.add('flex');
+      lucide.createIcons();
+      setTimeout(() => {
+        box.classList.add('hidden');
+        box.classList.remove('flex');
+      }, 3200);
     }
-    const prevPrimary = primaryTermId;
-    setPrimaryTermId(compareTermId);
-    setCompareTermId(prevPrimary);
-  };
 
-  return (
-    <div
-      className="min-h-screen bg-[#F4F7FB] text-[#0F172A] pb-16 selection:bg-[#D83A6F] selection:text-white"
-      style={{ fontFamily: "'Prompt', 'Sarabun', sans-serif" }}
-    >
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2.5 bg-[#111C35] text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-700 text-xs sm:text-sm">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
+    // -------------------------------------------------------------------------
+    // 4. การสลับแท็บหลัก (Navigation)
+    // -------------------------------------------------------------------------
+    function switchMainTab(tabId) {
+      state.activeTab = tabId;
 
-      {/* =====================================================================
-          1. TOP NAVIGATION BAR (ถอดแบบจากภาพต้นแบบโรงเรียนวัดสุทธิวราราม)
-      ===================================================================== */}
-      <header className="sticky top-0 z-30 bg-white border-b border-[#E2E8F0] shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-[72px] flex items-center justify-between gap-4">
-          {/* ด้านซ้าย: โลโก้ + ชื่อโรงเรียนวัดสุทธิวราราม + ระบบสถิตินักเรียน */}
-          <div className="flex items-center gap-3 shrink-0">
-            <SchoolLogo className="h-10 sm:h-11 w-auto" />
-            <div className="leading-tight">
-              <div className="text-base sm:text-lg font-bold text-[#D83A6F] tracking-tight">
-                {SCHOOL_INFO.name}
-              </div>
-              <div className="text-xs text-slate-500 font-medium">
-                {SCHOOL_INFO.systemTitle}
-              </div>
-            </div>
+      // อัปเดตสไตล์ปุ่มเมนูทั้ง Desktop และ Mobile
+      document.querySelectorAll('.nav-tab-btn').forEach((btn) => {
+        const isTarget = btn.getAttribute('data-tab') === tabId;
+        const isMobile = btn.closest('.md\\:hidden') !== null;
+
+        if (isTarget) {
+          btn.className = isMobile
+            ? 'nav-tab-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all bg-[#D83A6F] text-white shadow-2xs'
+            : 'nav-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer bg-[#D83A6F] text-white shadow-sm shadow-pink-600/20';
+        } else {
+          btn.className = isMobile
+            ? 'nav-tab-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all bg-white text-slate-600 border border-slate-200'
+            : 'nav-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer text-slate-600 hover:text-[#111C35] hover:bg-slate-100';
+        }
+      });
+
+      // แสดง/ซ่อน Panel
+      document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.add('hidden'));
+      const activePanel = document.getElementById(`panel-${tabId}`);
+      if (activePanel) {
+        activePanel.classList.remove('hidden');
+      }
+
+      if (tabId === 'compare') {
+        renderComparisonView();
+      } else if (tabId === 'charts') {
+        renderAllCharts();
+      }
+
+      lucide.createIcons();
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. อัปเดต 4 การ์ด KPI และหน้าแรก (Home View)
+    // -------------------------------------------------------------------------
+    function updateKPICards() {
+      const current = getTermSummary(state.selectedTermId);
+      const prevTerm = current.prevTermId ? getTermSummary(current.prevTermId) : null;
+      const prevYear = current.prevYearId ? getTermSummary(current.prevYearId) : null;
+
+      // Banner ด้านบน
+      document.getElementById('current-term-banner').textContent = `กำลังแสดงข้อมูล: ${current.fullLabel}`;
+      const latestBadge = document.getElementById('latest-badge');
+      if (current.isLatest) {
+        latestBadge.classList.remove('hidden');
+      } else {
+        latestBadge.classList.add('hidden');
+      }
+
+      // KPI 1: ยอดรวม
+      document.getElementById('kpi-total-students').textContent = current.total.students.toLocaleString();
+      document.getElementById('kpi-total-qoq').innerHTML = formatDeltaBadge(
+        prevTerm ? calcDelta(current.total.students, prevTerm.total.students) : null
+      );
+      document.getElementById('kpi-total-yoy').innerHTML = formatDeltaBadge(
+        prevYear ? calcDelta(current.total.students, prevYear.total.students) : null
+      );
+
+      // KPI 2: ม.ต้น
+      document.getElementById('kpi-lower-students').textContent = current.lower.students.toLocaleString();
+      document.getElementById('kpi-lower-share').textContent = `(${current.lower.share}%)`;
+      document.getElementById('kpi-lower-qoq').innerHTML = formatDeltaBadge(
+        prevTerm ? calcDelta(current.lower.students, prevTerm.lower.students) : null
+      );
+      document.getElementById('kpi-lower-yoy').innerHTML = formatDeltaBadge(
+        prevYear ? calcDelta(current.lower.students, prevYear.lower.students) : null
+      );
+
+      // KPI 3: ม.ปลาย
+      document.getElementById('kpi-upper-students').textContent = current.upper.students.toLocaleString();
+      document.getElementById('kpi-upper-share').textContent = `(${current.upper.share}%)`;
+      document.getElementById('kpi-upper-qoq').innerHTML = formatDeltaBadge(
+        prevTerm ? calcDelta(current.upper.students, prevTerm.upper.students) : null
+      );
+      document.getElementById('kpi-upper-yoy').innerHTML = formatDeltaBadge(
+        prevYear ? calcDelta(current.upper.students, prevYear.upper.students) : null
+      );
+
+      // KPI 4: ห้องเรียน & ค่าเฉลี่ย
+      document.getElementById('kpi-total-rooms').textContent = current.total.rooms;
+      document.getElementById('kpi-avg-room').textContent = `(${current.total.avg} คน/ห้อง)`;
+      document.getElementById('kpi-capacity-pct').textContent = `${current.total.capacityPct}%`;
+    }
+
+    function renderHomeGradeRows() {
+      const current = getTermSummary(state.selectedTermId);
+      const prevTerm = current.prevTermId ? getTermSummary(current.prevTermId) : null;
+      const q = state.searchQuery.trim().toLowerCase();
+
+      const rowsContainer = document.getElementById('grade-rows-container');
+      const filteredKeys = GRADE_KEYS.filter((key) => {
+        const meta = GRADE_META[key];
+        const st = current.grades[key].students;
+
+        if (state.levelFilter === 'lower' && meta.levelKey !== 'lower') return false;
+        if (state.levelFilter === 'upper' && meta.levelKey !== 'upper') return false;
+
+        if (q) {
+          return (
+            meta.code.toLowerCase().includes(q) ||
+            meta.fullName.toLowerCase().includes(q) ||
+            meta.level.toLowerCase().includes(q) ||
+            meta.levelFull.toLowerCase().includes(q) ||
+            String(st).includes(q)
+          );
+        }
+        return true;
+      });
+
+      if (filteredKeys.length === 0) {
+        rowsContainer.innerHTML = `
+          <div class="text-center py-12 text-slate-400 text-sm">
+            ไม่พบข้อมูลระดับชั้นที่ตรงกับคำค้นหา "${state.searchQuery}"
           </div>
+        `;
+      } else {
+        rowsContainer.innerHTML = filteredKeys
+          .map((key) => {
+            const meta = GRADE_META[key];
+            const item = current.grades[key];
+            const avgPerRoom = (item.students / item.rooms).toFixed(2);
+            const sharePct = ((item.students / current.total.students) * 100).toFixed(2);
+            const capacityPct = ((item.students / OBEC_MAX_PER_GRADE) * 100).toFixed(1);
+            const prevStudents = prevTerm ? prevTerm.grades[key].students : null;
+            const delta = calcDelta(item.students, prevStudents);
+            const isLower = meta.levelKey === 'lower';
 
-          {/* ตรงกลาง: เมนูหลักแบบ Pill Tabs */}
-          <nav aria-label="เมนูหลัก" className="hidden md:flex items-center gap-1.5 no-print">
-            {[
-              { id: 'home', label: 'หน้าหลัก', icon: Home },
-              { id: 'compare', label: 'เปรียบเทียบรายปี/เทอม', icon: ArrowRightLeft },
-              { id: 'charts', label: 'โครงสร้างชั้นเรียนและกราฟ', icon: BarChart3 },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeNavTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveNavTab(tab.id)}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-[#D83A6F] text-white shadow-sm shadow-pink-600/20 font-semibold'
-                      : 'text-slate-600 hover:text-[#111C35] hover:bg-slate-100/80'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* ด้านขวา: ปุ่มส่งออก CSV / พิมพ์รายงาน และปุ่มแคปซูล รหัส 10012030 */}
-          <div className="flex items-center gap-2 no-print">
-            <button
-              onClick={handleSyncSheets}
-              title="ซิงค์ข้อมูลจาก Google Sheets"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium text-slate-600 hover:text-[#111C35] hover:bg-slate-100 border border-slate-200/80 transition-colors cursor-pointer"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 text-[#D83A6F] ${isSyncing ? 'animate-spin' : ''}`} />
-              <span className="hidden lg:inline">ซิงค์ข้อมูล</span>
-            </button>
-
-            <button
-              onClick={handleExportCSV}
-              title="ส่งออกไฟล์ CSV"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5 text-blue-600" />
-              <span className="hidden sm:inline">ส่งออก CSV</span>
-            </button>
-
-            <button
-              onClick={() => window.print()}
-              title="พิมพ์รายงาน"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
-            >
-              <Printer className="w-3.5 h-3.5 text-slate-600" />
-              <span className="hidden lg:inline">พิมพ์</span>
-            </button>
-
-            {/* ปุ่มแคปซูลสถานะ รหัส 10012030 สไตล์เดียวกับปุ่ม "ผู้ดูแลระบบ" ในภาพ */}
-            <a
-              href={SCHOOL_INFO.sheetUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="เปิดฐานข้อมูล Google Sheets โรงเรียนวัดสุทธิวราราม"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
-              <span>รหัส {SCHOOL_INFO.code}</span>
-            </a>
-          </div>
-        </div>
-
-        {/* Mobile Pill Navigation Bar */}
-        <div className="md:hidden flex items-center gap-1.5 px-4 py-2 bg-slate-50/80 border-t border-slate-100 overflow-x-auto no-print">
-          {[
-            { id: 'home', label: 'หน้าหลัก', icon: Home },
-            { id: 'compare', label: 'เปรียบเทียบรายปี/เทอม', icon: ArrowRightLeft },
-            { id: 'charts', label: 'โครงสร้างชั้นเรียนและกราฟ', icon: BarChart3 },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeNavTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveNavTab(tab.id)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-                  isActive
-                    ? 'bg-[#D83A6F] text-white shadow-2xs'
-                    : 'bg-white text-slate-600 border border-slate-200'
-                }`}
+            return `
+              <div
+                onclick="openGradeModal('${key}')"
+                class="group bg-white hover:bg-slate-50/90 border border-slate-100 hover:border-blue-200 rounded-xl p-4 transition-all cursor-pointer grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-center"
               >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </header>
-
-      {/* =====================================================================
-          MAIN CONTENT CONTAINER
-      ===================================================================== */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
-        {/* แถบข้อมูลบริบทของภาคเรียนที่กำลังแสดง */}
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 text-[#111C35] font-semibold shadow-2xs">
-              <Calendar className="w-3.5 h-3.5 text-[#D83A6F]" />
-              กำลังแสดงข้อมูล: {primaryTerm.fullLabel}
-              {primaryTerm.isLatest && (
-                <span className="ml-1 px-1.5 py-0.2 bg-pink-50 text-[#D83A6F] rounded-full text-[10px] font-bold">
-                  ล่าสุด
-                </span>
-              )}
-            </span>
-            <span>• {SCHOOL_INFO.affiliation}</span>
-            <span className="hidden sm:inline">• {SCHOOL_INFO.type}</span>
-          </div>
-          <a
-            href={SCHOOL_INFO.sheetUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-blue-600 hover:underline font-medium no-print"
-          >
-            <span>แหล่งข้อมูล: Google Sheets สถิตินักเรียน</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
-        </div>
-
-        {/* ===================================================================
-            ส่วนที่ 1: แถวการ์ดสรุปสถิติ 4 ใบ (4-Column KPI Summary Cards)
-            ถอดแบบจากภาพต้นแบบเป๊ะ (กล่องไอคอนพาสเทลด้านซ้าย + ตัวเลขหนาด้านขวา)
-        =================================================================== */}
-        <section aria-label="สรุปสถิติสำคัญ" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* การ์ดที่ 1: นักเรียนทั้งหมด (กล่องไอคอนสีฟ้าอ่อน) */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                <Users className="w-6 h-6" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-medium text-slate-500 truncate">นักเรียนทั้งหมด</div>
-                <div className="text-2xl sm:text-[28px] font-bold text-[#0F172A] tabular-nums leading-tight mt-0.5">
-                  {primaryTerm.total.students.toLocaleString()}
-                  <span className="text-xs font-normal text-slate-400 ml-1.5">คน</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
-              <span className="text-slate-400 truncate">
-                {compareTerm ? `เทียบ ${compareTerm.termLabel}:` : 'เทียบเทอมก่อน:'}
-              </span>
-              <DeltaPill delta={compareTerm ? kpiDeltas.selectedTotal : kpiDeltas.qoqTotal} size="xs" />
-            </div>
-          </div>
-
-          {/* การ์ดที่ 2: ระดับมัธยมศึกษาตอนต้น (กล่องไอคอนสีเขียวมิ้นต์อ่อน) */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                <BookOpen className="w-6 h-6" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-medium text-slate-500 truncate">
-                  ระดับมัธยมศึกษาตอนต้น
-                </div>
-                <div className="text-2xl sm:text-[28px] font-bold text-[#0F172A] tabular-nums leading-tight mt-0.5">
-                  {primaryTerm.lower.students.toLocaleString()}
-                  <span className="text-xs font-semibold text-emerald-600 ml-1.5">
-                    ({primaryTerm.lower.sharePct}%)
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
-              <span className="text-slate-400 truncate">
-                {compareTerm ? `เทียบ ${compareTerm.termLabel}:` : 'เทียบเทอมก่อน:'}
-              </span>
-              <DeltaPill delta={compareTerm ? kpiDeltas.selectedLower : kpiDeltas.qoqLower} size="xs" />
-            </div>
-          </div>
-
-          {/* การ์ดที่ 3: ระดับมัธยมศึกษาตอนปลาย (กล่องไอคอนสีชมพูอ่อน) */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-pink-50 text-[#D83A6F] flex items-center justify-center shrink-0">
-                <GraduationCap className="w-6 h-6" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-medium text-slate-500 truncate">
-                  ระดับมัธยมศึกษาตอนปลาย
-                </div>
-                <div className="text-2xl sm:text-[28px] font-bold text-[#0F172A] tabular-nums leading-tight mt-0.5">
-                  {primaryTerm.upper.students.toLocaleString()}
-                  <span className="text-xs font-semibold text-[#D83A6F] ml-1.5">
-                    ({primaryTerm.upper.sharePct}%)
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
-              <span className="text-slate-400 truncate">
-                {compareTerm ? `เทียบ ${compareTerm.termLabel}:` : 'เทียบเทอมก่อน:'}
-              </span>
-              <DeltaPill delta={compareTerm ? kpiDeltas.selectedUpper : kpiDeltas.qoqUpper} size="xs" />
-            </div>
-          </div>
-
-          {/* การ์ดที่ 4: จำนวนห้องเรียน / เฉลี่ยต่อห้อง (กล่องไอคอนสีม่วงอ่อน) */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                <School className="w-6 h-6" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-medium text-slate-500 truncate">
-                  จำนวนห้องเรียน / เฉลี่ยต่อห้อง
-                </div>
-                <div className="text-2xl sm:text-[28px] font-bold text-[#0F172A] tabular-nums leading-tight mt-0.5">
-                  {primaryTerm.total.rooms}
-                  <span className="text-xs font-normal text-slate-500 ml-1">ห้อง</span>
-                  <span className="text-xs font-semibold text-purple-600 ml-1.5">
-                    ({primaryTerm.total.avgPerRoom} คน/ห้อง)
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
-              <span className="text-slate-400">ความจุเทียบเกณฑ์ สพฐ. (40):</span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-700 tabular-nums">
-                {primaryTerm.total.capacityPct}% ของความจุ
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* ===================================================================
-            ส่วนที่ 2: กล่องค้นหาและแถบตัวกรองแบบแคปซูล (Search & Pill Filter Box)
-            ถอดแบบจากภาพต้นแบบเป๊ะ
-        =================================================================== */}
-        <section
-          aria-label="ตัวกรองและค้นหาข้อมูล"
-          className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/70 shadow-sm space-y-3.5 no-print"
-        >
-          {/* แถวบน: ช่องค้นหาขอบมน + แถบ Pill Filter ระดับชั้น */}
-          <div className="flex flex-col lg:flex-row lg:items-center gap-3">
-            {/* ช่องค้นหาขอบมน rounded-full */}
-            <div className="relative w-full lg:w-72 shrink-0">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ค้นหาระดับชั้น เช่น ม.1, ม.ต้น, ม.ปลาย..."
-                className="w-full pl-9 pr-8 py-2 rounded-full border border-slate-200 bg-white text-xs sm:text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#111C35] transition-colors"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
-            {/* ชุดปุ่ม Pill Filter ช่วงชั้นและระดับชั้น (Active สีกรมท่าเข้ม #111C35) */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
-              {[
-                { id: 'all', label: 'ทุกระดับชั้น' },
-                { id: 'lower', label: 'มัธยมศึกษาตอนต้น (ม.1-ม.3)' },
-                { id: 'upper', label: 'มัธยมศึกษาตอนปลาย (ม.4-ม.6)' },
-                { id: 'm1', label: 'ม.1' },
-                { id: 'm2', label: 'ม.2' },
-                { id: 'm3', label: 'ม.3' },
-                { id: 'm4', label: 'ม.4' },
-                { id: 'm5', label: 'ม.5' },
-                { id: 'm6', label: 'ม.6' },
-              ].map((pill) => {
-                const isActive = gradeFilter === pill.id;
-                return (
-                  <button
-                    key={pill.id}
-                    onClick={() => setGradeFilter(pill.id)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#111C35] text-white border-[#111C35] shadow-2xs font-semibold'
-                        : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    {pill.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* แถวล่าง: เลือกภาคเรียนหลัก + เลือกคู่เปรียบเทียบ + ปุ่มสลับคู่เทียบ */}
-          <div className="pt-2.5 border-t border-slate-100 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
-            {/* ภาคเรียนหลัก */}
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs font-semibold text-slate-500 mr-1">ภาคเรียนหลัก:</span>
-              {allTerms.map((t) => {
-                const isActive = primaryTermId === t.id;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => setPrimaryTermId(t.id)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#111C35] text-white border-[#111C35] font-semibold'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    {t.termLabel} {t.isLatest ? '(ล่าสุด)' : ''}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* ภาคเรียนเปรียบเทียบ */}
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs font-semibold text-slate-500 mr-1">เปรียบเทียบกับ:</span>
-              {[
-                { id: '1-2569', label: '1/2569 (เทอมก่อน)' },
-                { id: '2-2568', label: '2/2568 (ปีก่อน)' },
-                { id: '1-2568', label: '1/2568' },
-                { id: 'none', label: 'ไม่เปรียบเทียบ' },
-              ].map((opt) => {
-                const isActive = compareTermId === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => setCompareTermId(opt.id)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#D83A6F] text-white border-[#D83A6F] font-semibold'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-
-              <button
-                onClick={handleSwapTerms}
-                title="สลับภาคเรียนหลักและภาคเรียนเปรียบเทียบ"
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer ml-1"
-              >
-                <ArrowRightLeft className="w-3 h-3" />
-                <span>สลับคู่เทียบ</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* ===================================================================
-            TAB 1: หน้าหลัก -> รายการสถิติรายระดับชั้นแบบ Row Cards
-            (ถอดแบบตาราง List Card จากภาพต้นแบบเป๊ะ)
-        =================================================================== */}
-        {activeNavTab === 'home' && (
-          <section aria-label="รายการสถิติรายระดับชั้น" className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-4 sm:p-6">
-            {/* Table Column Header (คล้ายในภาพต้นแบบ) */}
-            <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-4 pb-3 border-b border-slate-100 text-xs font-semibold text-slate-400">
-              <div className="col-span-3">ระดับชั้น</div>
-              <div className="col-span-2">ช่วงชั้นและจำนวนห้อง</div>
-              <div className="col-span-3">จำนวนนักเรียน (ชาย 100%)</div>
-              <div className="col-span-2">
-                {compareTerm ? `เทียบภาคเรียน ${compareTerm.termLabel}` : 'สถานะเปรียบเทียบ'}
-              </div>
-              <div className="col-span-1 text-right">เฉลี่ย/ห้อง</div>
-              <div className="col-span-1 text-right">ภาคเรียน</div>
-            </div>
-
-            {/* Row Cards List */}
-            <div className="space-y-2.5 mt-3">
-              {filteredGradeRows.length === 0 ? (
-                <div className="text-center py-12 text-slate-400 text-sm">
-                  ไม่พบข้อมูลระดับชั้นที่ตรงกับเงื่อนไขการค้นหา
-                </div>
-              ) : (
-                filteredGradeRows.map((row) => {
-                  const prevStudents = compareTerm ? compareTerm.grades[row.key].students : null;
-                  const delta = getDelta(row.students, prevStudents);
-                  const isLower = row.levelKey === 'lower';
-
-                  return (
-                    <div
-                      key={row.key}
-                      onClick={() => setSelectedRowDetail(row)}
-                      className="group bg-white hover:bg-slate-50/90 border border-slate-100 hover:border-blue-200 rounded-xl p-4 transition-all cursor-pointer grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-center"
-                    >
-                      {/* คอลัมน์ 1: ชื่อชั้นเรียน + Pastel Micro Badges ด้านล่าง (เหมือนในภาพต้นแบบ) */}
-                      <div className="lg:col-span-3 flex items-start justify-between lg:block">
-                        <div>
-                          <div className="font-bold text-sm sm:text-[15px] text-[#0F172A] group-hover:text-[#D83A6F] transition-colors flex items-center gap-1.5">
-                            <span>{row.fullName}</span>
-                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-[#D83A6F] group-hover:translate-x-0.5 transition-all" />
-                          </div>
-                          <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-blue-50 text-blue-600">
-                              {row.rooms} ห้องเรียน
-                            </span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-amber-50 text-amber-700">
-                              สัดส่วน {row.sharePct}%
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* แสดงภาคเรียนมุมขวาบนมือถือ */}
-                        <span className="lg:hidden px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
-                          {primaryTerm.termLabel}
-                        </span>
-                      </div>
-
-                      {/* คอลัมน์ 2: ป้าย Pill ช่วงชั้น (ม.ต้น / ม.ปลาย เหมือนป้าย "ภาษาไทย" ในภาพ) */}
-                      <div className="lg:col-span-2 flex items-center gap-2">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold ${
-                            isLower
-                              ? 'bg-blue-50 text-blue-600'
-                              : 'bg-pink-50 text-[#D83A6F]'
-                          }`}
-                        >
-                          {row.level}
-                        </span>
-                        <span className="text-xs text-slate-400">({row.rooms} ห้อง)</span>
-                      </div>
-
-                      {/* คอลัมน์ 3: จำนวนนักเรียน + Mini Progress Bar เทียบเกณฑ์ สพฐ. 480 คน/ชั้น */}
-                      <div className="lg:col-span-3">
-                        <div className="flex items-baseline justify-between mb-1">
-                          <span className="text-base sm:text-lg font-bold text-[#0F172A] tabular-nums">
-                            {row.students.toLocaleString()} <span className="text-xs font-normal text-slate-500">คน</span>
-                          </span>
-                          <span className="text-[11px] text-slate-400 tabular-nums">
-                            {row.capacityPct}% ของเกณฑ์ (480)
-                          </span>
-                        </div>
-                        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${isLower ? 'bg-blue-500' : 'bg-[#D83A6F]'}`}
-                            style={{ width: `${Math.min(row.capacityPct, 100)}%` }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* คอลัมน์ 4: ผลต่างจากการเปรียบเทียบ */}
-                      <div className="lg:col-span-2">
-                        {compareTerm ? (
-                          <div>
-                            <DeltaPill delta={delta} size="xs" />
-                            <div className="text-[11px] text-slate-400 mt-1 tabular-nums">
-                              จากเดิม {prevStudents?.toLocaleString()} คน
-                            </div>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-slate-400">ไม่ได้เลือกภาคเรียนเทียบ</span>
-                        )}
-                      </div>
-
-                      {/* คอลัมน์ 5: ค่าเฉลี่ยนักเรียนต่อห้อง */}
-                      <div className="lg:col-span-1 flex lg:block items-center justify-between text-right">
-                        <span className="lg:hidden text-xs text-slate-400">เฉลี่ยต่อห้อง:</span>
-                        <div>
-                          <div className="text-sm font-bold text-slate-800 tabular-nums">{row.avgPerRoom}</div>
-                          <div className="text-[10px] text-slate-400">คน/ห้อง</div>
-                        </div>
-                      </div>
-
-                      {/* คอลัมน์ 6: ป้าย Pill ภาคเรียนมุมขวา (เหมือนป้าย 2/2569 ในภาพต้นแบบเป๊ะ) */}
-                      <div className="hidden lg:flex lg:col-span-1 justify-end">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200/70 tabular-nums">
-                          {primaryTerm.termLabel}
-                        </span>
-                      </div>
+                <!-- คอลัมน์ 1: ชื่อระดับชั้น + Micro Badges -->
+                <div class="lg:col-span-3 flex items-start justify-between lg:block">
+                  <div>
+                    <div class="font-heading font-bold text-sm sm:text-[15px] text-[#0F172A] group-hover:text-[#D83A6F] transition-colors flex items-center gap-1.5">
+                      <span>${meta.fullName}</span>
+                      <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-[#D83A6F] group-hover:translate-x-0.5 transition-all"></i>
                     </div>
-                  );
-                })
-              )}
-
-              {/* แถวสรุปรวม ม.ต้น / ม.ปลาย / รวมทั้งหมด ด้านล่างสุดของรายการ */}
-              <div className="pt-3 mt-4 border-t border-slate-200/80 space-y-2">
-                {/* สรุป ม.ต้น */}
-                <div className="bg-blue-50/50 border border-blue-100 rounded-xl px-4 py-3 grid grid-cols-1 lg:grid-cols-12 gap-2 items-center text-xs sm:text-sm">
-                  <div className="lg:col-span-3 font-bold text-blue-900">
-                    รวมระดับมัธยมศึกษาตอนต้น (ม.1–ม.3)
-                  </div>
-                  <div className="lg:col-span-2 text-blue-700 font-medium">
-                    36 ห้องเรียน • สัดส่วน {primaryTerm.lower.sharePct}%
-                  </div>
-                  <div className="lg:col-span-3 font-bold text-blue-900 tabular-nums">
-                    {primaryTerm.lower.students.toLocaleString()} คน
-                  </div>
-                  <div className="lg:col-span-2">
-                    <DeltaPill delta={kpiDeltas.selectedLower} size="xs" />
-                  </div>
-                  <div className="lg:col-span-1 text-right font-bold text-blue-900 tabular-nums">
-                    {primaryTerm.lower.avgPerRoom} <span className="text-[10px] font-normal">คน/ห้อง</span>
-                  </div>
-                  <div className="hidden lg:flex lg:col-span-1 justify-end">
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-                      {primaryTerm.termLabel}
-                    </span>
-                  </div>
-                </div>
-
-                {/* สรุป ม.ปลาย */}
-                <div className="bg-pink-50/50 border border-pink-100 rounded-xl px-4 py-3 grid grid-cols-1 lg:grid-cols-12 gap-2 items-center text-xs sm:text-sm">
-                  <div className="lg:col-span-3 font-bold text-pink-950">
-                    รวมระดับมัธยมศึกษาตอนปลาย (ม.4–ม.6)
-                  </div>
-                  <div className="lg:col-span-2 text-[#D83A6F] font-medium">
-                    36 ห้องเรียน • สัดส่วน {primaryTerm.upper.sharePct}%
-                  </div>
-                  <div className="lg:col-span-3 font-bold text-pink-950 tabular-nums">
-                    {primaryTerm.upper.students.toLocaleString()} คน
-                  </div>
-                  <div className="lg:col-span-2">
-                    <DeltaPill delta={kpiDeltas.selectedUpper} size="xs" />
-                  </div>
-                  <div className="lg:col-span-1 text-right font-bold text-pink-950 tabular-nums">
-                    {primaryTerm.upper.avgPerRoom} <span className="text-[10px] font-normal">คน/ห้อง</span>
-                  </div>
-                  <div className="hidden lg:flex lg:col-span-1 justify-end">
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-pink-100 text-[#D83A6F]">
-                      {primaryTerm.termLabel}
-                    </span>
-                  </div>
-                </div>
-
-                {/* สรุปรวมทั้งหมดทั้งโรงเรียน */}
-                <div className="bg-[#111C35] text-white rounded-xl px-4 py-3.5 grid grid-cols-1 lg:grid-cols-12 gap-2 items-center text-xs sm:text-sm shadow-sm">
-                  <div className="lg:col-span-3 font-bold">
-                    รวมทั้งหมดทั้งโรงเรียน (ม.1–ม.6)
-                  </div>
-                  <div className="lg:col-span-2 text-slate-300">
-                    72 ห้องเรียน • 100.00%
-                  </div>
-                  <div className="lg:col-span-3 text-base font-bold text-pink-300 tabular-nums">
-                    {primaryTerm.total.students.toLocaleString()} คน
-                  </div>
-                  <div className="lg:col-span-2">
-                    <DeltaPill delta={kpiDeltas.selectedTotal} size="xs" />
-                  </div>
-                  <div className="lg:col-span-1 text-right font-bold text-white tabular-nums">
-                    {primaryTerm.total.avgPerRoom} <span className="text-[10px] font-normal text-slate-300">คน/ห้อง</span>
-                  </div>
-                  <div className="hidden lg:flex lg:col-span-1 justify-end">
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#D83A6F] text-white">
-                      {primaryTerm.termLabel}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ===================================================================
-            TAB 2: เปรียบเทียบรายปี/เทอม (ตารางวิเคราะห์เชิงลึก + อัตราเลื่อนชั้น)
-        =================================================================== */}
-        {activeNavTab === 'compare' && (
-          <div className="space-y-6">
-            {/* ตารางเปรียบเทียบแบบละเอียดทุกมิติ (2/2569, 1/2569, 2/2568, 1/2568) */}
-            <section className="bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden">
-              <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <h2 className="text-lg font-bold text-[#0F172A]">
-                    ตารางเปรียบเทียบสถิตินักเรียนรายปีการศึกษาและรายภาคเรียน (2568 – 2569)
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    แสดงข้อมูลครบทั้ง 4 ภาคเรียน พร้อมคำนวณผลต่างเทียบเทอมก่อน (QoQ) และเทียบปีก่อน (YoY) อัตโนมัติ
-                  </p>
-                </div>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-pink-50 text-[#D83A6F]">
-                  ข้อมูลล่าสุด: 2/2569 (2,504 คน)
-                </span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs sm:text-sm text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 text-xs">
-                      <th className="py-3.5 px-4 font-semibold">ระดับชั้น</th>
-                      <th className="py-3.5 px-3 text-center font-semibold">ห้อง</th>
-                      <th className="py-3.5 px-3 text-right font-bold text-[#111C35] bg-pink-50/40">2/2569 (ล่าสุด)</th>
-                      <th className="py-3.5 px-3 text-right font-semibold">1/2569</th>
-                      <th className="py-3.5 px-3 text-right font-semibold">2/2568</th>
-                      <th className="py-3.5 px-3 text-right font-semibold">1/2568</th>
-                      <th className="py-3.5 px-3 text-right font-semibold">เทียบเทอมก่อน (QoQ)</th>
-                      <th className="py-3.5 px-3 text-right font-semibold">เทียบปีก่อน (YoY เทอม 2)</th>
-                      <th className="py-3.5 px-4 text-right font-semibold">เฉลี่ย/ห้อง (2/2569)</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 tabular-nums">
-                    {multiPeriodComparisonRows.map((r) => (
-                      <tr key={r.key} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-3 px-4 font-semibold text-slate-800 whitespace-nowrap">
-                          <span
-                            className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                              r.levelKey === 'lower' ? 'bg-blue-500' : 'bg-[#D83A6F]'
-                            }`}
-                          />
-                          {r.fullName}
-                        </td>
-                        <td className="py-3 px-3 text-center text-slate-500">{r.rooms}</td>
-                        <td className="py-3 px-3 text-right font-bold text-[#111C35] bg-pink-50/20">
-                          {r.s69_2.toLocaleString()}
-                        </td>
-                        <td className="py-3 px-3 text-right text-slate-600">{r.s69_1.toLocaleString()}</td>
-                        <td className="py-3 px-3 text-right text-slate-600">{r.s68_2.toLocaleString()}</td>
-                        <td className="py-3 px-3 text-right text-slate-500">{r.s68_1.toLocaleString()}</td>
-                        <td className="py-3 px-3 text-right">
-                          <DeltaPill delta={r.qoq} showUnit={false} size="xs" />
-                        </td>
-                        <td className="py-3 px-3 text-right">
-                          <DeltaPill delta={r.yoy2} showUnit={false} size="xs" />
-                        </td>
-                        <td className="py-3 px-4 text-right font-semibold text-slate-700">{r.avg69_2} คน</td>
-                      </tr>
-                    ))}
-
-                    {/* รวม ม.ต้น */}
-                    <tr className="bg-blue-50/60 font-bold text-blue-950 border-t border-blue-100">
-                      <td className="py-3 px-4">รวมมัธยมศึกษาตอนต้น (ม.1 – ม.3)</td>
-                      <td className="py-3 px-3 text-center">36</td>
-                      <td className="py-3 px-3 text-right">{term2569_2.lower.students.toLocaleString()}</td>
-                      <td className="py-3 px-3 text-right">{term2569_1.lower.students.toLocaleString()}</td>
-                      <td className="py-3 px-3 text-right">{term2568_2.lower.students.toLocaleString()}</td>
-                      <td className="py-3 px-3 text-right">{term2568_1.lower.students.toLocaleString()}</td>
-                      <td className="py-3 px-3 text-right">
-                        <DeltaPill delta={getDelta(term2569_2.lower.students, term2569_1.lower.students)} showUnit={false} size="xs" />
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        <DeltaPill delta={getDelta(term2569_2.lower.students, term2568_2.lower.students)} showUnit={false} size="xs" />
-                      </td>
-                      <td className="py-3 px-4 text-right">{term2569_2.lower.avgPerRoom} คน</td>
-                    </tr>
-
-                    {/* รวม ม.ปลาย */}
-                    <tr className="bg-pink-50/60 font-bold text-pink-950 border-t border-pink-100">
-                      <td className="py-3 px-4">รวมมัธยมศึกษาตอนปลาย (ม.4 – ม.6)</td>
-                      <td className="py-3 px-3 text-center">36</td>
-                      <td className="py-3 px-3 text-right">{term2569_2.upper.students.toLocaleString()}</td>
-                      <td className="py-3 px-3 text-right">{term2569_1.upper.students.toLocaleString()}</td>
-                      <td className="py-3 px-3 text-right">{term2568_2.upper.students.toLocaleString()}</td>
-                      <td className="py-3 px-3 text-right">{term2568_1.upper.students.toLocaleString()}</td>
-                      <td className="py-3 px-3 text-right">
-                        <DeltaPill delta={getDelta(term2569_2.upper.students, term2569_1.upper.students)} showUnit={false} size="xs" />
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        <DeltaPill delta={getDelta(term2569_2.upper.students, term2568_2.upper.students)} showUnit={false} size="xs" />
-                      </td>
-                      <td className="py-3 px-4 text-right">{term2569_2.upper.avgPerRoom} คน</td>
-                    </tr>
-
-                    {/* รวมทั้งหมด */}
-                    <tr className="bg-[#111C35] text-white font-bold">
-                      <td className="py-3.5 px-4">รวมทั้งหมดทั้งโรงเรียน (ม.1 – ม.6)</td>
-                      <td className="py-3.5 px-3 text-center">72</td>
-                      <td className="py-3.5 px-3 text-right text-pink-300">{term2569_2.total.students.toLocaleString()}</td>
-                      <td className="py-3.5 px-3 text-right">{term2569_1.total.students.toLocaleString()}</td>
-                      <td className="py-3.5 px-3 text-right">{term2568_2.total.students.toLocaleString()}</td>
-                      <td className="py-3.5 px-3 text-right">{term2568_1.total.students.toLocaleString()}</td>
-                      <td className="py-3.5 px-3 text-right">
-                        <DeltaPill delta={getDelta(term2569_2.total.students, term2569_1.total.students)} showUnit={false} size="xs" />
-                      </td>
-                      <td className="py-3.5 px-3 text-right">
-                        <DeltaPill delta={getDelta(term2569_2.total.students, term2568_2.total.students)} showUnit={false} size="xs" />
-                      </td>
-                      <td className="py-3.5 px-4 text-right">{term2569_2.total.avgPerRoom} คน</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            {/* การวิเคราะห์อัตราการเลื่อนชั้นและคงอยู่ข้ามปีการศึกษา (2/2568 -> 1/2569) */}
-            <section className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5 sm:p-6">
-              <div className="mb-4">
-                <h3 className="text-lg font-bold text-[#0F172A]">
-                  การวิเคราะห์อัตราการเลื่อนชั้นและคงอยู่ข้ามปีการศึกษา (2/2568 → 1/2569)
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  ติดตามจำนวนนักเรียนรุ่นเดียวกันเมื่อเลื่อนขึ้นชั้นปีถัดไป รวมถึงยอดรับเข้าใหม่ ม.1 และ ม.4
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {cohortProgressionList.map((item) => {
-                  const isExpansion = item.rateType === 'expansion';
-                  const isChange = item.rateType === 'change';
-                  return (
-                    <div
-                      key={item.id}
-                      className="border border-slate-200/80 rounded-xl p-4 hover:border-blue-200 transition-colors flex flex-col justify-between bg-slate-50/30"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <span
-                            className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                              isExpansion
-                                ? 'bg-emerald-50 text-emerald-700'
-                                : isChange
-                                ? 'bg-amber-50 text-amber-700'
-                                : 'bg-blue-50 text-blue-600'
-                            }`}
-                          >
-                            {item.group}
-                          </span>
-                          <span className="text-xs font-bold text-[#111C35] tabular-nums">
-                            {item.rateType === 'retention'
-                              ? `คงอยู่ ${item.rate}%`
-                              : `${item.rate > 0 ? '+' : ''}${item.rate}%`}
-                          </span>
-                        </div>
-
-                        <div className="font-bold text-sm text-slate-900">{item.title}</div>
-
-                        <div className="mt-3 bg-white rounded-lg p-3 border border-slate-100 flex items-center justify-between tabular-nums">
-                          <div>
-                            <div className="text-[11px] text-slate-400">{item.fromTerm}</div>
-                            <div className="text-base font-bold text-slate-700">{item.fromVal} คน</div>
-                          </div>
-                          <div className="text-center px-2">
-                            <ChevronRight className="w-4 h-4 text-[#D83A6F] mx-auto" />
-                            <span
-                              className={`text-[11px] font-semibold ${
-                                item.diff > 0 ? 'text-emerald-600' : 'text-slate-500'
-                              }`}
-                            >
-                              {item.diff > 0 ? `+${item.diff}` : item.diff} คน
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-[11px] text-slate-400">{item.toTerm}</div>
-                            <div className="text-base font-bold text-[#111C35]">{item.toVal} คน</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <p className="mt-3 text-xs text-slate-500 leading-relaxed">{item.desc}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          </div>
-        )}
-
-        {/* ===================================================================
-            TAB 3: โครงสร้างชั้นเรียนและกราฟ (Recharts Visualization Suite)
-        =================================================================== */}
-        {activeNavTab === 'charts' && (
-          <div className="space-y-6">
-            {/* Row 1: กราฟแท่งเปรียบเทียบรายชั้น (8 cols) + กราฟโดนัทสัดส่วน (4 cols) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5 sm:p-6">
-                <div className="mb-4">
-                  <h2 className="text-lg font-bold text-[#0F172A]">
-                    กราฟเปรียบเทียบจำนวนนักเรียนรายระดับชั้น ({primaryTerm.termLabel}
-                    {compareTerm ? ` vs ${compareTerm.termLabel}` : ''})
-                  </h2>
-                  <p className="text-xs text-slate-500">
-                    เปรียบเทียบจำนวนนักเรียนแต่ละระดับชั้น (ม.1 – ม.6) ระหว่างภาคเรียนที่เลือก
-                  </p>
-                </div>
-
-                <div className="h-[340px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={barChartComparisonData} margin={{ top: 22, right: 16, left: -12, bottom: 5 }} barGap={8}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="grade" tick={{ fill: '#0F172A', fontWeight: 600, fontSize: 13 }} />
-                      <YAxis domain={[300, 500]} tick={{ fill: '#64748b', fontSize: 12 }} />
-                      <Tooltip content={<CustomTooltip unit="คน" />} cursor={{ fill: '#f8fafc' }} />
-                      <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                      <Bar
-                        dataKey={primaryTerm.termLabel}
-                        name={`ภาคเรียน ${primaryTerm.termLabel} (หลัก)`}
-                        fill="#111C35"
-                        radius={[6, 6, 0, 0]}
-                        maxBarSize={42}
-                      >
-                        <LabelList dataKey={primaryTerm.termLabel} position="top" fill="#111C35" fontSize={12} fontWeight={700} />
-                      </Bar>
-                      {compareTerm && (
-                        <Bar
-                          dataKey={compareTerm.termLabel}
-                          name={`ภาคเรียน ${compareTerm.termLabel} (เทียบ)`}
-                          fill="#D83A6F"
-                          radius={[6, 6, 0, 0]}
-                          maxBarSize={42}
-                        >
-                          <LabelList dataKey={compareTerm.termLabel} position="top" fill="#D83A6F" fontSize={12} fontWeight={600} />
-                        </Bar>
-                      )}
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              {/* กราฟโดนัทสัดส่วนประชากรนักเรียน */}
-              <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5 sm:p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-base font-bold text-[#0F172A]">สัดส่วนรายระดับชั้น</h3>
-                    <PieChartIcon className="w-4 h-4 text-[#D83A6F]" />
-                  </div>
-                  <p className="text-xs text-slate-500">ภาคเรียน {primaryTerm.termLabel}</p>
-                </div>
-
-                <div className="h-[210px] w-full relative my-2">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={donutChartData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={55}
-                        outerRadius={82}
-                        paddingAngle={3}
-                        dataKey="value"
-                      >
-                        {donutChartData.map((entry, idx) => (
-                          <Cell key={idx} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip unit="คน" />} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-[11px] text-slate-400">รวมทั้งหมด</span>
-                    <span className="text-xl font-bold text-[#0F172A] tabular-nums">
-                      {primaryTerm.total.students.toLocaleString()}
-                    </span>
-                    <span className="text-[10px] text-slate-500">คน</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-100 text-[11px]">
-                  {donutChartData.map((d) => (
-                    <div key={d.shortName} className="flex items-center justify-between bg-slate-50 px-2 py-1 rounded-lg">
-                      <span className="flex items-center gap-1 font-semibold text-slate-700">
-                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
-                        {d.shortName}
+                    <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-50 text-blue-600">
+                        ${item.rooms} ห้องเรียน
                       </span>
-                      <span className="text-slate-500 tabular-nums">{d.sharePct}%</span>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 tabular-nums">
+                        สัดส่วน ${sharePct}%
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Row 2: กราฟเส้นแนวโน้ม 4 ภาคเรียน (6 cols) + กราฟความหนาแน่นต่อห้องเทียบเกณฑ์ สพฐ. (6 cols) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* กราฟเส้นแนวโน้ม 4 ภาคเรียน */}
-              <div className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-base font-bold text-[#0F172A]">
-                      แนวโน้มจำนวนนักเรียน 4 ภาคเรียน (1/2568 – 2/2569)
-                    </h3>
-                    <p className="text-xs text-slate-500">เปรียบเทียบยอดรวมทั้งโรงเรียน ม.ต้น และ ม.ปลาย</p>
                   </div>
-                  <LineChartIcon className="w-4 h-4 text-blue-600" />
-                </div>
 
-                <div className="h-[300px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={trendChartData} margin={{ top: 20, right: 24, left: -10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis dataKey="term" tick={{ fill: '#0F172A', fontWeight: 600, fontSize: 12 }} />
-                      <YAxis domain={[1100, 2650]} tick={{ fill: '#64748b', fontSize: 12 }} />
-                      <Tooltip content={<CustomTooltip unit="คน" />} />
-                      <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                      <Line
-                        type="monotone"
-                        dataKey="รวมทั้งหมด"
-                        stroke="#111C35"
-                        strokeWidth={3}
-                        dot={{ r: 5, fill: '#111C35' }}
-                      >
-                        <LabelList dataKey="รวมทั้งหมด" position="top" fill="#111C35" fontSize={11} fontWeight={700} />
-                      </Line>
-                      <Line
-                        type="monotone"
-                        dataKey="ม.ต้น (ม.1–ม.3)"
-                        stroke="#2563EB"
-                        strokeWidth={2.5}
-                        dot={{ r: 4, fill: '#2563EB' }}
-                      >
-                        <LabelList dataKey="ม.ต้น (ม.1–ม.3)" position="top" fill="#2563EB" fontSize={11} />
-                      </Line>
-                      <Line
-                        type="monotone"
-                        dataKey="ม.ปลาย (ม.4–ม.6)"
-                        stroke="#D83A6F"
-                        strokeWidth={2.5}
-                        dot={{ r: 4, fill: '#D83A6F' }}
-                      >
-                        <LabelList dataKey="ม.ปลาย (ม.4–ม.6)" position="bottom" fill="#D83A6F" fontSize={11} />
-                      </Line>
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              {/* กราฟเปรียบเทียบค่าเฉลี่ยนักเรียนต่อห้องกับเกณฑ์ สพฐ. (40 คน/ห้อง) */}
-              <div className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-base font-bold text-[#0F172A]">
-                      ค่าเฉลี่ยนักเรียนต่อห้องเทียบเกณฑ์มาตรฐาน สพฐ. ({primaryTerm.termLabel})
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      เส้นประสีแดงแสดงเกณฑ์มาตรฐาน สพฐ. (40 คน/ห้องเรียน)
-                    </p>
-                  </div>
-                  <Award className="w-4 h-4 text-emerald-600" />
-                </div>
-
-                <div className="h-[300px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={densityChartData} margin={{ top: 24, right: 20, left: -12, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="grade" tick={{ fill: '#0F172A', fontWeight: 600, fontSize: 12 }} />
-                      <YAxis domain={[25, 44]} tick={{ fill: '#64748b', fontSize: 12 }} />
-                      <Tooltip content={<CustomTooltip unit="คน/ห้อง" />} />
-                      <ReferenceLine
-                        y={OBEC_STANDARD_PER_ROOM}
-                        stroke="#e11d48"
-                        strokeDasharray="6 4"
-                        strokeWidth={2}
-                        label={{
-                          value: 'เกณฑ์ สพฐ. 40 คน/ห้อง',
-                          position: 'insideTopRight',
-                          fill: '#e11d48',
-                          fontSize: 11,
-                          fontWeight: 700,
-                        }}
-                      />
-                      <Bar dataKey="เฉลี่ยต่อห้อง" name="เฉลี่ยนักเรียนต่อห้อง" radius={[6, 6, 0, 0]} maxBarSize={44}>
-                        {densityChartData.map((entry, idx) => (
-                          <Cell key={idx} fill={entry.color} />
-                        ))}
-                        <LabelList dataKey="เฉลี่ยต่อห้อง" position="top" fill="#0F172A" fontSize={12} fontWeight={700} />
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ===================================================================
-            MODAL / DRAWER รายละเอียดเจาะลึกเมื่อคลิกที่แถวระดับชั้นในหน้าหลัก
-        =================================================================== */}
-        {selectedRowDetail && (
-          <div
-            className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4"
-            onClick={() => setSelectedRowDetail(null)}
-          >
-            <div
-              className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                <div>
-                  <span
-                    className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold mb-1 ${
-                      selectedRowDetail.levelKey === 'lower'
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'bg-pink-50 text-[#D83A6F]'
-                    }`}
-                  >
-                    {selectedRowDetail.level} • {selectedRowDetail.rooms} ห้องเรียน
+                  <span class="lg:hidden px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 tabular-nums">
+                    ${current.shortLabel}
                   </span>
-                  <h3 className="text-lg font-bold text-[#0F172A]">
-                    {selectedRowDetail.fullName}
-                  </h3>
                 </div>
-                <button
-                  onClick={() => setSelectedRowDetail(null)}
-                  className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
 
-              {/* สถิติย้อนหลังทั้ง 4 ภาคเรียนของระดับชั้นนี้ */}
+                <!-- คอลัมน์ 2: ป้ายช่วงชั้น -->
+                <div class="lg:col-span-2 flex items-center gap-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold ${
+                    isLower ? 'bg-blue-50 text-blue-600' : 'bg-pink-50 text-[#D83A6F]'
+                  }">
+                    ${meta.level}
+                  </span>
+                  <span class="text-xs text-slate-400">(${item.rooms} ห้อง)</span>
+                </div>
+
+                <!-- คอลัมน์ 3: จำนวนนักเรียน + Progress Bar -->
+                <div class="lg:col-span-3">
+                  <div class="flex items-baseline justify-between mb-1">
+                    <span class="kpi-number text-base sm:text-lg font-bold text-[#0F172A] tabular-nums">
+                      ${item.students.toLocaleString()} <span class="text-xs font-normal text-slate-500">คน</span>
+                    </span>
+                    <span class="text-[11px] text-slate-400 tabular-nums">
+                      ${capacityPct}% ของเกณฑ์ (480)
+                    </span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      class="h-full rounded-full ${isLower ? 'bg-blue-500' : 'bg-[#D83A6F]'}"
+                      style="width: ${Math.min(capacityPct, 100)}%"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- คอลัมน์ 4: เทียบภาคเรียนก่อนหน้า -->
+                <div class="lg:col-span-2">
+                  ${
+                    prevTerm
+                      ? `<div>
+                          ${formatDeltaBadge(delta, true)}
+                          <div class="text-[11px] text-slate-400 mt-1 tabular-nums">
+                            จากเดิม ${prevStudents.toLocaleString()} คน (${prevTerm.shortLabel})
+                          </div>
+                        </div>`
+                      : `<span class="text-xs text-slate-400">ภาคเรียนเริ่มต้นฐานข้อมูล</span>`
+                  }
+                </div>
+
+                <!-- คอลัมน์ 5: เฉลี่ยต่อห้อง -->
+                <div class="lg:col-span-1 flex lg:block items-center justify-between text-right">
+                  <span class="lg:hidden text-xs text-slate-400">ค่าเฉลี่ยต่อห้อง:</span>
+                  <div>
+                    <div class="font-heading text-sm font-bold text-slate-800 tabular-nums">${avgPerRoom}</div>
+                    <div class="text-[10px] text-slate-400">คน/ห้อง</div>
+                  </div>
+                </div>
+
+                <!-- คอลัมน์ 6: ป้ายภาคเรียน -->
+                <div class="hidden lg:flex lg:col-span-1 justify-end">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200/70 tabular-nums">
+                    ${current.shortLabel}
+                  </span>
+                </div>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      // แถวสรุปรวมด้านล่าง
+      const lowerDelta = prevTerm ? calcDelta(current.lower.students, prevTerm.lower.students) : null;
+      const upperDelta = prevTerm ? calcDelta(current.upper.students, prevTerm.upper.students) : null;
+      const totalDelta = prevTerm ? calcDelta(current.total.students, prevTerm.total.students) : null;
+
+      document.getElementById('grade-summary-footer').innerHTML = `
+        <!-- รวม ม.ต้น -->
+        <div class="bg-blue-50/60 border border-blue-100 rounded-xl px-4 py-3 grid grid-cols-1 lg:grid-cols-12 gap-2 items-center text-xs sm:text-sm">
+          <div class="lg:col-span-3 font-heading font-bold text-blue-950">รวมระดับมัธยมศึกษาตอนต้น (ม.1–ม.3)</div>
+          <div class="lg:col-span-2 text-blue-700 font-medium">36 ห้องเรียน • สัดส่วน ${current.lower.share}%</div>
+          <div class="lg:col-span-3 font-heading font-bold text-blue-950 tabular-nums">${current.lower.students.toLocaleString()} คน</div>
+          <div class="lg:col-span-2">${formatDeltaBadge(lowerDelta, true)}</div>
+          <div class="lg:col-span-1 text-right font-heading font-bold text-blue-950 tabular-nums">${current.lower.avg} <span class="text-[10px] font-normal">คน/ห้อง</span></div>
+          <div class="hidden lg:flex lg:col-span-1 justify-end">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 tabular-nums">${current.shortLabel}</span>
+          </div>
+        </div>
+
+        <!-- รวม ม.ปลาย -->
+        <div class="bg-pink-50/60 border border-pink-100 rounded-xl px-4 py-3 grid grid-cols-1 lg:grid-cols-12 gap-2 items-center text-xs sm:text-sm">
+          <div class="lg:col-span-3 font-heading font-bold text-pink-950">รวมระดับมัธยมศึกษาตอนปลาย (ม.4–ม.6)</div>
+          <div class="lg:col-span-2 text-[#D83A6F] font-medium">36 ห้องเรียน • สัดส่วน ${current.upper.share}%</div>
+          <div class="lg:col-span-3 font-heading font-bold text-pink-950 tabular-nums">${current.upper.students.toLocaleString()} คน</div>
+          <div class="lg:col-span-2">${formatDeltaBadge(upperDelta, true)}</div>
+          <div class="lg:col-span-1 text-right font-heading font-bold text-pink-950 tabular-nums">${current.upper.avg} <span class="text-[10px] font-normal">คน/ห้อง</span></div>
+          <div class="hidden lg:flex lg:col-span-1 justify-end">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-pink-100 text-[#D83A6F] tabular-nums">${current.shortLabel}</span>
+          </div>
+        </div>
+
+        <!-- รวมทั้งหมด -->
+        <div class="bg-[#111C35] text-white rounded-xl px-4 py-3.5 grid grid-cols-1 lg:grid-cols-12 gap-2 items-center text-xs sm:text-sm shadow-sm">
+          <div class="lg:col-span-3 font-heading font-bold">รวมทั้งหมดทั้งโรงเรียน (ม.1–ม.6)</div>
+          <div class="lg:col-span-2 text-slate-300">72 ห้องเรียน • 100.00%</div>
+          <div class="lg:col-span-3 font-heading text-base font-bold text-pink-300 tabular-nums">${current.total.students.toLocaleString()} คน</div>
+          <div class="lg:col-span-2">${formatDeltaBadge(totalDelta, true)}</div>
+          <div class="lg:col-span-1 text-right font-heading font-bold text-white tabular-nums">${current.total.avg} <span class="text-[10px] font-normal text-slate-300">คน/ห้อง</span></div>
+          <div class="hidden lg:flex lg:col-span-1 justify-end">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#D83A6F] text-white tabular-nums">${current.shortLabel}</span>
+          </div>
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    function setLevelFilter(level) {
+      state.levelFilter = level;
+      document.querySelectorAll('.level-pill-btn').forEach((btn) => {
+        const isTarget = btn.getAttribute('data-level') === level;
+        btn.className = isTarget
+          ? 'level-pill-btn pill-btn px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border transition-all cursor-pointer bg-[#111C35] text-white border-[#111C35]'
+          : 'level-pill-btn pill-btn px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-all cursor-pointer bg-white text-slate-600 border-slate-200 hover:bg-slate-50';
+      });
+      renderHomeGradeRows();
+    }
+
+    function setSelectedTerm(termId) {
+      state.selectedTermId = termId;
+      document.querySelectorAll('.term-pill-btn').forEach((btn) => {
+        const isTarget = btn.getAttribute('data-term') === termId;
+        btn.className = isTarget
+          ? 'term-pill-btn pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer bg-[#111C35] text-white border-[#111C35]'
+          : 'term-pill-btn pill-btn px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer bg-white text-slate-600 border-slate-200 hover:bg-slate-50';
+      });
+      updateKPICards();
+      renderHomeGradeRows();
+    }
+
+    function handleSearchInput(val) {
+      state.searchQuery = val;
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (val.trim()) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      renderHomeGradeRows();
+    }
+
+    function clearSearchInput() {
+      const input = document.getElementById('grade-search-input');
+      input.value = '';
+      handleSearchInput('');
+    }
+
+    // -------------------------------------------------------------------------
+    // 6. แท็บที่ 2: เปรียบเทียบรายปี / เทอม & Cohort Progression
+    // -------------------------------------------------------------------------
+    function applyComparePreset(baseId, targetId) {
+      document.getElementById('compare-base-select').value = baseId;
+      document.getElementById('compare-target-select').value = targetId;
+      renderComparisonView();
+    }
+
+    function swapComparePeriods() {
+      const baseEl = document.getElementById('compare-base-select');
+      const targetEl = document.getElementById('compare-target-select');
+      const temp = baseEl.value;
+      baseEl.value = targetEl.value;
+      targetEl.value = temp;
+      renderComparisonView();
+    }
+
+    function renderComparisonView() {
+      const baseId = document.getElementById('compare-base-select').value;
+      const targetId = document.getElementById('compare-target-select').value;
+      const base = getTermSummary(baseId);
+      const target = getTermSummary(targetId);
+
+      // การ์ดสรุปผลต่างรวม 3 ใบ
+      const totalDelta = calcDelta(base.total.students, target.total.students);
+      const lowerDelta = calcDelta(base.lower.students, target.lower.students);
+      const upperDelta = calcDelta(base.upper.students, target.upper.students);
+
+      document.getElementById('compare-summary-cards').innerHTML = `
+        <div class="bg-slate-50/80 border border-slate-200/80 rounded-xl p-4">
+          <div class="text-xs font-semibold text-slate-500">รวมทั้งหมด (${base.shortLabel} เทียบ ${target.shortLabel})</div>
+          <div class="flex items-baseline justify-between mt-1.5">
+            <span class="kpi-number text-xl font-bold text-[#0F172A] tabular-nums">${base.total.students.toLocaleString()} <span class="text-xs font-normal text-slate-400">vs ${target.total.students.toLocaleString()} คน</span></span>
+            ${formatDeltaBadge(totalDelta, true)}
+          </div>
+        </div>
+
+        <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+          <div class="text-xs font-semibold text-blue-700">มัธยมศึกษาตอนต้น (${base.shortLabel} เทียบ ${target.shortLabel})</div>
+          <div class="flex items-baseline justify-between mt-1.5">
+            <span class="kpi-number text-xl font-bold text-blue-950 tabular-nums">${base.lower.students.toLocaleString()} <span class="text-xs font-normal text-blue-500">vs ${target.lower.students.toLocaleString()} คน</span></span>
+            ${formatDeltaBadge(lowerDelta, true)}
+          </div>
+        </div>
+
+        <div class="bg-pink-50/50 border border-pink-100 rounded-xl p-4">
+          <div class="text-xs font-semibold text-[#D83A6F]">มัธยมศึกษาตอนปลาย (${base.shortLabel} เทียบ ${target.shortLabel})</div>
+          <div class="flex items-baseline justify-between mt-1.5">
+            <span class="kpi-number text-xl font-bold text-pink-950 tabular-nums">${base.upper.students.toLocaleString()} <span class="text-xs font-normal text-pink-500">vs ${target.upper.students.toLocaleString()} คน</span></span>
+            ${formatDeltaBadge(upperDelta, true)}
+          </div>
+        </div>
+      `;
+
+      // หัวตารางเปรียบเทียบ
+      document.getElementById('compare-table-title').textContent = `ตารางเปรียบเทียบรายระดับชั้น (${base.shortLabel} เทียบกับ ${target.shortLabel})`;
+      document.getElementById('compare-table-head').innerHTML = `
+        <th class="py-3.5 px-4 font-semibold">ระดับชั้น</th>
+        <th class="py-3.5 px-3 text-center font-semibold">ห้องเรียน</th>
+        <th class="py-3.5 px-3 text-right font-bold text-[#111C35] bg-pink-50/40">${base.shortLabel} (หลัก)</th>
+        <th class="py-3.5 px-3 text-right font-semibold">เฉลี่ย/ห้อง (${base.shortLabel})</th>
+        <th class="py-3.5 px-3 text-right font-semibold">${target.shortLabel} (เทียบ)</th>
+        <th class="py-3.5 px-3 text-right font-semibold">เฉลี่ย/ห้อง (${target.shortLabel})</th>
+        <th class="py-3.5 px-4 text-right font-semibold">ผลต่าง (คน / %)</th>
+      `;
+
+      // เนื้อหาตารางรายระดับชั้น
+      const rowsHtml = GRADE_KEYS.map((key) => {
+        const meta = GRADE_META[key];
+        const bItem = base.grades[key];
+        const tItem = target.grades[key];
+        const bAvg = (bItem.students / bItem.rooms).toFixed(2);
+        const tAvg = (tItem.students / tItem.rooms).toFixed(2);
+        const delta = calcDelta(bItem.students, tItem.students);
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3 px-4 font-semibold text-slate-800 whitespace-nowrap">
+              <span class="inline-block w-2 h-2 rounded-full mr-2 ${meta.levelKey === 'lower' ? 'bg-blue-500' : 'bg-[#D83A6F]'}"></span>
+              ${meta.fullName}
+            </td>
+            <td class="py-3 px-3 text-center text-slate-500">${bItem.rooms}</td>
+            <td class="py-3 px-3 text-right font-bold text-[#111C35] bg-pink-50/20">${bItem.students.toLocaleString()} คน</td>
+            <td class="py-3 px-3 text-right text-slate-600">${bAvg}</td>
+            <td class="py-3 px-3 text-right text-slate-600">${tItem.students.toLocaleString()} คน</td>
+            <td class="py-3 px-3 text-right text-slate-500">${tAvg}</td>
+            <td class="py-3 px-4 text-right">${formatDeltaBadge(delta, true)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('compare-table-body').innerHTML = `
+        ${rowsHtml}
+        <tr class="bg-blue-50/60 font-bold text-blue-950 border-t border-blue-100">
+          <td class="py-3 px-4">รวมมัธยมศึกษาตอนต้น (ม.1–ม.3)</td>
+          <td class="py-3 px-3 text-center">36</td>
+          <td class="py-3 px-3 text-right">${base.lower.students.toLocaleString()} คน</td>
+          <td class="py-3 px-3 text-right">${base.lower.avg}</td>
+          <td class="py-3 px-3 text-right">${target.lower.students.toLocaleString()} คน</td>
+          <td class="py-3 px-3 text-right">${target.lower.avg}</td>
+          <td class="py-3 px-4 text-right">${formatDeltaBadge(lowerDelta, true)}</td>
+        </tr>
+        <tr class="bg-pink-50/60 font-bold text-pink-950 border-t border-pink-100">
+          <td class="py-3 px-4">รวมมัธยมศึกษาตอนปลาย (ม.4–ม.6)</td>
+          <td class="py-3 px-3 text-center">36</td>
+          <td class="py-3 px-3 text-right">${base.upper.students.toLocaleString()} คน</td>
+          <td class="py-3 px-3 text-right">${base.upper.avg}</td>
+          <td class="py-3 px-3 text-right">${target.upper.students.toLocaleString()} คน</td>
+          <td class="py-3 px-3 text-right">${target.upper.avg}</td>
+          <td class="py-3 px-4 text-right">${formatDeltaBadge(upperDelta, true)}</td>
+        </tr>
+        <tr class="bg-[#111C35] text-white font-bold">
+          <td class="py-3.5 px-4">รวมทั้งหมดทั้งโรงเรียน (ม.1–ม.6)</td>
+          <td class="py-3.5 px-3 text-center">72</td>
+          <td class="py-3.5 px-3 text-right text-pink-300">${base.total.students.toLocaleString()} คน</td>
+          <td class="py-3.5 px-3 text-right">${base.total.avg}</td>
+          <td class="py-3.5 px-3 text-right">${target.total.students.toLocaleString()} คน</td>
+          <td class="py-3.5 px-3 text-right">${target.total.avg}</td>
+          <td class="py-3.5 px-4 text-right">${formatDeltaBadge(totalDelta, true)}</td>
+        </tr>
+      `;
+
+      renderCohortProgression();
+      lucide.createIcons();
+    }
+
+    function renderCohortProgression() {
+      const t68_1 = TERMS_DB['1-2568'].grades;
+      const t68_2 = TERMS_DB['2-2568'].grades;
+      const t69_1 = TERMS_DB['1-2569'].grades;
+
+      const cohorts = [
+        {
+          tag: 'รับเข้าใหม่ ม.1',
+          tagClass: 'bg-amber-50 text-amber-700',
+          title: 'รับเข้าใหม่ ม.1 (1/2569 เทียบ 1/2568)',
+          fromLabel: 'ม.1 (1/2568)',
+          fromVal: t68_1.m1.students,
+          toLabel: 'ม.1 (1/2569)',
+          toVal: t69_1.m1.students,
+          diff: t69_1.m1.students - t68_1.m1.students,
+          rateText: `${(((t69_1.m1.students - t68_1.m1.students) / t68_1.m1.students) * 100).toFixed(2)}%`,
+          desc: 'รับนักเรียนชั้น ม.1 เต็มทั้ง 12 ห้องเรียน เฉลี่ย 37.67 คน/ห้อง'
+        },
+        {
+          tag: 'เลื่อนชั้น ม.ต้น',
+          tagClass: 'bg-blue-50 text-blue-600',
+          title: 'ม.1 (2/2568) → เลื่อนชั้น ม.2 (1/2569)',
+          fromLabel: 'ม.1 (2/2568)',
+          fromVal: t68_2.m1.students,
+          toLabel: 'ม.2 (1/2569)',
+          toVal: t69_1.m2.students,
+          diff: t69_1.m2.students - t68_2.m1.students,
+          rateText: `คงอยู่ ${((t69_1.m2.students / t68_2.m1.students) * 100).toFixed(2)}%`,
+          desc: 'อัตราการคงอยู่และเลื่อนชั้นสูงถึง 96.54% (ลดลงเพียง 16 คน)'
+        },
+        {
+          tag: 'เลื่อนชั้น ม.ต้น',
+          tagClass: 'bg-blue-50 text-blue-600',
+          title: 'ม.2 (2/2568) → เลื่อนชั้น ม.3 (1/2569)',
+          fromLabel: 'ม.2 (2/2568)',
+          fromVal: t68_2.m2.students,
+          toLabel: 'ม.3 (1/2569)',
+          toVal: t69_1.m3.students,
+          diff: t69_1.m3.students - t68_2.m2.students,
+          rateText: `คงอยู่ ${((t69_1.m3.students / t68_2.m2.students) * 100).toFixed(2)}%`,
+          desc: 'อัตราคงอยู่ 90.00% เข้าสู่ชั้นปีสุดท้ายของมัธยมศึกษาตอนต้น'
+        },
+        {
+          tag: 'รอยต่อ ม.ต้น → ม.ปลาย',
+          tagClass: 'bg-emerald-50 text-emerald-700',
+          title: 'จบ ม.3 (2/2568) → เข้าเรียน ม.4 (1/2569)',
+          fromLabel: 'ม.3 (2/2568)',
+          fromVal: t68_2.m3.students,
+          toLabel: 'ม.4 (1/2569)',
+          toVal: t69_1.m4.students,
+          diff: t69_1.m4.students - t68_2.m3.students,
+          rateText: `สัดส่วน ${((t69_1.m4.students / t68_2.m3.students) * 100).toFixed(2)}% (+21.79%)`,
+          desc: 'ยอดนักเรียนเพิ่มขึ้น +78 คน จากการเปิดรับสมัครนักเรียนใหม่เข้า ม.4'
+        },
+        {
+          tag: 'เลื่อนชั้น ม.ปลาย',
+          tagClass: 'bg-pink-50 text-[#D83A6F]',
+          title: 'ม.4 (2/2568) → เลื่อนชั้น ม.5 (1/2569)',
+          fromLabel: 'ม.4 (2/2568)',
+          fromVal: t68_2.m4.students,
+          toLabel: 'ม.5 (1/2569)',
+          toVal: t69_1.m5.students,
+          diff: t69_1.m5.students - t68_2.m4.students,
+          rateText: `คงอยู่ ${((t69_1.m5.students / t68_2.m4.students) * 100).toFixed(2)}%`,
+          desc: 'อัตราคงอยู่ 90.74% ตามแผนการเรียนระดับมัธยมศึกษาตอนปลาย'
+        },
+        {
+          tag: 'เลื่อนชั้น ม.ปลาย',
+          tagClass: 'bg-pink-50 text-[#D83A6F]',
+          title: 'ม.5 (2/2568) → เลื่อนชั้น ม.6 (1/2569)',
+          fromLabel: 'ม.5 (2/2568)',
+          fromVal: t68_2.m5.students,
+          toLabel: 'ม.6 (1/2569)',
+          toVal: t69_1.m6.students,
+          diff: t69_1.m6.students - t68_2.m5.students,
+          rateText: `คงอยู่ ${((t69_1.m6.students / t68_2.m5.students) * 100).toFixed(2)}%`,
+          desc: 'อัตราคงอยู่สูงสุดถึง 97.99% เตรียมพร้อมศึกษาต่อระดับอุดมศึกษา'
+        }
+      ];
+
+      document.getElementById('cohort-progression-grid').innerHTML = cohorts
+        .map((c) => {
+          const diffSign = c.diff > 0 ? `+${c.diff}` : `${c.diff}`;
+          const diffColor = c.diff > 0 ? 'text-emerald-600' : 'text-slate-500';
+          return `
+            <div class="border border-slate-200/90 rounded-xl p-4 bg-slate-50/40 hover:border-blue-200 transition-colors flex flex-col justify-between">
               <div>
-                <div className="text-xs font-semibold text-slate-500 mb-2">
-                  สถิติย้อนหลังครบทั้ง 4 ภาคเรียน (ปีการศึกษา 2568 – 2569)
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${c.tagClass}">${c.tag}</span>
+                  <span class="font-heading text-xs font-bold text-[#111C35] tabular-nums">${c.rateText}</span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 tabular-nums">
-                  {[...allTerms].reverse().map((t) => {
-                    const st = t.grades[selectedRowDetail.key].students;
-                    const avg = +(st / t.grades[selectedRowDetail.key].rooms).toFixed(2);
-                    const isCurrent = t.id === primaryTerm.id;
-                    return (
-                      <div
-                        key={t.id}
-                        className={`p-3 rounded-xl border ${
-                          isCurrent
-                            ? 'bg-pink-50/60 border-[#D83A6F]/40'
-                            : 'bg-slate-50 border-slate-100'
-                        }`}
-                      >
-                        <div className="text-[11px] font-semibold text-slate-500">{t.termLabel}</div>
-                        <div className="text-lg font-bold text-[#0F172A] mt-0.5">{st} คน</div>
-                        <div className="text-[11px] text-slate-400">{avg} คน/ห้อง</div>
-                      </div>
-                    );
-                  })}
+                <div class="font-heading font-bold text-sm text-slate-900">${c.title}</div>
+
+                <div class="mt-3 bg-white rounded-lg p-3 border border-slate-100 flex items-center justify-between tabular-nums">
+                  <div>
+                    <div class="text-[11px] text-slate-400">${c.fromLabel}</div>
+                    <div class="font-heading text-base font-bold text-slate-700">${c.fromVal} คน</div>
+                  </div>
+                  <div class="text-center px-2">
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-[#D83A6F] mx-auto"></i>
+                    <span class="text-[11px] font-semibold ${diffColor}">${diffSign} คน</span>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[11px] text-slate-400">${c.toLabel}</div>
+                    <div class="font-heading text-base font-bold text-[#111C35]">${c.toVal} คน</div>
+                  </div>
                 </div>
               </div>
-
-              {/* กราฟแท่งขนาดเล็กของระดับชั้นที่เลือก */}
-              <div className="h-44 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={[...allTerms].reverse().map((t) => ({
-                      term: t.termLabel,
-                      จำนวนนักเรียน: t.grades[selectedRowDetail.key].students,
-                    }))}
-                    margin={{ top: 18, right: 12, left: -18, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="term" tick={{ fontSize: 12, fill: '#334155' }} />
-                    <YAxis domain={[320, 500]} tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                    <Tooltip content={<CustomTooltip unit="คน" />} />
-                    <Bar dataKey="จำนวนนักเรียน" fill="#D83A6F" radius={[6, 6, 0, 0]} maxBarSize={38}>
-                      <LabelList dataKey="จำนวนนักเรียน" position="top" fontSize={11} fontWeight={700} fill="#0F172A" />
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="flex justify-end pt-2 border-t border-slate-100">
-                <button
-                  onClick={() => setSelectedRowDetail(null)}
-                  className="px-4 py-2 rounded-full bg-[#111C35] text-white text-xs font-semibold hover:bg-slate-800 transition-colors cursor-pointer"
-                >
-                  ปิดหน้าต่าง
-                </button>
-              </div>
+              <p class="mt-3 text-xs text-slate-500 leading-relaxed">${c.desc}</p>
             </div>
-          </div>
-        )}
+          `;
+        })
+        .join('');
+    }
 
-        {/* ===================================================================
-            FOOTER
-        =================================================================== */}
-        <footer className="pt-4 border-t border-slate-200/70 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
-          <div>
-            © {SCHOOL_INFO.name} ({SCHOOL_INFO.affiliation}) • รหัสโรงเรียน {SCHOOL_INFO.code}
+    // -------------------------------------------------------------------------
+    // 7. แท็บที่ 3: กราฟวิเคราะห์เชิงลึก (Chart.js)
+    // -------------------------------------------------------------------------
+    function renderAllCharts() {
+      Chart.defaults.font.family = "'Sarabun', sans-serif";
+      Chart.defaults.color = '#475569';
+
+      // 1) กราฟแท่งเปรียบเทียบรายระดับชั้น (2/2569 vs 1/2569 vs 2/2568)
+      const ctxBars = document.getElementById('chart-grade-bars').getContext('2d');
+      if (chartInstances.gradeBars) chartInstances.gradeBars.destroy();
+
+      chartInstances.gradeBars = new Chart(ctxBars, {
+        type: 'bar',
+        data: {
+          labels: ['ม.1', 'ม.2', 'ม.3', 'ม.4', 'ม.5', 'ม.6'],
+          datasets: [
+            {
+              label: '2/2569 (ล่าสุด)',
+              data: GRADE_KEYS.map((k) => TERMS_DB['2-2569'].grades[k].students),
+              backgroundColor: '#111C35',
+              borderRadius: 6,
+              barPercentage: 0.78
+            },
+            {
+              label: '1/2569 (เทอมก่อน)',
+              data: GRADE_KEYS.map((k) => TERMS_DB['1-2569'].grades[k].students),
+              backgroundColor: '#D83A6F',
+              borderRadius: 6,
+              barPercentage: 0.78
+            },
+            {
+              label: '2/2568 (ปีก่อน)',
+              data: GRADE_KEYS.map((k) => TERMS_DB['2-2568'].grades[k].students),
+              backgroundColor: '#93C5FD',
+              borderRadius: 6,
+              barPercentage: 0.78
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { usePointStyle: true, padding: 16, font: { size: 12, weight: '600' } }
+            },
+            tooltip: {
+              backgroundColor: '#111C35',
+              padding: 12,
+              cornerRadius: 10,
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()} คน`
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 300,
+              max: 500,
+              grid: { color: '#F1F5F9' },
+              ticks: { callback: (v) => `${v} คน` }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { weight: '700', size: 13 }, color: '#0F172A' }
+            }
+          }
+        }
+      });
+
+      // 2) กราฟโดนัทสัดส่วน ม.ต้น vs ม.ปลาย (2/2569)
+      const ctxDonut = document.getElementById('chart-level-donut').getContext('2d');
+      if (chartInstances.levelDonut) chartInstances.levelDonut.destroy();
+
+      chartInstances.levelDonut = new Chart(ctxDonut, {
+        type: 'doughnut',
+        data: {
+          labels: ['มัธยมศึกษาตอนต้น (ม.1–ม.3)', 'มัธยมศึกษาตอนปลาย (ม.4–ม.6)'],
+          datasets: [
+            {
+              data: [1295, 1209],
+              backgroundColor: ['#2563EB', '#D83A6F'],
+              borderWidth: 3,
+              borderColor: '#FFFFFF',
+              hoverOffset: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '68%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#111C35',
+              padding: 12,
+              cornerRadius: 10,
+              callbacks: {
+                label: (ctx) => {
+                  const pct = ((ctx.parsed / 2504) * 100).toFixed(2);
+                  return `${ctx.label}: ${ctx.parsed.toLocaleString()} คน (${pct}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // 3) กราฟเส้นแนวโน้ม 4 ภาคเรียน (1/2568 - 2/2569)
+      const ctxLines = document.getElementById('chart-trend-lines').getContext('2d');
+      if (chartInstances.trendLines) chartInstances.trendLines.destroy();
+
+      const chronSummaries = TERM_ORDER_CHRONOLOGICAL.map((id) => getTermSummary(id));
+
+      chartInstances.trendLines = new Chart(ctxLines, {
+        type: 'line',
+        data: {
+          labels: chronSummaries.map((t) => t.shortLabel),
+          datasets: [
+            {
+              label: 'รวมทั้งหมด',
+              data: chronSummaries.map((t) => t.total.students),
+              borderColor: '#111C35',
+              backgroundColor: '#111C35',
+              borderWidth: 3,
+              pointRadius: 5,
+              tension: 0.25
+            },
+            {
+              label: 'ม.ต้น (ม.1–ม.3)',
+              data: chronSummaries.map((t) => t.lower.students),
+              borderColor: '#2563EB',
+              backgroundColor: '#2563EB',
+              borderWidth: 2.5,
+              pointRadius: 4,
+              tension: 0.25
+            },
+            {
+              label: 'ม.ปลาย (ม.4–ม.6)',
+              data: chronSummaries.map((t) => t.upper.students),
+              borderColor: '#D83A6F',
+              backgroundColor: '#D83A6F',
+              borderWidth: 2.5,
+              pointRadius: 4,
+              tension: 0.25
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { usePointStyle: true, padding: 14, font: { size: 12, weight: '600' } }
+            },
+            tooltip: {
+              backgroundColor: '#111C35',
+              padding: 12,
+              cornerRadius: 10,
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()} คน`
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 1100,
+              max: 2650,
+              grid: { color: '#F1F5F9' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { weight: '700' }, color: '#0F172A' }
+            }
+          }
+        }
+      });
+
+      // 4) กราฟค่าเฉลี่ยนักเรียนต่อห้องเทียบเกณฑ์มาตรฐาน สพฐ. (40 คน/ห้อง)
+      const ctxDensity = document.getElementById('chart-room-density').getContext('2d');
+      if (chartInstances.roomDensity) chartInstances.roomDensity.destroy();
+
+      const t69_2 = TERMS_DB['2-2569'].grades;
+      const avgList = GRADE_KEYS.map((k) => +(t69_2[k].students / t69_2[k].rooms).toFixed(2));
+
+      chartInstances.roomDensity = new Chart(ctxDensity, {
+        data: {
+          labels: ['ม.1', 'ม.2', 'ม.3', 'ม.4', 'ม.5', 'ม.6'],
+          datasets: [
+            {
+              type: 'line',
+              label: 'เกณฑ์มาตรฐาน สพฐ. (40 คน/ห้อง)',
+              data: [40, 40, 40, 40, 40, 40],
+              borderColor: '#E11D48',
+              borderWidth: 2,
+              borderDash: [6, 4],
+              pointRadius: 0,
+              fill: false
+            },
+            {
+              type: 'bar',
+              label: 'เฉลี่ยนักเรียนต่อห้อง (2/2569)',
+              data: avgList,
+              backgroundColor: GRADE_KEYS.map((k) => GRADE_META[k].color),
+              borderRadius: 6,
+              barPercentage: 0.55
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { usePointStyle: true, padding: 14, font: { size: 12, weight: '600' } }
+            },
+            tooltip: {
+              backgroundColor: '#111C35',
+              padding: 12,
+              cornerRadius: 10,
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} คน/ห้อง`
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 25,
+              max: 44,
+              grid: { color: '#F1F5F9' },
+              ticks: { callback: (v) => `${v} คน` }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { weight: '700' }, color: '#0F172A' }
+            }
+          }
+        }
+      });
+    }
+
+    // -------------------------------------------------------------------------
+    // 8. Modal เจาะลึกรายระดับชั้น (เมื่อคลิกแถวในหน้าแรก)
+    // -------------------------------------------------------------------------
+    function openGradeModal(gradeKey) {
+      const meta = GRADE_META[gradeKey];
+      const modal = document.getElementById('grade-detail-modal');
+      const badge = document.getElementById('modal-level-badge');
+
+      badge.textContent = `${meta.levelFull} • 12 ห้องเรียน`;
+      badge.className = `inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold mb-1.5 ${
+        meta.levelKey === 'lower' ? 'bg-blue-50 text-blue-600' : 'bg-pink-50 text-[#D83A6F]'
+      }`;
+
+      document.getElementById('modal-grade-title').textContent = meta.fullName;
+
+      // การ์ดย่อย 4 ภาคเรียน
+      const cardsHtml = TERM_ORDER_CHRONOLOGICAL.map((tId) => {
+        const t = TERMS_DB[tId];
+        const st = t.grades[gradeKey].students;
+        const avg = (st / t.grades[gradeKey].rooms).toFixed(2);
+        const isCurrent = tId === state.selectedTermId;
+
+        return `
+          <div class="p-3 rounded-xl border ${
+            isCurrent ? 'bg-pink-50/70 border-[#D83A6F]/50' : 'bg-slate-50 border-slate-100'
+          }">
+            <div class="text-[11px] font-semibold text-slate-500">${t.shortLabel}</div>
+            <div class="kpi-number text-lg font-bold text-[#0F172A] mt-0.5">${st} คน</div>
+            <div class="text-[11px] text-slate-400">${avg} คน/ห้อง</div>
           </div>
-          <div>
-            ฐานข้อมูลสถิตินักเรียนอย่างเป็นทางการ (ปีการศึกษา 2568 – 2569)
-          </div>
-        </footer>
-      </main>
-    </div>
-  );
-}
+        `;
+      }).join('');
+
+      document.getElementById('modal-terms-grid').innerHTML = cardsHtml;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      // วาดกราฟแท่งใน Modal
+      const ctxModal = document.getElementById('chart-modal-grade').getContext('2d');
+      if (chartInstances.modalGrade) chartInstances.modalGrade.destroy();
+
+      chartInstances.modalGrade = new Chart(ctxModal, {
+        type: 'bar',
+        data: {
+          labels: TERM_ORDER_CHRONOLOGICAL.map((id) => TERMS_DB[id].shortLabel),
+          datasets: [
+            {
+              label: `จำนวนนักเรียน ${meta.code}`,
+              data: TERM_ORDER_CHRONOLOGICAL.map((id) => TERMS_DB[id].grades[gradeKey].students),
+              backgroundColor: meta.levelKey === 'lower' ? '#2563EB' : '#D83A6F',
+              borderRadius: 6,
+              barPercentage: 0.48
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#111C35',
+              callbacks: {
+                label: (ctx) => `${ctx.parsed.y.toLocaleString()} คน`
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 320,
+              max: 500,
+              grid: { color: '#E2E8F0' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { weight: '700' }, color: '#0F172A' }
+            }
+          }
+        }
+      });
+
+      lucide.createIcons();
+    }
+
+    function closeGradeModal() {
+      const modal = document.getElementById('grade-detail-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // -------------------------------------------------------------------------
+    // 9. ส่งออกไฟล์ CSV (Export CSV)
+    // -------------------------------------------------------------------------
+    function exportCSV() {
+      const headers = [
+        'ปีการศึกษา',
+        'ภาคเรียน',
+        'ม.1 (คน)',
+        'ม.2 (คน)',
+        'ม.3 (คน)',
+        'รวม ม.ต้น (คน)',
+        'ม.4 (คน)',
+        'ม.5 (คน)',
+        'ม.6 (คน)',
+        'รวม ม.ปลาย (คน)',
+        'รวมทั้งหมด (คน)',
+        'จำนวนห้องเรียน',
+        'ค่าเฉลี่ยนักเรียน/ห้อง'
+      ];
+
+      const orderedIds = ['2-2569', '1-2569', '2-2568', '1-2568'];
+      const rows = orderedIds.map((id) => {
+        const s = getTermSummary(id);
+        const g = s.grades;
+        return [
+          s.year,
+          s.term,
+          g.m1.students,
+          g.m2.students,
+          g.m3.students,
+          s.lower.students,
+          g.m4.students,
+          g.m5.students,
+          g.m6.students,
+          s.upper.students,
+          s.total.students,
+          s.total.rooms,
+          s.total.avg
+        ].join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'สถิตินักเรียน_โรงเรียนวัดสุทธิวราราม_2568-2569.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showToast('ดาวน์โหลดไฟล์รายงานสถิติ (CSV) เรียบร้อยแล้ว');
+    }
+
+    // -------------------------------------------------------------------------
+    // 10. เริ่มต้นทำงานเมื่อโหลดหน้าเว็บเสร็จสมบูรณ์
+    // -------------------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      updateKPICards();
+      renderHomeGradeRows();
+      lucide.createIcons();
+    });
+
+    // รองรับการกดปุ่ม Esc เพื่อปิด Modal
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeGradeModal();
+      }
+    });
+  </script>
+</body>
+</html>
