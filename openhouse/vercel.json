@@ -1,0 +1,8 @@
+{
+  "redirects": [
+    {
+      "source": "/openhouse",
+      "permanent": false
+    }
+  ]
+}
